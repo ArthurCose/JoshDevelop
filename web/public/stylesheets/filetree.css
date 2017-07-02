@@ -1,0 +1,40 @@
+#filetree{
+  width: 220px;
+  height: 100%;
+  background: #f8f8f8;
+  user-select: none;
+  list-style: none;
+  color: #000;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+}
+
+#filetree ul{
+  padding-left: 14px;
+  list-style: none;
+  margin: 0;
+  overflow: auto;
+  flex: 1;
+  /*border-left: 1px dashed grey;*/
+}
+
+#filetree ul:first-child{
+  padding-left: 0px;
+  border-left: none;
+}
+
+#filetree .root{
+  background: #e6e6e6 !important;
+  width: 100%;
+}
+
+#filetree li:hover,
+#filetree .selected{
+  background: #eeeeee;
+  cursor: pointer;
+}
+
+#filetree span{
+  padding-left: 3px;
+}

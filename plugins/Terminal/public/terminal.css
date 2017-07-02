@@ -1,0 +1,73 @@
+#add-terminal{
+  display: inline-block;
+  padding: 0 5px;
+  padding-top: 4px;
+  margin-left: -3px;
+  height: 100%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#clear-terminal{
+  display: block;
+  float: right;
+  padding: 0 5px;
+  padding-top: 4px;
+  height: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  color: transparent;
+  text-shadow: 0 0 0 #FFF;
+}
+
+#terminal-container{
+  background-color: #000;
+  min-height: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+#terminal-container .tab-content
+{
+  display: flex;
+}
+
+.terminal{
+  flex: 1;
+  width: 100%;
+  background: #000;
+}
+
+.xterm-viewport{
+  width: 100%;
+  min-height: 100%;
+}
+
+#terminal-container .tab-container{
+  display: inline;
+}
+
+#terminal-container .tab-container,
+#terminal-container .tab-header,
+#terminal-container .tab{
+  height: 25px;
+}
+
+#terminal-container .tab-header{
+  background-color: #333;
+  color: #FFF;
+}
+
+#add-terminal:hover,
+#terminal-container .tab .close:hover{
+  color: #DDD;
+}
+
+#terminal-container .tab{
+  background-color: #444;
+  color: #fff;
+}
+
+#terminal-container .tab.active{
+  background-color: #555;
+}

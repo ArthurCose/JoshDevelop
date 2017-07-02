@@ -1,0 +1,58 @@
+.popup,
+#filetree,
+#editor-container .tab-header,
+#terminal-container .tab-header{
+  color: #fff;
+}
+
+.popup,
+#editor-container .tab-header,
+#filetree{
+  background: #8AC5D7;
+}
+
+#filetree .root{
+  background-color: #82B1CA!important;
+}
+
+#filetree li:hover,
+#filetree .selected{
+  background-color: #7EBCD6;
+}
+
+#editor-container .tab{
+  background-color: #D2DFE9;
+  color: #000;
+  opacity: 1 !important;
+  transition: background-color .25s;
+}
+
+#editor-container .tab:hover{
+  background-color: #E0EAF1;
+}
+
+#editor-container .tab.active{
+  background-color: #fff;
+}
+
+.bottom-bar{
+  background-color: #ccc;
+  line-height: 17px;
+  height: 17px;
+  width: 100%;
+}
+
+.tab{
+  border: 0;
+  vertical-align: top;
+  padding: 0 5px;
+  margin-right: 1px;
+}
+
+.contextmenu .menuitem{
+  color: #09F;
+}
+
+.contextmenu .menuitem:hover{
+  background: #BDF;
+}

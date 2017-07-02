@@ -1,0 +1,43 @@
+#user-settings{
+  border-left: 1px solid grey !important;
+}
+
+#user-list{
+  position: absolute;
+  top: 17px;
+  right: 0;
+  width: 250px;
+  background: #F2F2F2;
+  border: 3px solid #DDD;
+  border-top: none;
+  border-right: none;
+  z-index: 5;
+  display: none;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+}
+
+#user-list:focus,
+.username:focus,
+.usercolor:focus{
+  outline: 0;
+}
+
+.user{
+  border-bottom: 1px solid #DDD;
+  padding: 2px;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.username{
+  margin-left: 7px;
+}
+
+.usercolor{
+  display: inline-block;
+  margin: auto 0;
+  vertical-align: text-bottom;
+}

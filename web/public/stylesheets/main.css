@@ -1,0 +1,63 @@
+html, body{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font: 15px Segoe UI Symbol, Arial !important;
+}
+
+button:active, button:focus{
+  outline: 0;
+}
+
+input[type="color"] {
+	-webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+	border: 0;
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+}
+
+#popup-container{
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  z-index: 20;
+}
+
+.popup{
+  background: #e6e6e6;
+  box-shadow: 0 0 3px #999;
+  color: #000;
+  padding: 10px;
+  width: 200px;
+  margin: 20px;
+  margin-top: -10px;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.right{
+  float: right;
+}
+
+#tabbed-container{
+  width: 100%;
+  height: 80%;
+  position: relative;
+}

@@ -1,0 +1,21 @@
+.popup,
+#filetree,
+#editor-container .tab-header{
+  background-color: #D55;
+}
+
+#filetree .root{
+  background-color: #C44 !important;
+}
+
+#filetree li.selected,
+#filetree li:hover{
+  background-color: #E47070;
+}
+
+.popup,
+#filetree,
+#editor-container .tab-header,
+#terminal-container .tab-header{
+  color: #fff;
+}

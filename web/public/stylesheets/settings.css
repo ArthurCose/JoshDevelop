@@ -1,0 +1,73 @@
+#settings{
+  border: 1px solid #aaa;
+  background: #ddd;
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  z-index: 999;
+  outline: 0;
+  box-shadow: 0 0 8px #777;
+}
+
+#settings .tab-container{
+  background: #ccc;
+  flex: .2;
+  flex-direction: column;
+}
+
+#settings .tab{
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 7px;
+  user-select: none;
+  opacity:1;
+}
+
+#settings .tab:active,
+#settings .tab.active{
+  background: #bbb;
+}
+
+
+#settings .tab-content{
+  flex: 1;
+  padding: 7px 10px;
+  line-height: 22px;
+  overflow: auto;
+}
+
+#settings select,
+#settings button,
+#settings input
+{
+  font-size: 15px;
+  background: #eee;
+  border: 1px solid #aaa;
+  outline: 0;
+  vertical-align: text-bottom;
+}
+
+#settings input
+{
+  padding: 0 2px;
+}
+
+#settings input[type=color]
+{
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  vertical-align: middle;
+}
+
+#settings input[type=number]
+{
+  padding-right: 0;
+}

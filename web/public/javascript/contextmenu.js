@@ -1,0 +1,99 @@
+class ContextMenu
+{
+  constructor(x, y)
+  {
+    this.element = document.createElement("div");
+    this.element.className = "contextmenu";
+    this.element.style.left = x + "px";
+    this.element.style.top = y + "px";
+    this.element.tabIndex = 0;
+    this.destroyed = false;
+    
+    this.submenu = undefined;
+    
+    this.element.addEventListener("blur", (e) =>
+    {
+      if(!this.isChildElement(e.relatedTarget))
+        this.destroy();
+    });
+    
+    this.rootMenu = this;
+  }
+  
+  isChildElement(element)
+  {
+    while(element != null)
+    {
+      if(this.element == element)
+        return true;
+      
+      element = element.parentElement;
+    }
+    return false;
+  }
+  
+  appendToElement(parentElement)
+  {
+    parentElement.appendChild(this.element);
+    this.element.focus();
+  }
+  
+  addButton(label, clickDelegate)
+  {
+    let menuItem = document.createElement("div");
+    menuItem.className = "menuitem";
+    menuItem.innerText = label;
+    
+    menuItem.addEventListener("click", () => {
+        if(clickDelegate)
+            clickDelegate();
+        
+        this.rootMenu.destroy();
+    });
+    
+    menuItem.addEventListener("mouseover", () => {
+      if(this.submenu != undefined)
+        this.submenu.destroy();
+    });
+    
+    this.element.appendChild(menuItem);
+    return menuItem;
+  }
+  
+  addSubmenu(label)
+  {
+    let submenu = new ContextMenu(0, this.element.clientY);
+    submenu.rootMenu = this;
+    
+    let button = this.addButton(label);
+    button.style.cursor = "default";
+    
+    let rightArrow = document.createElement("span");
+    rightArrow.style.float = "right";
+    rightArrow.innerText = ">";
+    button.appendChild(rightArrow);
+    
+    button.addEventListener("mouseover", () => {
+      let x = this.element.offsetWidth;
+      submenu.element.style.top = "0px";
+      submenu.element.style.left = x + "px";
+      submenu.destroyed = false;
+      
+      this.element.appendChild(submenu.element);
+      this.submenu = submenu;
+    });
+    
+    this.element.appendChild(button);
+    
+    return submenu;
+  }
+  
+  destroy()
+  {
+    if(this.destroyed)
+      return;
+    
+    this.destroyed = true;
+    this.element.remove();
+  }
+}

@@ -1,0 +1,65 @@
+.tabbed-container{
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-container, .tab-header, .tab{
+  min-height: 25px;
+}
+
+.tab-container, .tab-header{
+  user-select: none;
+}
+
+.tab-container{
+  width: 100%;
+  flex: 0;
+  display: flex;
+  position: relative;
+}
+
+.tab-content{
+  flex: 1;
+  display: flex;
+}
+
+.tab{
+  border: 0;
+  vertical-align: top;
+  display: inline-block;
+  padding: 0 5px;
+  margin-right: 1px;
+  user-select: none;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: .7;
+}
+
+.tab:hover{
+  opacity: .8;
+}
+
+.tab.active{
+  opacity: 1;
+}
+
+.tab .close,
+.tab .name{
+  display: inline-block;
+  vertical-align: top;
+}
+
+.tab .name{
+  padding-top: 4px;
+}
+
+.tab .close{
+  font-weight: bold;
+  padding-top: 3px;
+  margin-left: 10px;
+}
+
+.tab .close:hover{
+  color: #777;
+}

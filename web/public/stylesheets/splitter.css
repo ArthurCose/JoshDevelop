@@ -1,0 +1,36 @@
+.hsplit, .vsplit{
+  display: flex;
+  flex: 1;
+}
+
+.hsplit > *,
+.vsplit > *{
+  box-sizing: border-box;
+}
+
+.vsplit
+{
+  flex-direction: row;
+}
+
+.hsplit
+{
+  flex-direction: column;
+}
+
+.vsplitter, .hsplitter{
+  background: #ddd;
+  user-select: none;
+}
+
+.hsplitter{
+  cursor: ns-resize;
+  width: 100%;
+  height: 7px;
+}
+
+.vsplitter{
+  cursor: ew-resize;
+  height: 100%;
+  width: 7px;
+}
