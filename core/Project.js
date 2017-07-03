@@ -44,7 +44,6 @@ class Project
     session.setProject(this);
 
     this.fileManager.sendFolder(session, this.fileManager.root);
-
   }
 
   disconnect(session)
@@ -53,6 +52,12 @@ class Project
 
     let index = this.sessions.indexOf(session);
     this.sessions.splice(index, 1);
+  }
+
+  broadcast(message)
+  {
+    for(let i = 0; i < this.sessions.length; i++)
+      this.sessions[i].send(message);
   }
 
   // todo
