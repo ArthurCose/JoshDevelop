@@ -8,7 +8,7 @@ class TerminalPlugin extends Plugin
     super();
     this.publicPath = "public";
 
-    this.localScripts = ["init.js", "settings.js", "shell.js"];
+    this.localScripts = ["init.js", "shell.js"];
     this.stylesheets = ["terminal.css", "editor.css"];
 
     this.externalStylesheets = ["xterm/xterm.css"];

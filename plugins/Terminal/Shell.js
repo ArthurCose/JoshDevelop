@@ -65,7 +65,7 @@ class Shell
       process.env.SHELL,
       [],
       {
-        name: "xterm-color",
+        name: "xterm-256color",
         cols: this.columns,
         rows: this.rows,
         cwd: this.session.fileManager.root.serverPath,

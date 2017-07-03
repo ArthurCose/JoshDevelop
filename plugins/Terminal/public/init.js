@@ -25,8 +25,6 @@ session.on("load", () => {
   document.body.appendChild(terminalContainer);
   
 
-  session.settings.addSection(new TerminalSettings());
-
   document.getElementById("add-terminal").addEventListener(
     "click",
     () => createTerminal()
