@@ -160,18 +160,25 @@ function setupErrorHandlers(app, server)
 
 function download(req, res)
 {
-  if(typeof req.query.path == 'undefined')
+  let invalidProject = typeof req.query.project == "undefined" ||
+                       req.query.project.includes("/") ||
+                       req.query.project.includes("\\");
+  let invalidPath = typeof req.query.path == 'undefined';
+
+  if(invalidProject || invalidPath)
   {
-    res.end();
+    res.status(400).end();
     return;
   }
   
-  var filePath = req.query.path == '' ? '/' : req.query.path;
-  filePath = "project/" + path.resolve(filePath);
+  var filePath = `projects/${req.query.project}/${req.query.path}`;
   
   fs.stat(filePath, (err, stats) => {
     if(err)
+    {
+      res.status(500).send(err);
       return;
+    }
 
     if(stats.isDirectory())
     {

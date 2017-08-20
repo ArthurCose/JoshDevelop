@@ -24,3 +24,7 @@
 .menuitem:hover{
   background: #eee;
 }
+
+.contextmenu hr{
+  margin: 1px;
+}

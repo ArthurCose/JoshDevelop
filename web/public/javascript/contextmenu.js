@@ -38,16 +38,20 @@ class ContextMenu
     this.element.focus();
   }
   
-  addButton(label, clickDelegate)
+  addButton(label, clickDelegate, destroy)
   {
+    if(destroy == null)
+      destroy = true;
+
     let menuItem = document.createElement("div");
     menuItem.className = "menuitem";
     menuItem.innerText = label;
     
     menuItem.addEventListener("click", () => {
-        if(clickDelegate)
-            clickDelegate();
-        
+      if(clickDelegate)
+        clickDelegate();
+      
+      if(destroy)
         this.rootMenu.destroy();
     });
     
@@ -58,6 +62,13 @@ class ContextMenu
     
     this.element.appendChild(menuItem);
     return menuItem;
+  }
+
+  addBreak()
+  {
+    let breakElement = document.createElement("hr");
+    this.element.appendChild(breakElement);
+    return breakElement;
   }
   
   addSubmenu(label)

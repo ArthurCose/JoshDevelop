@@ -3,6 +3,7 @@ class Session extends EventRaiser
   constructor()
   {
     super();
+    this.project = undefined;
     this.cookiejar = new CookieJar();
 
     // name -> class
@@ -67,7 +68,23 @@ class Session extends EventRaiser
   {
     let dropdown = this.toolbar.addDropDown("Projects");
 
-    //let newButton = dropdown.addButton("New Project", () => alert("test"));
+    dropdown.addBreak("/list end");
+    dropdown.addButton("New Project", () => {
+      let menuElement = dropdown.contextMenu.element;
+      let breakElement = menuElement.querySelector("hr");
+      let input = document.createElement("input");
+
+      input.addEventListener("change", () => {
+        console.log(input.value);
+        dropdown.hide();
+      })
+      input.addEventListener("blur", () => {
+        dropdown.hide();
+      });
+
+      menuElement.insertBefore(input, breakElement);
+      input.focus();
+    }, false);
 
     return dropdown;
   }
@@ -160,6 +177,20 @@ class Session extends EventRaiser
     return websocket;
   }
 
+  addProject(projectName)
+  {
+    this.projectList.addButtonBefore(
+      "/list end",
+      projectName,
+      () => this.swapProject(projectName)
+    );
+  }
+
+  removeProject(projectName)
+  {
+    this.projectList.removeElement(projectName);
+  }
+
   swapProject(projectName)
   {
     // close all editors
@@ -179,6 +210,7 @@ class Session extends EventRaiser
   setProject(projectName)
   {
     this.fileManager.root.name = projectName;
+    this.project = projectName;
   }
 
   messageReceived(message)
@@ -208,13 +240,10 @@ class Session extends EventRaiser
       this.setProject(message.name);
     break;
     case "project add":
-      this.projectList.addButton(
-        message.name,
-        () => this.swapProject(message.name)
-      );
+      this.addProject(message.name);
       break;
     case "project remove":
-      this.projectList.removeButton(message.name);
+      this.removeProject(message.name);
       break;
     case "user add":
       this.userlist.addUser(message.name, message.color, message.userid);

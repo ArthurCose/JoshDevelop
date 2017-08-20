@@ -111,7 +111,9 @@ class ClientFileNode extends FileNode
     
     menu.addButton("Download", () => {
       let filePath = encodeURIComponent(this.clientPath);
-      window.location = "/download?path=" + filePath;
+      let projectName = encodeURIComponent(session.project);
+
+      window.location = `/download?project=${projectName}&path=${filePath}`;
     });
     
     if(this.parentFolder != undefined)

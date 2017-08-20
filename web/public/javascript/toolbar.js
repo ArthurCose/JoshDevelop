@@ -35,83 +35,98 @@ class DropDownMenu
 {
   constructor()
   {
-    this.buttons = [];
-    this.buttonDictionary = {};
+    this.elements = [];
     this.contextMenu = undefined;
   }
 
-  addButton(label, clickDelegate)
+  // label is used to identify the break
+  // it serves no other purpose
+  addBreak(label)
   {
-    if(label in this.buttonDictionary)
-      throw `button ${label} already exists.`;
-
-    let button = {
-      label: label,
-      clickDelegate: clickDelegate
-    };
-
-    this.buttons.push(button);
-    this.buttonDictionary[label] = button;
+    this.elements.push({
+      type: "break",
+      label: label
+    });
   }
 
-  addButtonBefore(beforeLabel, label, clickDelegate)
+  addButton(label, clickDelegate, destroy)
   {
-    if(label in this.buttonDictionary)
-      throw `button ${label} already exists.`;
-    
-    let insertIndex = this.indexOf(beforeLabel);
+    let button = {
+      type: "button",
+      label: label,
+      clickDelegate: clickDelegate,
+      destroy: destroy
+    };
+
+    this.elements.push(button);
+  }
+
+  // identifier is the label or the index of the item
+  // that we want to add the new button before
+  addButtonBefore(identifier, label, clickDelegate, destroy)
+  {
+    let insertIndex = typeof identifier == "string" ?
+                      this.indexOf(identifier) : identifier;
 
     // create the button
     let button = {
+      type: "button",
       label: label,
-      clickDelegate: clickDelegate
+      clickDelegate: clickDelegate,
+      destroy: destroy
     };
     
-    this.buttons.splice(insertIndex, 0, button);
-    this.buttonDictionary[label] = button;
+    this.elements.splice(insertIndex, 0, button);
   }
 
-  addButtonAfter(afterLabel, label, clickDelegate)
+  // identifier is the label or the index of the item
+  // that we want to add the new button before
+  addButtonAfter(identifier, label, clickDelegate, destroy)
   {
-    if(label in this.buttonDictionary)
-      throw `button ${label} already exists.`;
-    
-    let insertIndex = this.indexOf(afterLabel) + 1;
+    let insertIndex = typeof identifier == "string" ?
+                      this.indexOf(identifier) + 1 : identifier + 1;
     
     // create the button
     let button = {
+      type: "button",
       label: label,
-      clickDelegate: clickDelegate
+      clickDelegate: clickDelegate,
+      destroy: destroy
     };
 
-    this.buttons.splice(insertIndex, 0, button);
-    this.buttonDictionary[label] = button;
+    this.elements.splice(insertIndex, 0, button);
   }
 
   indexOf(label)
   {
-    for(var i = 0; i < this.buttons.length; i++)
-      if(this.buttons[i].label == label)
+    for(var i = 0; i < this.elements.length; i++)
+    {
+      let element = this.elements[i];
+      if(element.label == label)
         return i;
+    }
   }
 
-  removeButton(label)
+  removeElement(label)
   {
-    let button = this.buttonDictionary[label];
-    let index = this.buttons.indexOf(button);
+    let index = this.indexOf(label);
 
-    this.buttons.splice(index, 1);
-    delete this.buttonDictionary[label];
+    this.elements.splice(index, 1);
   }
 
   show(x, y)
   {
-    let menu = new ContextMenu(x, y);
+    this.contextMenu = new ContextMenu(x, y);
 
-    for(let button of this.buttons)
-      menu.addButton(button.label, button.clickDelegate);
+    for(let element of this.elements)
+    {
+      if(element.type == "button")
+        this.contextMenu.addButton(element.label, element.clickDelegate, element.destroy);
+      else if(element.type == "break")
+        this.contextMenu.addBreak();
+    }
     
-    menu.appendToElement(document.body);
+    this.contextMenu.appendToElement(document.body);
   }
 
   hide()
