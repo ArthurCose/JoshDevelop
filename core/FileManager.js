@@ -175,17 +175,10 @@ class FileManager extends FileTree
     this.root = new ServerFolderNode(this, undefined, project.name);
     this.project = project;
     this.parentPath = "projects/";
-    this.checkRootFolder();
+
+    this.root.make();
 
     this.fileWatcher = new FileWatcher(this);
-  }
-  
-  checkRootFolder()
-  {
-    let rootStats = fs.statSync(this.root.serverPath);
-    
-    if(!rootStats.isDirectory())
-      throw new Error(`${this.root.serverPath} is not a directory`);
   }
   
   sendFolder(session, folder)

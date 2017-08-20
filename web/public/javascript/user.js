@@ -87,7 +87,8 @@ class User extends EventRaiser
     session.cookiejar.setCookie("usercolor", this.color);
 
     session.send({
-      type: "user update",
+      type: "user",
+      action: "update",
       name: this.name,
       color: this.color
     });
@@ -133,5 +134,27 @@ class UserList
     this.getUser(id).destroy();
 
     this._users[id] = undefined;
+  }
+
+  messageReceived(message)
+  {
+    switch(message.action)
+    {
+    case "add":
+      this.addUser(message.name, message.color, message.userid);
+      break;
+    case "update":
+      if(message.userid == session.id)
+        break;
+
+      let user = this.getUser(message.userid);
+
+      user.name = message.name;
+      user.color = message.color;
+      break;
+    case "remove":
+      this.removeUser(message.userid);
+      break;
+    }
   }
 }

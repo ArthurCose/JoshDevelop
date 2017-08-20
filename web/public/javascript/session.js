@@ -20,7 +20,7 @@ class Session extends EventRaiser
     this.userlist = new UserList();
     this.settings = new SettingsMenu();
     this.fileManager = this.initializeFileManager();
-    this.projectList = this.initializeProjectList();
+    this.projectList = new ProjectList();
 
     let editorContainer = document.querySelector("#editor-container");
 
@@ -62,31 +62,6 @@ class Session extends EventRaiser
     });
 
     return fileManager;
-  }
-
-  initializeProjectList()
-  {
-    let dropdown = this.toolbar.addDropDown("Projects");
-
-    dropdown.addBreak("/list end");
-    dropdown.addButton("New Project", () => {
-      let menuElement = dropdown.contextMenu.element;
-      let breakElement = menuElement.querySelector("hr");
-      let input = document.createElement("input");
-
-      input.addEventListener("change", () => {
-        console.log(input.value);
-        dropdown.hide();
-      })
-      input.addEventListener("blur", () => {
-        dropdown.hide();
-      });
-
-      menuElement.insertBefore(input, breakElement);
-      input.focus();
-    }, false);
-
-    return dropdown;
   }
 
   openEditor(fileNode)
@@ -177,20 +152,6 @@ class Session extends EventRaiser
     return websocket;
   }
 
-  addProject(projectName)
-  {
-    this.projectList.addButtonBefore(
-      "/list end",
-      projectName,
-      () => this.swapProject(projectName)
-    );
-  }
-
-  removeProject(projectName)
-  {
-    this.projectList.removeElement(projectName);
-  }
-
   swapProject(projectName)
   {
     // close all editors
@@ -202,7 +163,8 @@ class Session extends EventRaiser
     this.fileManager.reset();
 
     this.send({
-      type: "project swap",
+      type: "project",
+      action: "swap",
       name: projectName
     });
   }
@@ -236,29 +198,11 @@ class Session extends EventRaiser
     case "filetree":
       this.fileManager.messageReceived(message);
       break;
-    case "project swap":
-      this.setProject(message.name);
-    break;
-    case "project add":
-      this.addProject(message.name);
+    case "project":
+      this.projectList.messageReceived(message);
       break;
-    case "project remove":
-      this.removeProject(message.name);
-      break;
-    case "user add":
-      this.userlist.addUser(message.name, message.color, message.userid);
-      break;
-    case "user update":
-      if(message.userid == this.id)
-        break;
-
-      let user = this.userlist.getUser(message.userid);
-
-      user.name = message.name;
-      user.color = message.color;
-      break;
-    case "user remove":
-      this.userlist.removeUser(message.userid);
+    case "user":
+      this.userlist.messageReceived(message);
       break;
     }
 

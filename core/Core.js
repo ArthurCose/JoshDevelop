@@ -57,7 +57,8 @@ class Core
         this.projects[projectName].connect(session);
 
       session.send({
-        type: "project add",
+        type: "project",
+        action: "add",
         name: projectName
       });
     }
@@ -112,6 +113,41 @@ class Core
     let editor = new supportedEditor(this, fileNode);
 
     return editor;
+  }
+
+  messageReceived(session, message)
+  {
+    if(message.type != "project")
+      return;
+
+    switch(message.action)
+    {
+    case "swap":
+      this.projects[message.name].connect(session);
+      break;
+    case "add":
+      if(message.name in this.projects)
+      {
+        session.displayPopup(`Project "${message.name}" already exists`);
+        return;
+      }
+
+      if(message.name.includes("/") || message.name.includes("\\"))
+      {
+        session.displayPopup("Project name can not contain / or \\");
+        return;
+      }
+
+      // create the project
+      this.projects[message.name] = new Project(this, message.name);
+      
+      this.broadcast({
+        type: "project",
+        action: "add",
+        name: message.name
+      });
+      break;
+    }
   }
 }
 

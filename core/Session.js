@@ -32,7 +32,8 @@ class Session extends EventRaiser
     });
 
     this.core.broadcast({
-      type: "user add",
+      type: "user",
+      action: "add",
       name: this.name,
       color: this.color,
       userid: this.id
@@ -41,7 +42,8 @@ class Session extends EventRaiser
     for(let session of this.core.sessions)
       if(session != this)
         this.send({
-          type: "user add",
+          type: "user",
+          action: "add",
           name: session.name,
           color: session.color,
           userid: session.id
@@ -57,7 +59,8 @@ class Session extends EventRaiser
     if(project)
     {
       this.send({
-        type: "project swap",
+        type: "project",
+        action: "swap",
         name: project.name
       });
 
@@ -153,15 +156,19 @@ class Session extends EventRaiser
       case "filemanager":
         this.fileManager.messageReceived(this, message);
         break;
-      case "project swap":
-        this.core.projects[message.name].connect(this);
+      case "project":
+        this.core.messageReceived(this, message);
         break;
-      case "user update":
+      case "user":
+        if(message.action != "update")
+          return;
+
         this.name = message.name;
         this.color = message.color;
 
         this.core.broadcast({
-          type: "user update",
+          type: "user",
+          action: "update",
           name: this.name,
           color: this.color,
           userid: this.id
@@ -197,7 +204,8 @@ class Session extends EventRaiser
     this.core.sessions.splice(index, 1);
     
     this.core.broadcast({
-      type: "user remove",
+      type: "user",
+      action: "remove",
       userid: this.id
     });
 
