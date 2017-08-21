@@ -1,14 +1,10 @@
-/**
- * @callback extraRouting 
- * @param {express} express
- * @param {app} app
- */
-
 class Plugin{
   constructor()
   {
-    /** Folder relative to this folder used to serve web files.
-     * @prop {?string} */
+    /**
+     * Folder relative to this folder used to serve web files.
+     * @prop {?string}
+     */
     this.publicPath;
     /**
      * An array of paths relative to the publicPath to serve
@@ -35,11 +31,20 @@ class Plugin{
     this.externalStylesheets;
     /** 
      * Extra express routing for any special uses 
-     * @prop {extraRouting} extraRouting */
+     * @function extraRouting
+     * @param express
+     * @param app
+     */
     this.extraRouting;
-    // function dictionary
-    // connect(session)
-    // message(session, message)
+    /** 
+     * Core hooks
+     * 
+     * Current hooks:
+     *  connect(session)
+     *  disconnect(session)
+     *  message(session, message)
+     * @prop {Object.<string, function>} hooks
+     */
     this.hooks;
   }
 }
