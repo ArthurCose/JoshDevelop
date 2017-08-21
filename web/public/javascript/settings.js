@@ -1,3 +1,60 @@
+class SettingsMenu
+{
+  constructor()
+  {
+    this.menuElement = document.getElementById("settings");
+    this.settingsButtonElement = document.getElementById("settings-button");
+
+    this.tabs = new TabbedContainer(this.menuElement);
+    this.sections = {};
+    this.unloadedSections = [];
+
+    this.menuElement.tabIndex = 0;
+
+    this.settingsButtonElement.addEventListener("click", () => {
+      this.menuElement.style.display = "flex";
+      this.menuElement.focus();
+    });
+
+    document.body.addEventListener("click", (e) => {
+      let focusElementIsDescendant = this.menuElement.contains(e.target);
+
+      if(!focusElementIsDescendant && e.target != this.settingsButtonElement)
+        this.menuElement.style.display = "none";
+    });
+  }
+
+  addSection(section)
+  {
+    let tab = this.tabs.addTab(section.title, section.title, section.contentElement);
+    section.tab = tab;
+
+    if(this.tabs.length == 1)
+      tab.makeActive();
+
+    tab.lock();
+    this.sections[section.title] = section;
+  }
+}
+
+class SettingsTable
+{
+  constructor()
+  {
+    this.table = document.createElement("table");
+  }
+
+  appendRow(text, input)
+  {
+    let row = this.table.insertRow();
+    let textCell = row.insertCell();
+    let inputCell = row.insertCell();
+
+    textCell.innerText = text;
+    inputCell.appendChild(input);
+  }
+}
+
 class SettingsSection
 {
   constructor(title)
@@ -121,62 +178,5 @@ class SettingsSection
     let breakElement = document.createElement("br");
 
     this.contentElement.appendChild(breakElement);
-  }
-}
-
-class SettingsTable
-{
-  constructor()
-  {
-    this.table = document.createElement("table");
-  }
-
-  appendRow(text, input)
-  {
-    let row = this.table.insertRow();
-    let textCell = row.insertCell();
-    let inputCell = row.insertCell();
-
-    textCell.innerText = text;
-    inputCell.appendChild(input);
-  }
-}
-
-class SettingsMenu
-{
-  constructor()
-  {
-    this.menuElement = document.getElementById("settings");
-    this.settingsButtonElement = document.getElementById("settings-button");
-
-    this.tabs = new TabbedContainer(this.menuElement);
-    this.sections = {};
-    this.unloadedSections = [];
-
-    this.menuElement.tabIndex = 0;
-
-    this.settingsButtonElement.addEventListener("click", () => {
-      this.menuElement.style.display = "flex";
-      this.menuElement.focus();
-    });
-
-    document.body.addEventListener("click", (e) => {
-      let focusElementIsDescendant = this.menuElement.contains(e.target);
-
-      if(!focusElementIsDescendant && e.target != this.settingsButtonElement)
-        this.menuElement.style.display = "none";
-    });
-  }
-
-  addSection(section)
-  {
-    let tab = this.tabs.addTab(section.title, section.title, section.contentElement);
-    section.tab = tab;
-
-    if(this.tabs.length == 1)
-      tab.makeActive();
-
-    tab.lock();
-    this.sections[section.title] = section;
   }
 }

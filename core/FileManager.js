@@ -7,169 +7,6 @@ const fs = require('fs-promise');
 const path = require('path');
 
 
-class ServerFileNode extends FileNode
-{
-  get serverPath()
-  {
-    return this.filetree.parentPath + this.clientPath;
-  }
-  
-  async make()
-  {
-    let fileExists = false;
-
-    await fs.open(this.serverPath, "wx")
-      .then((fd) => fs.close(fd))
-      .catch((err) => {
-        // already exists
-        if(err.code == "EEXIST")
-          fileExists = true;
-        else // failure
-          throw err.message;
-    });
-
-    if(fileExists)
-    {
-      let stats = await fs.stat(this.serverPath);
-      
-      if(!stats.isFile())
-        throw `${this.serverPath} exists as a folder.`;
-    }
-  }
-
-  async rename(newName)
-  {
-    let newPath = this.parentFolder == undefined ?
-                  this.filetree.parentPath + '/' + newName :
-                  this.parentFolder.serverPath + '/' + newName;
-    
-    await fs.move(this.serverPath, newPath).catch((err) => {
-      throw err.message;
-    });
-
-    this.filetree.project.broadcast({
-      type: 'filetree',
-      action: 'rename',
-      oldPath: this.clientPath,
-      isFile: this.isFile,
-      newName: newName
-    });
-
-    this.name = newName;
-    this.triggerEvent("rename");
-  }
-  
-  async delete()
-  {
-    await fs.remove(this.serverPath)
-            .then(() => this.unlink())
-            .catch((err) => {
-              if(err.code == "ENOENT")
-                this.unlink();
-              else
-                throw err.message;
-            });
-  }
-
-  unlist()
-  {
-    if(this.parentFolder != undefined)
-      this.filetree.project.broadcast({
-        type: "filetree",
-        action: "remove",
-        isFile: this.isFile,
-        path: this.clientPath
-      });
-
-    super.unlist();
-  }
-}
-
-class ServerFolderNode extends ServerFileNode
-{
-  constructor(filetree, parentFolder, name)
-  {
-    super(filetree, parentFolder, name);
-    this.isFile = false;
-    this.children = [];
-  }
-  
-  async make()
-  {
-    let fileExists = false;
-
-    await fs.mkdir(this.serverPath).catch((err) => {
-      if(err.code == "EEXIST")
-        // file exists
-        fileExists = true;
-      else if(err.code == "ENOENT")
-        // folder doesn't exist
-        throw `${this.serverPath}  does not exist.`;
-      else
-        // failure
-        throw err.message;
-    });
-
-    if(fileExists)
-    {
-      let stats = await fs.stat(this.serverPath);
-
-      // if it's a file throw an error
-      if(stats.isFile())
-          throw `${this.serverPath} exists as a file.`;
-    }
-  }
-  
-  registerSubFolder(name)
-  {
-    let folder = new ServerFolderNode(this.filetree, this, name);
-    this.children.push(folder);
-    
-    return folder;
-  }
-  
-  registerFile(name)
-  {
-    let file = new ServerFileNode(this.filetree, this, name);
-    this.children.push(file);
-    
-    return file;
-  }
-
-  containsChild(name)
-  {
-    for(let child of this.children)
-      if(child.name == name)
-        return true;
-    return false;
-  }
-
-  unlist()
-  {
-    // unlist children
-    while(this.children.length > 0)
-      this.children[0].unlist();
-
-    super.unlist();
-  }
-  
-  async empty()
-  {
-    let skipped = 0;
-
-    while(this.children.length > skipped)
-    {
-      // try to delete this child, if it fails
-      // increment skipped to skip it
-      // failed deletions will remain in the front
-      await this.children[skipped].delete().catch(() => skipped++);
-    }
-
-    if(skipped > 0)
-      throw `${skipped} errors occurred while emptying ${this.clientPath}`
-  }
-}
-
 class FileManager extends FileTree
 {
   constructor(project)
@@ -335,6 +172,169 @@ class FileManager extends FileTree
       this.fileWatcher.restart();
       break;
     }
+  }
+}
+
+class ServerFileNode extends FileNode
+{
+  get serverPath()
+  {
+    return this.filetree.parentPath + this.clientPath;
+  }
+  
+  async make()
+  {
+    let fileExists = false;
+
+    await fs.open(this.serverPath, "wx")
+      .then((fd) => fs.close(fd))
+      .catch((err) => {
+        // already exists
+        if(err.code == "EEXIST")
+          fileExists = true;
+        else // failure
+          throw err.message;
+    });
+
+    if(fileExists)
+    {
+      let stats = await fs.stat(this.serverPath);
+      
+      if(!stats.isFile())
+        throw `${this.serverPath} exists as a folder.`;
+    }
+  }
+
+  async rename(newName)
+  {
+    let newPath = this.parentFolder == undefined ?
+                  this.filetree.parentPath + '/' + newName :
+                  this.parentFolder.serverPath + '/' + newName;
+    
+    await fs.move(this.serverPath, newPath).catch((err) => {
+      throw err.message;
+    });
+
+    this.filetree.project.broadcast({
+      type: 'filetree',
+      action: 'rename',
+      oldPath: this.clientPath,
+      isFile: this.isFile,
+      newName: newName
+    });
+
+    this.name = newName;
+    this.triggerEvent("rename");
+  }
+  
+  async delete()
+  {
+    await fs.remove(this.serverPath)
+            .then(() => this.unlink())
+            .catch((err) => {
+              if(err.code == "ENOENT")
+                this.unlink();
+              else
+                throw err.message;
+            });
+  }
+
+  unlist()
+  {
+    if(this.parentFolder != undefined)
+      this.filetree.project.broadcast({
+        type: "filetree",
+        action: "remove",
+        isFile: this.isFile,
+        path: this.clientPath
+      });
+
+    super.unlist();
+  }
+}
+
+class ServerFolderNode extends ServerFileNode
+{
+  constructor(filetree, parentFolder, name)
+  {
+    super(filetree, parentFolder, name);
+    this.isFile = false;
+    this.children = [];
+  }
+  
+  async make()
+  {
+    let fileExists = false;
+
+    await fs.mkdir(this.serverPath).catch((err) => {
+      if(err.code == "EEXIST")
+        // file exists
+        fileExists = true;
+      else if(err.code == "ENOENT")
+        // folder doesn't exist
+        throw `${this.serverPath}  does not exist.`;
+      else
+        // failure
+        throw err.message;
+    });
+
+    if(fileExists)
+    {
+      let stats = await fs.stat(this.serverPath);
+
+      // if it's a file throw an error
+      if(stats.isFile())
+          throw `${this.serverPath} exists as a file.`;
+    }
+  }
+  
+  registerSubFolder(name)
+  {
+    let folder = new ServerFolderNode(this.filetree, this, name);
+    this.children.push(folder);
+    
+    return folder;
+  }
+  
+  registerFile(name)
+  {
+    let file = new ServerFileNode(this.filetree, this, name);
+    this.children.push(file);
+    
+    return file;
+  }
+
+  containsChild(name)
+  {
+    for(let child of this.children)
+      if(child.name == name)
+        return true;
+    return false;
+  }
+
+  unlist()
+  {
+    // unlist children
+    while(this.children.length > 0)
+      this.children[0].unlist();
+
+    super.unlist();
+  }
+  
+  async empty()
+  {
+    let skipped = 0;
+
+    while(this.children.length > skipped)
+    {
+      // try to delete this child, if it fails
+      // increment skipped to skip it
+      // failed deletions will remain in the front
+      await this.children[skipped].delete().catch(() => skipped++);
+    }
+
+    if(skipped > 0)
+      throw `${skipped} errors occurred while emptying ${this.clientPath}`
   }
 }
 
