@@ -55,6 +55,9 @@ function loadPlugins(app)
     let plugin = require('./' + plugLocation);
     let pluginFolder = path.dirname(plugLocation);
 
+    if(plugin.initialize)
+      plugin.initialize(core);
+
     // append editors to a list
     if(plugin.editors)
       core.editorPlugins.splice(0, 0, ...plugin.editors);
