@@ -32,21 +32,21 @@ class Session extends EventRaiser
     });
 
     this.core.broadcast({
-      type: "user",
+      type: "profile",
       action: "add",
       name: this.name,
       color: this.color,
-      userid: this.id
+      sessionID: this.id
     });
 
     for(let session of this.core.sessions)
       if(session != this)
         this.send({
-          type: "user",
+          type: "profile",
           action: "add",
           name: session.name,
           color: session.color,
-          userid: session.id
+          sessionID: session.id
         });
   }
 
@@ -159,7 +159,7 @@ class Session extends EventRaiser
       case "project":
         this.core.messageReceived(this, message);
         break;
-      case "user":
+      case "profile":
         if(message.action != "update")
           return;
 
@@ -167,11 +167,11 @@ class Session extends EventRaiser
         this.color = message.color;
 
         this.core.broadcast({
-          type: "user",
+          type: "profile",
           action: "update",
           name: this.name,
           color: this.color,
-          userid: this.id
+          sessionID: this.id
         });
         break;
       }
@@ -204,9 +204,9 @@ class Session extends EventRaiser
     this.core.sessions.splice(index, 1);
     
     this.core.broadcast({
-      type: "user",
+      type: "profile",
       action: "remove",
-      userid: this.id
+      sessionID: this.id
     });
 
     this.triggerEvent("disconnect");

@@ -201,7 +201,7 @@ class Session extends EventRaiser
     case "project":
       this.projectList.messageReceived(message);
       break;
-    case "user":
+    case "profile":
       this.userlist.messageReceived(message);
       break;
     }

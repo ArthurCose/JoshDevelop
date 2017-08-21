@@ -1,4 +1,62 @@
-class User extends EventRaiser
+class UserList
+{
+  constructor()
+  {
+    this.element = document.getElementById("user-list");
+    this.element.style.display = "none";
+    this._users = [];
+
+    let profileListButton = document.getElementById("user-list-button");
+    profileListButton.addEventListener("click", () => this.toggleDisplay());
+  }
+
+  toggleDisplay()
+  {
+    let show = this.element.style.display == "none";
+    this.element.style.display = show ? "block" : "none";
+  }
+
+  getUser(id)
+  {
+    return this._users[id];
+  }
+
+  addUser(name, color, id)
+  {
+    this._users[id] = new Profile(name, color, id);
+  }
+
+  removeUser(id)
+  {
+    this.getUser(id).destroy();
+
+    delete this._users[id];
+  }
+
+  messageReceived(message)
+  {
+    switch(message.action)
+    {
+    case "add":
+      this.addUser(message.name, message.color, message.sessionID);
+      break;
+    case "update":
+      if(message.sessionID == session.id)
+        break;
+
+      let user = this.getUser(message.sessionID);
+
+      user.name = message.name;
+      user.color = message.color;
+      break;
+    case "remove":
+      this.removeUser(message.sessionID);
+      break;
+    }
+  }
+}
+
+class Profile extends EventRaiser
 {
   constructor(name, color, id)
   {
@@ -87,7 +145,7 @@ class User extends EventRaiser
     session.cookiejar.setCookie("usercolor", this.color);
 
     session.send({
-      type: "user",
+      type: "profile",
       action: "update",
       name: this.name,
       color: this.color
@@ -97,64 +155,5 @@ class User extends EventRaiser
   destroy()
   {
     this.element.remove();
-  }
-}
-
-class UserList
-{
-  constructor()
-  {
-    this.element = document.getElementById("user-list");
-    this.element.style.display = "none";
-    this._users = [];
-
-    let userSettingsButton = document.getElementById("user-settings");
-    userSettingsButton.addEventListener("click", () => this.toggleDisplay());
-
-  }
-
-  toggleDisplay()
-  {
-    let show = this.element.style.display == "none";
-    this.element.style.display = show ? "block" : "none";
-  }
-
-  getUser(id)
-  {
-    return this._users[id];
-  }
-
-  addUser(name, color, id)
-  {
-    this._users[id] = new User(name, color, id);
-  }
-
-  removeUser(id)
-  {
-    this.getUser(id).destroy();
-
-    this._users[id] = undefined;
-  }
-
-  messageReceived(message)
-  {
-    switch(message.action)
-    {
-    case "add":
-      this.addUser(message.name, message.color, message.userid);
-      break;
-    case "update":
-      if(message.userid == session.id)
-        break;
-
-      let user = this.getUser(message.userid);
-
-      user.name = message.name;
-      user.color = message.color;
-      break;
-    case "remove":
-      this.removeUser(message.userid);
-      break;
-    }
   }
 }
