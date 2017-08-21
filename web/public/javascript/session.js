@@ -172,6 +172,7 @@ class Session extends EventRaiser
   setProject(projectName)
   {
     this.fileManager.root.name = projectName;
+    this.fileManager.clipboard = new FileClipboard();
     this.project = projectName;
   }
 
