@@ -59,8 +59,8 @@ function loadPlugins(app)
     if(plugin.editors)
       core.editorPlugins.splice(0, 0, ...plugin.editors);
     
-    if(plugin.hooks)
-      core.pluginHooks.push(plugin.hooks);
+    if(plugin.sessionHooks)
+      core.sessionHooks.push(plugin.sessionHooks);
     
     if(plugin.extraRouting)
       plugin.extraRouting(express, app);

@@ -30,22 +30,20 @@ class Plugin{
      */
     this.externalStylesheets;
     /** 
-     * Extra express routing for any special uses 
+     * Provides access to Express for more control 
      * @function extraRouting
      * @param express
      * @param app
      */
     this.extraRouting;
-    /** 
-     * Core hooks
-     * 
+    /**
      * Current hooks:
      *  connect(session)
      *  disconnect(session)
      *  message(session, message)
      * @prop {Object.<string, function>} hooks
      */
-    this.hooks;
+    this.sessionHooks;
   }
 }
 

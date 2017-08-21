@@ -18,7 +18,7 @@ class TerminalPlugin extends Plugin
       app.use('/xterm', express.static('node_modules/xterm/dist'));
     };
 
-    this.hooks = {
+    this.sessionHooks = {
       connect: (session) => {
         session.shells = [];
       },

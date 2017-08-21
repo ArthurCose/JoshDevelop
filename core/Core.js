@@ -10,7 +10,7 @@ class Core
 {
   constructor()
   {
-    this.pluginHooks = [];
+    this.sessionHooks = [];
     this.editorPlugins = [];
     this.sessions = [];
     this.projects = {};
@@ -110,7 +110,7 @@ class Core
     }
 
     // attach hooks
-    for(let hookList of this.pluginHooks)
+    for(let hookList of this.sessionHooks)
     {
       if(hookList.connect)
         hookList.connect(session);
