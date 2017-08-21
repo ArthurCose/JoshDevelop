@@ -56,20 +56,20 @@ class Session extends EventRaiser
 
     this.project = project;
 
-    if(project)
-    {
-      this.send({
-        type: "project",
-        action: "swap",
-        name: project.name
-      });
+    this.send({
+      type: "project",
+      action: "swap",
+      name: project.name
+    });
 
-      this.triggerEvent("join project", project);
-    }
-    else
+    if(lastProject != undefined)
     {
+      lastProject.disconnect(this);
       this.triggerEvent("leave project", lastProject);
     }
+
+    project.connect(this);
+    this.triggerEvent("join project", project);
   }
 
   get fileManager()

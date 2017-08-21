@@ -1,4 +1,4 @@
-class ProjectList
+class ProjectListMenu
 {
   constructor()
   {
@@ -36,8 +36,19 @@ class ProjectList
   
   addProject(projectName)
   {
+    let index = 0;
+
+    // get the index for alphabetical sort
+    for(let element of this.dropdown.elements)
+    {
+      if(projectName < element.label || element.label == "/list end")
+        break;
+
+      index++;
+    }
+
     this.dropdown.addButtonBefore(
-      "/list end",
+      index,
       projectName,
       () => session.swapProject(projectName)
     );
@@ -46,6 +57,15 @@ class ProjectList
   removeProject(projectName)
   {
     this.dropdown.removeElement(projectName);
+  }
+
+  renameProject(projectName, newName)
+  {
+    this.removeProject(projectName);
+
+    // replace in alphabetical order,
+    // recreating the trigger callback as well
+    this.addProject(newName);
   }
 
   messageReceived(message)
@@ -60,6 +80,9 @@ class ProjectList
       break;
     case "remove":
       this.removeProject(message.name);
+      break;
+    case "rename":
+      this.renameProject(message.oldName, message.newName);
       break;
     }
   }

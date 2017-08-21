@@ -9,6 +9,9 @@ class Project
     this.fileManager = new FileManager(this);
     this.editors = {};
     this.sessions = [];
+
+    this.fileManager.root.on("unlist", () => this.delete());
+    this.fileManager.root.on("rename", () => this.rename(this.fileManager.root.name));
   }
 
   getEditor(path)
@@ -38,31 +41,46 @@ class Project
   {
     this.sessions.push(session);
 
-    if(session.project)
-      session.project.disconnect(session);
-    
-    session.setProject(this);
-
     this.fileManager.sendFolder(session, this.fileManager.root);
   }
 
   disconnect(session)
   {
-    session.setProject(undefined);
-
     let index = this.sessions.indexOf(session);
     this.sessions.splice(index, 1);
   }
 
   broadcast(message)
   {
-    for(let i = 0; i < this.sessions.length; i++)
-      this.sessions[i].send(message);
+    for(let session of this.sessions)
+      session.send(message);
   }
 
-  // todo
+  rename(name)
+  {
+    delete this.core.projects[this.name];
+    this.core.projects[name] = this;
+
+    this.core.broadcast({
+      type: "project",
+      action: "rename",
+      oldName: this.name,
+      newName: name
+    });
+
+    this.name = name;
+  }
+
   delete()
-  {}
+  {
+    this.core.deleteProject(this.name);
+
+    let projectList = Object.values(this.core.projects);
+    let firstProject = projectList[0];
+
+    for(let session of this.sessions)
+      session.setProject(firstProject);
+  }
 }
 
 

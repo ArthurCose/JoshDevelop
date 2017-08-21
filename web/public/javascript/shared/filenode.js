@@ -54,6 +54,9 @@ class FileNode extends EventRaiser
 
   destroy()
   {
+    if(this.parentFolder == undefined)
+      return;
+
     let index = this.parentFolder.children.indexOf(this);
     this.parentFolder.children.splice(index, 1);
   }

@@ -4,6 +4,8 @@ const Session = require('./Session');
 const Project = require('./Project');
 const fs = require("fs");
 
+const DEFAULT_PROJECT_NAME = "new";
+
 class Core
 {
   constructor()
@@ -12,6 +14,7 @@ class Core
     this.editorPlugins = [];
     this.sessions = [];
     this.projects = {};
+    this.projectCount = 0
     this.topId = 0;
 
     this.loadProjects();
@@ -19,6 +22,9 @@ class Core
 
   loadProjects()
   {
+    if(this.projectCount > 0)
+      throw "Core.loadProjects() can not be called more than once";
+
     let filenames = fs.readdirSync("projects");
 
     for(let file of filenames)
@@ -27,16 +33,53 @@ class Core
 
       // file is a directory
       if(fs.lstatSync(filePath).isDirectory())
-      {
-        // add the project to the project array
-        let project = new Project(this, file);
-
-        this.projects[file] = project;
-      }
+        this.addProject(file);
     }
 
-    if(this.projects.length == 0)
-      throw new Error("No Projects found");
+    if(this.projectCount == 0)
+      this.addProject(DEFAULT_PROJECT_NAME);
+  }
+
+  addProject(name)
+  {
+    if(name == "")
+      throw `Project name can not be blank`;
+    if(name in this.projects)
+      throw `Project "${name}" already exists`;
+    if(name.includes("/") || name.includes("\\"))
+      throw `Project name can not contain / or \\`;
+
+    let project = new Project(this, name);
+
+    this.projects[name] = project;
+    this.projectCount++;
+    
+    this.broadcast({
+      type: "project",
+      action: "add",
+      name: name
+    });
+
+    return project;
+  }
+
+  deleteProject(name)
+  {
+    delete this.projects[name];
+
+    this.broadcast({
+      type: "project",
+      action: "remove",
+      name: name
+    });
+
+    if(--this.projectCount == 0)
+    {
+      let newProject = this.addProject(DEFAULT_PROJECT_NAME);
+
+      for(let session of this.sessions)
+        session.setProject(newProject);
+    }
   }
 
   // accept all websocket requests
@@ -49,12 +92,15 @@ class Core
   connect(webSocketConnection)
   {
     let session = new Session(this, webSocketConnection, this.topId++);
-    let projectCount = 0;
 
     for(let projectName in this.projects)
     {
-      if(projectCount++ == 0)
-        this.projects[projectName].connect(session);
+      if(session.project == undefined)
+      {
+        let project = this.projects[projectName];
+
+        session.setProject(project);
+      }
 
       session.send({
         type: "project",
@@ -80,8 +126,8 @@ class Core
 
   broadcast(message)
   {
-    for(let i = 0; i < this.sessions.length; i++)
-      this.sessions[i].send(message);
+    for(let session of this.sessions)
+      session.send(message);
   }
 
   createEditor(fileNode)
@@ -123,29 +169,20 @@ class Core
     switch(message.action)
     {
     case "swap":
-      this.projects[message.name].connect(session);
+      let project = this.projects[message.name];
+
+      session.setProject(project);
       break;
     case "add":
-      if(message.name in this.projects)
+      try
       {
-        session.displayPopup(`Project "${message.name}" already exists`);
-        return;
+        // create the project
+        this.addProject(message.name);
       }
-
-      if(message.name.includes("/") || message.name.includes("\\"))
+      catch(err)
       {
-        session.displayPopup("Project name can not contain / or \\");
-        return;
+        session.displayPopup(err);
       }
-
-      // create the project
-      this.projects[message.name] = new Project(this, message.name);
-      
-      this.broadcast({
-        type: "project",
-        action: "add",
-        name: message.name
-      });
       break;
     }
   }

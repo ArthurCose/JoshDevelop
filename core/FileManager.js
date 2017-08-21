@@ -39,7 +39,9 @@ class ServerFileNode extends FileNode
 
   async rename(newName)
   {
-    let newPath = this.parentFolder.serverPath + '/' + newName;
+    let newPath = this.parentFolder == undefined ?
+                  this.filetree.parentPath + '/' + newName :
+                  this.parentFolder.serverPath + '/' + newName;
     
     await fs.move(this.serverPath, newPath).catch((err) => {
       throw err.message;
@@ -71,12 +73,13 @@ class ServerFileNode extends FileNode
 
   unlist()
   {
-    this.filetree.project.broadcast({
-      type: "filetree",
-      action: "remove",
-      isFile: this.isFile,
-      path: this.clientPath
-    });
+    if(this.parentFolder != undefined)
+      this.filetree.project.broadcast({
+        type: "filetree",
+        action: "remove",
+        isFile: this.isFile,
+        path: this.clientPath
+      });
 
     super.unlist();
   }

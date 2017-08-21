@@ -1,13 +1,7 @@
 ## Core
 
 * Multiple projects
-  * Project list next to settings button.
-    * alphabetical sort
-    * add new button
-    * rename ability
-      * through filetree?
-    * delete ability
-      * through filetree?
+  * alphabetical sort
 * Keybind input
 * See what file a user is in
   * Display that in the user list

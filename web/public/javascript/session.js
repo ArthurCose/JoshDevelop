@@ -20,7 +20,7 @@ class Session extends EventRaiser
     this.userlist = new UserList();
     this.settings = new SettingsMenu();
     this.fileManager = this.initializeFileManager();
-    this.projectList = new ProjectList();
+    this.projectList = new ProjectListMenu();
 
     let editorContainer = document.querySelector("#editor-container");
 

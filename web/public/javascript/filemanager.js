@@ -54,10 +54,14 @@ class ClientFileManager extends FileTree
       node = this.getNode(e.oldPath, e.isFile);
       node.name = e.newName;
 
-      // remove and add the node back, to sort it
-      node.destroy();
-      node.parentFolder.insertNode(node);
-      node.append();
+      if(node.parentFolder != undefined)
+      {
+        // remove and add the node back, to sort it
+        node.destroy();
+        node.parentFolder.insertNode(node);
+        node.append();
+      }
+
       node.triggerEvent("rename");
       break;
     }
@@ -109,6 +113,8 @@ class ClientFileNode extends FileNode
     if(!this.isFile && this.filetree.clipboard.contentExists)
       menu.addButton("Paste", () => this.filetree.clipboard.paste(this.clientPath));
     
+    menu.addButton("Rename", () => this.rename());
+
     menu.addButton("Download", () => {
       let filePath = encodeURIComponent(this.clientPath);
       let projectName = encodeURIComponent(session.project);
@@ -116,11 +122,7 @@ class ClientFileNode extends FileNode
       window.location = `/download?project=${projectName}&path=${filePath}`;
     });
     
-    if(this.parentFolder != undefined)
-    {
-      menu.addButton("Rename", () => this.rename());
-      menu.addButton("Delete", () => this.delete());
-    }
+    menu.addButton("Delete", () => this.delete());
     
     if(!this.isFile)
     {
@@ -200,6 +202,9 @@ class ClientFileNode extends FileNode
   
   destroy()
   {
+    if(this.parentFolder == undefined)
+      return;
+    
     this.controlElement.remove();
     super.destroy();
   }
