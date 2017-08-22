@@ -22,9 +22,7 @@ class Session extends EventRaiser
     this.fileManager = this.initializeFileManager();
     this.projectList = new ProjectListMenu();
 
-    let editorContainer = document.querySelector("#editor-container");
-
-    this.editorTabs = new TabbedContainer(editorContainer);
+    this.editorTabs = new TabbedContainer("#editor-container");
 
     this.websocket = this.connect(() => {
       this.editors = [];
@@ -51,8 +49,7 @@ class Session extends EventRaiser
 
   initializeFileManager()
   {
-    let element = document.querySelector("#filetree");
-    let fileManager = new ClientFileManager(element);
+    let fileManager = new ClientFileManager("#filetree");
 
     fileManager.addListener((node) => {
       if(!node.isFile)
@@ -66,35 +63,41 @@ class Session extends EventRaiser
 
   openEditor(fileNode)
   {
+    // get the tab for the editor
     let tab = this.editorTabs.get(fileNode.clientPath);
 
+    // if the tab already exists, then make it active
     if(tab)
     {
       tab.makeActive();
+      return;
     }
-    else
-    {
-      // request to join an editor session
-      this.send({
-        type: "editor",
-        action: "join",
-        path: fileNode.clientPath,
-        editorId: this.editors.length
-      });
 
-      // allocate a space for the editor
-      // save the path of the file there so we don't
-      // have to send it back and forth
-      this.editors.push(fileNode.clientPath);
-    }
+    // tab did not exist, we need to join/create the editor session
+
+    // request to join an editor session
+    this.send({
+      type: "editor",
+      action: "join",
+      path: fileNode.clientPath,
+      editorId: this.editors.length
+    });
+
+    // allocate a space for the editor
+    // save the path of the file there so we don't
+    // have to send it back and forth
+    this.editors.push(fileNode.clientPath);
   }
 
   initializeEditor(editorName, id)
   {
+    // get the class/constructor from the editor dictionary
     let EditorClass = this.editorDictionary[editorName];
+    // retrieve the editor place holder (its path)
     let filePath = this.editors[id];
-
+    // get the file node for the editor
     let fileNode = this.fileManager.getFile(filePath);
+    // create an element for the editor to use
     let element = document.createElement("div");
     element.className = "editor";
 
@@ -102,8 +105,9 @@ class Session extends EventRaiser
     let tab = this.editorTabs.addTab(fileNode.clientPath, fileNode.name, element);
 
     // create the editor
-    this.editors[id] = new EditorClass(tab, fileNode, element, id);
+    this.editors[id] = new EditorClass(tab, fileNode, id);
 
+    // make the newly opened editor the active editor
     tab.makeActive();
   }
   

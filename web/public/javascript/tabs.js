@@ -112,9 +112,14 @@ class Tab extends EventRaiser
 
 class TabbedContainer extends EventRaiser
 {
+  // css selector or element object
   constructor(element)
   {
     super();
+
+    if(typeof element == "string")
+      element = document.querySelector(element);
+
     this.container = element;
     this.tabcontainer = element.querySelector(".tab-container");
     this.tabcontent = element.querySelector(".tab-content");

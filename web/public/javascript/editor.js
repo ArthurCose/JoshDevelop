@@ -1,10 +1,10 @@
 class Editor
 {
-  constructor(tab, fileNode, element, id)
+  constructor(tab, fileNode, id)
   {
+    this.element = tab.content;
     this.tab = tab;
     this.fileNode = fileNode;
-    this.element = element;
     this.id = id;
     this.fileNodeListeners = [];
 

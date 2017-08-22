@@ -1,8 +1,13 @@
 class ClientFileManager extends FileTree
 {
+  // css selector or element object
   constructor(element)
   {
     super();
+
+    if(typeof element == "string")
+      element = document.querySelector(element);
+
     this.root = new ClientFolderNode(this, undefined, "");
     this.clipboard = new FileClipboard();
     this.listeners = [];
