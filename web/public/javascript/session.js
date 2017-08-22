@@ -39,8 +39,8 @@ class Session extends EventRaiser
   initializeSplitters()
   {
     let vsplit = new VSplit(
-      session.fileManager.container,
-      session.editorTabs.container
+      session.fileManager.element,
+      session.editorTabs.element
     );
     
     vsplit.on("resize", () => session.editorTabs.resized());

@@ -2,7 +2,7 @@ class Shell {
   constructor(tab, element)
   {
     this.id = -1;
-    this.container = element;
+    this.element = element;
     this.terminal = new Terminal();
     this.terminal.open(element);
     this.tab = tab;

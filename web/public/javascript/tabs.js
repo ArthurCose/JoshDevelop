@@ -120,7 +120,7 @@ class TabbedContainer extends EventRaiser
     if(typeof element == "string")
       element = document.querySelector(element);
 
-    this.container = element;
+    this.element = element;
     this.tabcontainer = element.querySelector(".tab-container");
     this.tabcontent = element.querySelector(".tab-content");
     this.activeTab = undefined;

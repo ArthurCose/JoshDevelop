@@ -41,11 +41,11 @@ session.on("load", () => {
   terminalTabs = new TabbedContainer(terminalContainer);
   
   let hsplit = new HSplit(
-    session.editorTabs.container,
-    terminalTabs.container
+    session.editorTabs.element,
+    terminalTabs.element
   );
 
-  session.editorTabs.container.style.flex = 'none'
+  session.editorTabs.element.style.flex = 'none'
   hsplit.splitElement.style.flex = 1;
 
   hsplit.on("resize", () => {
