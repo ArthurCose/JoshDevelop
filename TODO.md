@@ -1,8 +1,5 @@
 ## Core
 
-* Multiple projects
-  * alphabetical sort
-* Keybind input
 * See what file a user is in
   * Display that in the user list
     * Ability to request to go to that file at the exact same location
@@ -12,19 +9,19 @@
       * A "FollowUser" request seems like a good name
     * Only show the path, editors will handle details when requested
   * add to the User class as location
-* Cleanup + tighten filetree/filemanager
+
 
 ## Plugin Additions
 
 * Text Editor
+  * Templates
+    * When a file is created add pregenerated content based off of extension
   * File search (name + content)
 * Image editor
   * Display other clients cursor location
   * Hiding layers
   * Create tool classes
 * Chat
-* Templates
-  * When a file is created add pregenerated content based off of extension
 * Convert file upload to a plugin
 * Terminal
   * Close when the project is swapped, and if nothing was typed.
@@ -35,7 +32,6 @@
 
 * convert to ES6 modules
 * documentation
-
 
 
 ## Uncertain
