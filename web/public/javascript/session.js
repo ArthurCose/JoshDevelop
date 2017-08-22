@@ -188,14 +188,6 @@ class Session extends EventRaiser
     case "popup":
       this.displayPopup(message.message);
       break;
-    case "editor":
-      let editor = this.editors[message.editorId];
-      
-      editor.messageReceived(message);
-      break;
-    case "initialize editor":
-      this.initializeEditor(message.name, message.id);
-      break;
     case "filetree":
       this.fileManager.messageReceived(message);
       break;
@@ -204,6 +196,17 @@ class Session extends EventRaiser
       break;
     case "profile":
       this.userlist.messageReceived(message);
+      break;
+    case "editor":
+      if(message.action == "initialize")
+      {
+        this.initializeEditor(message.name, message.id);
+        break;
+      }
+      
+      let editor = this.editors[message.editorId];
+      
+      editor.messageReceived(message);
       break;
     }
 

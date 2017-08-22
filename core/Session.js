@@ -110,7 +110,8 @@ class Session extends EventRaiser
     }
 
     this.send({
-      type: "initialize editor",
+      type: "editor",
+      action: "initialize",
       name: editor.name,
       id: this.editors.length
     });
