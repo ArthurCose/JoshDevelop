@@ -64,7 +64,7 @@ class Session extends EventRaiser
   openEditor(fileNode)
   {
     // get the tab for the editor
-    let tab = this.editorTabs.get(fileNode.clientPath);
+    let tab = this.editorTabs.getTab(fileNode.clientPath);
 
     // if the tab already exists, then make it active
     if(tab)

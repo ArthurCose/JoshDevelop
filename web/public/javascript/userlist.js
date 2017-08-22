@@ -16,11 +16,6 @@ class UserList
     this.element.style.display = show ? "block" : "none";
   }
 
-  getUser(id)
-  {
-    return this._users[id];
-  }
-
   addUser(name, color, id)
   {
     this._users[id] = new Profile(name, color, id);
@@ -31,6 +26,11 @@ class UserList
     this.getUser(id).destroy();
 
     delete this._users[id];
+  }
+
+  getUser(id)
+  {
+    return this._users[id];
   }
 
   messageReceived(message)

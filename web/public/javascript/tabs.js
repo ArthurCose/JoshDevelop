@@ -149,6 +149,21 @@ class TabbedContainer extends EventRaiser
 
     return tab;
   }
+
+  removeTab(identifier)
+  {
+    let tab = this.getTab(identifier);
+    tab.destroy()
+  }
+  
+  getTab(identifier)
+  {
+    for(let tab of this.tabs)
+      if(tab.identifier == identifier)
+          return tab;
+    
+    return undefined;
+  }
   
   resized()
   {
@@ -156,14 +171,5 @@ class TabbedContainer extends EventRaiser
       this.activeTab.resized();
 
     this.triggerEvent("resize");
-  }
-  
-  get(identifier)
-  {
-    for(let tab of this.tabs)
-      if(tab.identifier == identifier)
-          return tab;
-    
-    return undefined;
   }
 }
