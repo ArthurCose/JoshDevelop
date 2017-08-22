@@ -49,7 +49,7 @@ class Session extends EventRaiser
 
   initializeFileManager()
   {
-    let fileManager = new ClientFileManager("#filetree");
+    let fileManager = new ClientFileManager();
 
     fileManager.addListener((node) => {
       if(!node.isFile)
