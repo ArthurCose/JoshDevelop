@@ -24,6 +24,6 @@
   "main": "index.js",
   "devDependencies": {},
   "author": "Arthur Cosentino",
-  "license": "ISC",
+  "license": "MIT",
   "description": ""
 }
