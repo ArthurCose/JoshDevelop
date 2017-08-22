@@ -6,7 +6,7 @@ class Session extends EventRaiser
     this.project = undefined;
     this.cookiejar = new CookieJar();
 
-    // name -> class
+    // <name, class>
     this.editorDictionary = {};
 
     this.addEvent("connect");

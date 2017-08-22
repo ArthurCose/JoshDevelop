@@ -26,11 +26,14 @@ class Session extends EventRaiser
 
   init()
   {
+    // give the client their ID
     this.send({
       type: "init",
       id: this.id
     });
 
+    // broadcast the addition of this
+    // user to update user lists
     this.core.broadcast({
       type: "profile",
       action: "add",
@@ -39,6 +42,8 @@ class Session extends EventRaiser
       sessionID: this.id
     });
 
+    // send session list to this session
+    // ignore self as it was received through broadcasted already
     for(let session of this.core.sessions)
       if(session != this)
         this.send({
