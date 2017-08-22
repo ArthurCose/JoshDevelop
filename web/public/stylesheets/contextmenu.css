@@ -26,5 +26,7 @@
 }
 
 .contextmenu hr{
-  margin: 1px;
+  margin: 0;
+  border: none;
+  border-top: .5px solid #aaa;
 }
