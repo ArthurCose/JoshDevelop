@@ -60,7 +60,7 @@ class AceSettings extends SettingsSection{
   set theme(value)
   {
     for(let editor of this.editors)
-      editor.setTheme("ace/theme/" + value);
+      editor.setTheme(`ace/theme/${value}`);
 
     this.settings.aceTheme = value;
     this.saveSettings();
@@ -134,7 +134,7 @@ class AceSettings extends SettingsSection{
 
   applySettings(aceEditor)
   {
-    aceEditor.setTheme("ace/theme/" + this.theme);
+    aceEditor.setTheme(`ace/theme/${this.theme}`);
     aceEditor.session.setUseSoftTabs(this.useSoftTabs);
     aceEditor.setShowInvisibles(this.showInvisibles);
     aceEditor.setOption("tabSize", this.tabSize);

@@ -134,7 +134,7 @@ class Session extends EventRaiser
 
   connect(onConnect)
   {
-    let websocket = new WebSocket("ws://" + window.location.host);
+    let websocket = new WebSocket(`ws://${window.location.host}`);
 
     websocket.onopen = (e) => {
       document.getElementById("connection").style.backgroundColor = "lime";

@@ -26,7 +26,7 @@ function init()
   let [javascripts, stylesheets] = loadPlugins(app);
 
   let mainCSS = walkSync("web/public/stylesheets", { directories: false });
-  mainCSS.forEach((value, index) => mainCSS[index] = "stylesheets/" + value);
+  mainCSS.forEach((value, index) => mainCSS[index] = `stylesheets/${value}`);
 
   stylesheets = mainCSS.concat(stylesheets);
 
@@ -51,8 +51,8 @@ function loadPlugins(app)
 
   for(let plugLocation of plugLocations)
   {
-    plugLocation = "plugins/" + plugLocation;
-    let plugin = require('./' + plugLocation);
+    plugLocation = `plugins/${plugLocation}`;
+    let plugin = require(`./${plugLocation}`);
     let pluginFolder = path.dirname(plugLocation);
 
     if(plugin.initialize)

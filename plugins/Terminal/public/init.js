@@ -74,7 +74,7 @@ function createTerminal(){
   let id = shells.length;
 
   // create tab
-  let tab = terminalTabs.addTab(id, "Terminal " + (id + 1), element);
+  let tab = terminalTabs.addTab(id, `Terminal ${id + 1}`, element);
   tab.makeActive();
 
   // create shell

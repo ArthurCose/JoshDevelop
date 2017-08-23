@@ -62,7 +62,7 @@ class SpriteEditor extends Editor
     tab.on("resize", () => this.canvasResized());
     tab.on("active", () => this.canvasResized());
 
-    this.addLayer("Layer " + this.layers.length);
+    this.addLayer(`Layer ${this.layers.length}`);
   }
 
   get leftColor()

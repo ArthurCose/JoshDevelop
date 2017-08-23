@@ -272,7 +272,7 @@ class ClientFolderNode extends ClientFileNode
 
     xhr.open(
       'POST',
-      window.location.origin + "/upload?parentPath=" + safeclientPath,
+      `${window.location.origin}/upload?parentPath=${safeclientPath}`,
       true
     );
 

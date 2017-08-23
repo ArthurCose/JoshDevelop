@@ -110,7 +110,7 @@ class Session extends EventRaiser
 
     if(!editor)
     {
-      this.displayPopup("No editor available for " + path);
+      this.displayPopup(`No editor available for ${path}`);
       return;
     }
 
