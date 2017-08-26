@@ -91,7 +91,7 @@ class FileManager extends FileTree
     switch(message.action)
     {
     case "add":
-      let err = this.createNode(
+      this.createNode(
         message.parentPath,
         message.name,
         message.isFile
@@ -104,7 +104,7 @@ class FileManager extends FileTree
       
       if(node)
         node.delete().catch((err) => {
-          session.send(err);
+          session.displayPopup(err);
         });
       break;
     case "empty":
