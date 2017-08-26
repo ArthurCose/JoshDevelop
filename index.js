@@ -113,7 +113,7 @@ function createServer(app, indexHTML)
 
 function setupWebsocketServer(server)
 {
-  var socketServer = new WebSocketServer({
+  let socketServer = new WebSocketServer({
     httpServer : server,
     maxReceivedFrameSize: 18446744073709551615,
     maxReceivedMessageSize: 18446744073709551615
@@ -127,7 +127,7 @@ function setupErrorHandlers(app, server)
 {
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    let err = new Error('Not Found');
     err.status = 404;
     next(err);
   });
@@ -143,7 +143,7 @@ function setupErrorHandlers(app, server)
     if (error.syscall != 'listen') 
       throw error;
 
-    var bind = typeof port == 'string' ? 'Pipe ' + port
+    let bind = typeof port == 'string' ? 'Pipe ' + port
                                        : 'Port ' + port;
 
     switch (error.code) {
@@ -174,7 +174,7 @@ function download(req, res)
     return;
   }
   
-  var filePath = `projects/${req.query.project}/${req.query.path}`;
+  let filePath = `projects/${req.query.project}/${req.query.path}`;
   
   fs.stat(filePath, (err, stats) => {
     if(err)
@@ -185,7 +185,7 @@ function download(req, res)
 
     if(stats.isDirectory())
     {
-      var archive = archiver.create("zip");
+      let archive = archiver.create("zip");
       archive.pipe(res);
       archive.directory(filePath);
       archive.finalize();
@@ -199,34 +199,48 @@ function download(req, res)
 
 function upload(req, res)
 {
-  var parentPath = req.query.parentPath;
-  var parentFolder = core.fileManager.getFolder(parentPath);
+  let parentPath = req.query.parentPath;
+  let projectName = req.query.project;
+  let project = core.projects[projectName];
 
-  if(req.busboy == undefined)
-    return;
-
-  if(parentFolder == undefined)
+  if(!project)
   {
-    res.send(`${parentPath} is not a folder.`);
+    res.status(400).send(`Project "${projectName}" does not exist.`);
     return;
   }
 
-  var errors = 0;
-  var filecount = 0;
+  if(req.busboy == undefined)
+  {
+    res.status(500).send(`Busboy is missing.`);
+    return;
+  }
+  
+  let parentFolder = project.fileManager.getFolder(parentPath);
+
+  if(parentFolder == undefined)
+  {
+    res.status(400).send(`${parentPath} is not a folder.`);
+    return;
+  }
+
+  let errors = 0;
+  let filecount = 0;
 
   req.busboy.on('file', (fieldname, filestream, filename, encoding, mimetype) => {
-    var error = uploadFile(parentFolder, filename, filestream);
-    filecount++;
-    
-    if(error)
+    try{
+      uploadFile(project.fileManager, parentFolder, filename, filestream);
+    }
+    catch(err)
     {
       errors++;
       filestream.resume();
     }
+
+    filecount++;
   });
 
   req.busboy.on('finish', function() {
-    var completed = filecount - errors;
+    let completed = filecount - errors;
 
     res.send(
       `${completed}/${filecount} File(s) uploaded\n` +
@@ -237,24 +251,16 @@ function upload(req, res)
   req.pipe(req.busboy);
 }
 
-function uploadFile(parentFolder, filename, readStream)
+async function uploadFile(fileManager, parentFolder, filename, readStream)
 {
-  var creationError = core.fileManager.createNode(
-    parentFolder.clientPath,
-    filename,
-    true
-  );
+  fileManager.createNode(parentFolder.clientPath, filename, true);
 
-  // skip if there's an error
-  if(creationError)
-    return creationError;
-
-  var filePath = parentFolder.clientPath + "/" + filename;
-  var fileNode = core.fileManager.getFile(filePath);
+  let filePath = parentFolder.clientPath + "/" + filename;
+  let fileNode = fileManager.getFile(filePath);
 
   if(fileNode == undefined)
-    return "Couldn't get file by path";
+    throw "Couldn't get file by path";
 
-  var writeStream = fs.createWriteStream(fileNode.serverPath);
+  let writeStream = fs.createWriteStream(fileNode.serverPath);
   readStream.pipe(writeStream);
 }

@@ -254,6 +254,7 @@ class ClientFolderNode extends ClientFileNode
     e.preventDefault();
 
     let files = e.target.files || e.dataTransfer.files;
+    let projectName = encodeURIComponent(session.project);
     let safeclientPath = encodeURIComponent(this.clientPath);
     
     let xhr = new XMLHttpRequest();
@@ -262,17 +263,15 @@ class ClientFolderNode extends ClientFileNode
     for(let file of files)
       formData.append(file.name, file);
 
-    xhr.addEventListener("readystatechange", () => {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        displayPopup(xhr.responseText);
-      }
+    session.displayPopup(`Uploading ${files.length} file(s).`);
+    
+    xhr.addEventListener("loadend", () => {
+      session.displayPopup(xhr.responseText);
     });
-
-    displayPopup(`Uploading ${files.length} file(s).`);
 
     xhr.open(
       'POST',
-      `${window.location.origin}/upload?parentPath=${safeclientPath}`,
+      `${window.location.origin}/upload?project=${projectName}&parentPath=${safeclientPath}`,
       true
     );
 
