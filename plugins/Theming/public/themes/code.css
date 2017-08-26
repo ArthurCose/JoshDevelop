@@ -216,6 +216,8 @@ body,
 input.ace_search_field{
   background-color: #3C3C3C;
   color: #C5C5C5 !important;
+  border: 0 !important;
+  border-radius: 0 0 0 0 !important;
 }
 
 .ace_button,
@@ -223,24 +225,6 @@ input.ace_search_field{
   color: #C5C5C5 !important;
   border: 0 !important;
   background: none !important;
-}
-
-.ace_searchbtn.next:after,
-.ace_searchbtn.prev:after{
-  font-size: 20px;
-  font-weight: bold;
-  font-family: DejaVu;
-  position: relative;
-}
-
-.ace_searchbtn.next:after{
-  content: "⌄";
-  top: -5px;
-}
-
-.ace_searchbtn.prev:after{
-  content: "⌃";
-  top: 4px;
 }
 
 #settings{
