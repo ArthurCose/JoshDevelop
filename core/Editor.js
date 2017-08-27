@@ -7,18 +7,17 @@ class Editor
    * in their constructors
    * 
    * @param {string} name Used to get the client class in session.editorDictionary
-   * @param {Core} core
+   * @param {Core} project
    * @param {ServerFileNode} fileNode
    */
-  constructor(name, core, fileNode)
+  constructor(name, project, fileNode)
   {
-    this.core = core;
+    this.project = project;
     this.fileNode = fileNode;
     this.name = name;
     this.path = fileNode.clientPath;
     this.connectedSessions = [];
     this.destroyed = false;
-    this.project = undefined;
 
     this.eventListeners = [
       fileNode.on("rename", () => this.fileRenamed()),
@@ -33,11 +32,11 @@ class Editor
   
   fileRenamed()
   {
-    delete this.core.editors[this.path];
+    delete this.project.editors[this.path];
 
     this.path = this.fileNode.clientPath;
 
-    this.core.editors[this.path] = this;
+    this.project.editors[this.path] = this;
   }
 
   /**

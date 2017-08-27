@@ -6,9 +6,9 @@ const Editor = require("../../core/Editor");
 
 class TextEditor extends Editor
 {
-  constructor(core, fileNode)
+  constructor(project, fileNode)
   {
-    super("TextEditor", core, fileNode);
+    super("TextEditor", project, fileNode);
     this.document = new TextDocument(fileNode);
     this.carets = [];
   }

@@ -4,9 +4,9 @@ const path = require("path");
 
 class SpriteEditor extends Editor
 {
-  constructor(core, fileNode)
+  constructor(project, fileNode)
   {
-    super("SpriteEditor", core, fileNode);
+    super("SpriteEditor", project, fileNode);
     this.sprite = new SpriteFile(fileNode);
   }
   

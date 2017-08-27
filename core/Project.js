@@ -30,9 +30,8 @@ class Project
     if(!fileNode)
       return;
     
-    editor = this.core.createEditor(fileNode);
+    editor = this.core.createEditor(this, fileNode);
     this.editors[fileNode.clientPath] = editor;
-    editor.project = this; 
 
     return editor;
   }

@@ -130,7 +130,7 @@ class Core
       session.send(message);
   }
 
-  createEditor(fileNode)
+  createEditor(project, fileNode)
   {
     let lowestSupportLevel = Infinity;
     let supportedEditor;
@@ -156,7 +156,7 @@ class Core
     if(!supportedEditor)
       return;
     
-    let editor = new supportedEditor(this, fileNode);
+    let editor = new supportedEditor(project, fileNode);
 
     return editor;
   }
