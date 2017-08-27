@@ -23,6 +23,7 @@ class ProjectListMenu
         });
         dropdown.hide();
       })
+
       input.addEventListener("blur", () => {
         dropdown.hide();
       });

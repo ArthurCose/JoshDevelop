@@ -189,6 +189,7 @@ class ClientFileNode extends FileNode
     );
 
     renameElement.focus();
+    renameElement.setSelectionRange(0, renameElement.value.length);
   }
   
   delete()
@@ -319,6 +320,7 @@ class ClientFolderNode extends ClientFileNode
     // insert the node
     this.listElement.insertBefore(input, this.listElement.firstChild);
     input.focus();
+    input.setSelectionRange(0, input.value.length);
   }
   
   registerSubFolder(name)
