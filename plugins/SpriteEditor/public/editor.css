@@ -48,23 +48,28 @@
 .sprite-editor .layer-tab canvas{
   background: 0;
   border: 1px solid #000;
-  height: 20px;
-}
-
-.sprite-editor .tool-icon-container{
-  border: 1px solid gray;
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin: 2px;
+  height: 25px;
 }
 
 .sprite-editor .tool-icon{
-  width: 20px;
-  height: 20px;
-  background-size: cover;
+  border: 1px solid white;
   display: inline-block;
-  overflow: hidden;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  background-size: cover;
+}
+
+.sprite-editor .tool-icon{
+  filter: brightness(.6);
+}
+
+.sprite-editor .tool-icon:hover:not(.selected) {
+  filter: brightness(.4);
+}
+
+.sprite-editor .tool-icon.selected{
+  filter: brightness(0);
 }
 
 .sprite-editor .pencil{
@@ -73,4 +78,12 @@
 
 .sprite-editor .eraser{
   background-image: url("icons/eraser.png");
+}
+
+.sprite-editor .move{
+  background-image: url("icons/move.png");
+}
+
+.sprite-editor .dropper{
+  background-image: url("icons/dropper.png");
 }

@@ -62,7 +62,7 @@ class TextEditor extends Editor
 
     session.send({
       type:"editor",
-      action: "updateCaret",
+      action: "update caret",
       editorId: this.id,
       range: range
     });
@@ -113,17 +113,17 @@ class TextEditor extends Editor
       
       this.lastRevision = message.lastRevision;
       break;
-    case "addCaret":
+    case "add caret":
       let caret = this.editor.addCaret(message.userid);
 
       caret.updatePosition(message.range);
 
       this.carets[message.userid] = caret;
       break;
-    case "updateCaret":
+    case "update caret":
       this.carets[message.userid].updatePosition(message.range);
       break;
-    case "removeCaret":
+    case "remove caret":
       this.carets[message.userid].destroy();
       this.carets[message.userid] = undefined;
       break;

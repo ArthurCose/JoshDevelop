@@ -1,24 +1,14 @@
+const Color = require("./Color.js");
+
 class Layer
 {
-  constructor(width, height)
+  constructor(name, width, height)
   {
-    super();
-    this.pixels = [];
+    this.name = name;
     this.width = width;
     this.height = height;
-    this.name;
     
-    this.clear();
-  }
-
-  get name()
-  {
-    return nameElement.innerText;
-  }
-
-  set name(value)
-  {
-    nameElement.innerText = value;
+    this.data = new Uint8ClampedArray(this.width * this.height * 4);
   }
 
   getPixel(x, y)
@@ -26,34 +16,40 @@ class Layer
     x = Math.floor(x);
     y = Math.floor(y);
 
-    let row = this.pixels[x];
+    let color = new Color(0, 0, 0, 0);
+    let idx = (y * this.width + x) * 4;
 
-    // return an alpha colorIndex
-    if(!row)
-      return -1; 
+    // return transparent
+    if(idx > this.data.length)
+      return color;
     
-    let colorIndex = row[y];
+    color.r = this.data[idx];
+    color.g = this.data[idx + 1];
+    color.b = this.data[idx + 2];
+    color.a = this.data[idx + 3];
 
-    // return alpha index if undefined
-    // otherwise return the colorIndex
-    return colorIndex ? colorIndex : -1;
+    return color;
   }
 
-  setPixel(x, y, colorIndex)
+  setPixel(x, y, color)
   {
     x = Math.floor(x);
     y = Math.floor(y);
 
-    if(x > -1 && x < this.width && y > -1 && y < this.height)
-      this.pixels[x][y] = colorIndex;
+    let idx = (y * this.width + x) * 4;
+
+    if(idx > this.data.length)
+      return;
+
+    this.data[idx] = color.r;
+    this.data[idx + 1] = color.g;
+    this.data[idx + 2] = color.b;
+    this.data[idx + 3] = color.a;
   }
 
   clear()
   {
-    this.pixels = [];
-
-    for(let x = 0; x < this.width; x++)
-      this.pixels[x] = this.createPadding(this.height);
+    this.data = new Uint8ClampedArray(this.width * this.height * 4);
   }
 
   // todo
@@ -61,51 +57,60 @@ class Layer
   {
   }
 
-  /** 
-   * creates an array of alphaIndex using the
-   * specified length
-   * 
-   * @param {number} length
-   * @returns {number[]}
-   */
-  createPadding(length)
-  {
-    return [].fill(-1, 0, length);
-  }
-
   padTop(size)
   {
-    // we append values only so reusing an
-    // array does not matter
-    let padding = this.createPadding(size);
+    this.height += size;
 
-    // append padding to the start of each column
-    for(let x = 0; x < this.width; x++)
-      this.pixels.splice(0, 0, ...padding);
+    // copy
+    let oldData = this.data;
+
+    // clear to resize
+    this.clear();
+
+    // place old data
+    this.data.set(oldData, size * width * 4);
   }
 
   padBottom(size)
   {
-    let padding = this.createPadding(size);
+    this.height += size;
 
-    for(let x = 0; x < this.width; x++)
-    {
-      let column = this.pixels[x];
-
-      // append padding to the bottom of the column
-      column.splice(column.length, 0, ...padding);
-    }
+    let oldData = this.data;
+    this.clear();
+    this.data.set(oldData, 0);
   }
 
   padLeft(size)
   {
+    this.width += size;
+
+    let oldData = this.data;
+    this.clear();
+
     for(let i = 0; i < size; i++)
-      this.pixels.splice(0, 0, this.createPadding(this.height));
+    {
+      let idx = i * this.width * 4;
+      let row = oldData.subarray(idx, idx + this.width * 4);
+
+      this.data.set(row, idx);
+    }
   }
 
   padRight(size)
   {
-    for(let i = 0; i < size; i++)
-      this.pixels.splice(this.pixels.length, 0, this.createPadding(this.height));
+    this.width += size;
+
+    let oldData = this.data;
+    this.clear();
+
+    for(let i = 1; i <= size; i++)
+    {
+      let idx = i * this.width * 4;
+      let row = oldData.subarray(idx, idx + this.width * 4);
+
+      this.data.set(row, idx);
+    }
   }
 }
+
+module.exports = Layer;

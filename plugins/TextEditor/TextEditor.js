@@ -43,7 +43,7 @@ class TextEditor extends Editor
 
       session.send({
         type: "editor",
-        action: "addCaret",
+        action: "add caret",
         range: caretRange,
         userid: key,
         editorId: editorId
@@ -59,7 +59,7 @@ class TextEditor extends Editor
 
     this.broadcast(session, {
       type: "editor",
-      action: "addCaret",
+      action: "add caret",
       range: range,
       userid: session.id
     });
@@ -73,7 +73,7 @@ class TextEditor extends Editor
 
     this.broadcast(session, {
       type: "editor",
-      action: "removeCaret",
+      action: "remove caret",
       userid: session.id
     });
   }
@@ -91,12 +91,12 @@ class TextEditor extends Editor
       this.applyOperations(session, [message.operation], message.lastRevision);
 
       break;
-    case "updateCaret":
+    case "update caret":
       this.carets[session.id] = message.range;
 
       this.broadcast(session, {
         type: "editor",
-        action: "updateCaret",
+        action: "update caret",
         range: message.range,
         userid: session.id
       });

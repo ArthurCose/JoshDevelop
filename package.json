@@ -19,7 +19,8 @@
     "xterm": "~2.9.2",
     "node-pty": "~0.6.10",
     "ace-builds": "~1.2.8",
-    "walk-sync": "~0.3.2"
+    "walk-sync": "~0.3.2",
+    "pngjs": "~3.3.0"
   },
   "main": "index.js",
   "devDependencies": {},

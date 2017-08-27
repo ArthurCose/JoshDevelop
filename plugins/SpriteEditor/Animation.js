@@ -1,7 +1,11 @@
 class Animation
 {
-  constructor()
+  constructor(name, startFrame, endFrame)
   {
-    this.layers = [];
+    this.name = name;
+    this.startFrame = startFrame;
+    this.endFrame = endFrame;
   }
 }
+
+module.exports = Animation;

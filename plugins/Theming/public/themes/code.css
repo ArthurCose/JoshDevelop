@@ -240,5 +240,13 @@ input.ace_search_field{
 }
 
 .sprite-editor .tool-icon{
-  filter: brightness(0) invert();
+  filter: brightness(.6);
+}
+
+.sprite-editor .tool-icon:hover:not(.selected) {
+  filter: brightness(.8);
+}
+
+.sprite-editor .tool-icon.selected{
+  filter: brightness(1);
 }

@@ -186,9 +186,9 @@ class Session extends EventRaiser
     }
     catch(e)
     {
-       console.log(message)
-       console.log("\n");
-       console.log(e);
+      console.log(message)
+      console.log("\n");
+      console.log(e);
       // some error that could've crashed the server
       // I'm assuming it wasn't me, and was someone trying
       // to be malicious

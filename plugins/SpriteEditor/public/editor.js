@@ -3,15 +3,14 @@ class SpriteEditor extends Editor
   constructor(tab, fileNode, id)
   {
     super(tab, fileNode, id);
-    element.classList.add("sprite-editor");
+    this.element.classList.add("sprite-editor");
 
     this.width = 32;
     this.height = 32;
-    this.colors = [];
     this.layers = [];
     this.selectedLayer;
     this.selection;
-    this.tool = new Pencil(this);
+    this.tool = new PencilTool(this);
 
     this.x = 0;
     this.y = 0;
@@ -30,11 +29,11 @@ class SpriteEditor extends Editor
 
     this.leftColorElement = this.createColorElement();
     this.selectedColorsElement.appendChild(this.leftColorElement);
-    this.leftColor = "#000000";
+    this.leftColor = new Color(0, 0, 0, 0);
 
     this.rightColorElement = this.createColorElement();
     this.selectedColorsElement.appendChild(this.rightColorElement);
-    this.rightColor = "#ffffff";
+    this.rightColor = new Color(255, 255, 255, 255);
 
     this.ctx = this.canvas.getContext("2d");
 
@@ -49,8 +48,12 @@ class SpriteEditor extends Editor
     this.toolsElement.innerHTML = "Tools: <br />";
     this.rightPanelElement.appendChild(this.toolsElement);
 
-    this.toolsElement.appendChild(this.tool.iconContainer);
-    this.toolsElement.appendChild(new Eraser(this).iconContainer);
+    this.toolsElement.appendChild(this.tool.icon);
+    this.toolsElement.appendChild(new EraserTool(this).icon);
+    this.toolsElement.appendChild(new MoveTool(this).icon);
+    this.toolsElement.appendChild(new DropperTool(this).icon);
+    
+    this.tool.icon.classList.add("selected");
 
     // layers
     this.layersElement = document.createElement("div");
@@ -61,28 +64,30 @@ class SpriteEditor extends Editor
 
     tab.on("resize", () => this.canvasResized());
     tab.on("active", () => this.canvasResized());
-
-    this.addLayer(`Layer ${this.layers.length}`);
   }
 
   get leftColor()
   {
-    return this.leftColorElement.value;
+    let value = this.leftColorElement.value;
+
+    return Color.fromInputHex(value);
   }
 
   get rightColor()
   {
-    return this.rightColorElement.value;
+    let value = this.rightColorElement.value;
+
+    return Color.fromInputHex(value);
   }
 
-  set leftColor(value)
+  set leftColor(color)
   {
-    this.leftColorElement.value = value;
+    this.leftColorElement.value = color.toInputHex();
   }
 
-  set rightColor(value)
+  set rightColor(color)
   {
-    this.rightColorElement.value = value;
+    this.rightColorElement.value = color.toInputHex();
   }
 
   createColorElement()
@@ -157,25 +162,16 @@ class SpriteEditor extends Editor
     this.render();
   }
 
-  /**
-   * Gets a color index for the color written in hex.
-   * Appends the color if it was missing.
-   * @param {string} hex 
-   */
-  getColorIndex(hex)
+  getLayer(name)
   {
-    let index = this.colors.indexOf(hex);
-
-    if(index == -1)
-      index = this.colors.push(hex) - 1;
-    
-    return index;
+    for(let layer of this.layers)
+      if(layer.name == name)
+        return layer;
   }
 
   addLayer(name)
   {
-    let layer = new Layer(this.width, this.height, this.colors);
-    layer.name = name;
+    let layer = new Layer(name, this.width, this.height);
 
     layer.layerElement.addEventListener("click", () => this.selectLayer(layer));
 
@@ -188,6 +184,18 @@ class SpriteEditor extends Editor
 
     // add to the end/top
     this.layers.push(layer);
+
+    return layer;
+  }
+
+  removeLayer(name)
+  {
+    let layer = this.getLayer(name);
+    let index = this.layers.indexOf(layer);
+
+    layer.layerElement.remove();
+
+    delete this.layers[index];
   }
 
   selectLayer(layer)
@@ -198,6 +206,19 @@ class SpriteEditor extends Editor
       this.selectedLayer.layerElement.classList.remove("selected");
     
     this.selectedLayer = layer;
+  }
+
+  modifyAnimation(name, start, end)
+  {
+    let animation = this.animations[name];
+
+    animation.start = start;
+    animation.end = end;
+  }
+
+  deleteAnimation(name)
+  {
+    delete this.animations[name];
   }
 
   scale(width, height)
@@ -211,56 +232,71 @@ class SpriteEditor extends Editor
     this.render();
   }
 
-  padLeft(length)
+  pad(size, direction)
   {
-    this.width = width + length;
-    this.height = height;
+    switch(direction)
+    {
+    case "left":
+      this.padLeft(size);
+      break;
+    case "right":
+      this.padRight(size);
+      break;
+    case "top":
+      this.padTop(size);
+      break;
+    case "bottom":
+      this.padBottom(size);
+      break;
+    }
+  }
+
+  padLeft(size)
+  {
+    this.width += size;
 
     for(let layer of this.layers)
     {
-      layer.padLeft(length);
+      layer.padLeft(size);
       layer.render();
     }
 
     this.render();
   }
 
-  padRight(length)
+  padRight(size)
   {
-    this.width = width + length;
-    this.height = height;
+    this.width += size;
 
     for(let layer of this.layers)
     {
-      layer.padRight(length);
+      layer.padRight(size);
       layer.render();
     }
 
     this.render();
   }
 
-  padTop(length)
+  padTop(size)
   {
-    this.width = width;
-    this.height = height + length;
+    this.height += size;
 
     for(let layer of this.layers)
     {
-      layer.padTop(length);
+      layer.padTop(size);
       layer.render();
     }
 
     this.render();
   }
 
-  padBottom(length)
+  padBottom(size)
   {
-    this.width = width;
-    this.height = height + length;
+    this.height += size;
 
     for(let layer of this.layers)
     {
-      layer.padBottom(length);
+      layer.padBottom(size);
       layer.render();
     }
 
@@ -297,16 +333,123 @@ class SpriteEditor extends Editor
       }
     }
   }
+  
+  loadSprite(message)
+  {
+    this.width = message.width;
+    this.height = message.height;
+
+    for(let layerData of message.layers)
+    {
+      let layer = this.addLayer(layerData.name);
+      let dataArray = Object.values(layerData.data);
+
+      layer.data = new Uint8ClampedArray(dataArray);
+      layer.render();
+    }
+
+    for(let animationName in message.animations)
+    {
+      let animation = message.animations[animationName];
+
+      this.modifyAnimation(animation.name, animation.startFrame, animation.endFrame);
+    }
+  }
+
+  messageReceived(message)
+  {
+    switch(message.action)
+    {
+    case "join":
+      this.loadSprite(message);
+      break;
+    case "scale":
+      this.scale(message.width, message.height);
+      break;
+    case "pad":
+      this.pad(message.size, message.direction);
+      break;
+    case "animation":
+      this.modifyAnimation(message.name, message.start, message.end);
+      break;
+    case "delete animation":
+      this.deleteAnimation(message.name);
+      break;
+    case "add layer":
+      this.addLayer(message.name);
+      break;
+    case "remove layer":
+      this.removeLayer(message.name);
+      break;
+    case "pencil":
+      let layer = this.getLayer(message.layerName);
+
+      // layer was deleted before edit could go through
+      if(layer == undefined)
+        return;
+
+      let color = Color.fromObject(message.color);
+      layer.setPixel(message.x, message.y, color);
+      break;
+    case "bucket":
+      // todo
+      break;
+    case "cursor":
+      // todo
+      break;
+    }
+
+    this.render();
+  }
+}
+
+class Color
+{
+  constructor(r, g, b, a)
+  {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+  }
+
+  toInputHex()
+  {
+    let value = this.r << 16 | this.g << 8 | this.b;
+
+    return "#" + value.toString(16);
+  }
+
+  toRGBAString()
+  {
+    return `rgba(${this.r},${this.g},${this.b},${this.a})`;
+  }
+  
+  static fromObject(object)
+  {
+    return new Color(object.r, object.g, object.b, object.a);
+  }
+
+  static fromInputHex(value)
+  {
+    value = value.replace("#", "");
+    value = parseInt(value, 16);
+    
+    let r = value >> 16 & 0xFF;
+    let g = value >> 8 & 0xFF;
+    let b = value & 0xFF;
+
+    return new Color(r, g, b, 255);
+  }
 }
 
 class Layer
 {
-  constructor(width, height, colors)
+  constructor(name, width, height)
   {
-    this.pixels = [];
-    this.colors = colors;
     this.width = width;
     this.height = height;
+    this.data = new Uint8ClampedArray(this.width * this.height * 4);
 
     this.canvas = document.createElement("canvas");
     this.canvas.className = "layer-preview";
@@ -320,12 +463,10 @@ class Layer
 
     this.nameElement = document.createElement("span");
     this.nameElement.className = "name";
-    this.nameElement.innerText = this.name;
+    this.nameElement.innerText = name;
 
     this.layerElement.appendChild(this.canvas);
     this.layerElement.appendChild(this.nameElement);
-
-    this.clear();
   }
 
   get name()
@@ -343,43 +484,45 @@ class Layer
     x = Math.floor(x);
     y = Math.floor(y);
 
-    let row = this.pixels[x];
+    let color = new Color(0, 0, 0, 0);
+    let idx = (y * this.width + x) * 4;
 
-    // return an alpha colorIndex
-    if(!row)
-      return -1; 
+    // return transparent
+    if(idx > this.data.length)
+      return color;
     
-    let colorIndex = row[y];
+    color.r = this.data[idx];
+    color.g = this.data[idx + 1];
+    color.b = this.data[idx + 2];
+    color.a = this.data[idx + 3];
 
-    // return alpha index if undefined
-    // otherwise return the colorIndex
-    return colorIndex ? colorIndex : -1;
+    return color;
   }
 
-  setPixel(x, y, colorIndex)
+  setPixel(x, y, color)
   {
     x = Math.floor(x);
     y = Math.floor(y);
 
-    if(x > -1 && x < this.width && y > -1 && y < this.height)
-    {
-      this.pixels[x][y] = colorIndex;
+    let idx = (y * this.width + x) * 4;
 
-      // draw this pixel
-      this.ctx.fillStyle = this.colors[colorIndex];
-      this.ctx.fillRect(x, y, 1, 1);
-    }
+    if(idx > this.data.length)
+      return;
+
+    this.data[idx] = color.r;
+    this.data[idx + 1] = color.g;
+    this.data[idx + 2] = color.b;
+    this.data[idx + 3] = color.a;
+
+    this.ctx.fillStyle = color.toRGBAString();
+
+    this.ctx.clearRect(x, y, 1, 1);
+    this.ctx.fillRect(x, y, 1, 1);
   }
 
   clear()
   {
-    this.pixels = [];
-
-    for(let x = 0; x < this.width; x++)
-      this.pixels[x] = this.createPadding(this.height);
-    
-    // clear canvas
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.data = new Uint8ClampedArray(this.width * this.height * 4);
   }
 
   // todo
@@ -387,78 +530,65 @@ class Layer
   {
   }
 
-  /** 
-   * creates an array of alphaIndex using the
-   * specified length
-   * 
-   * @param {number} length
-   * @returns {number[]}
-   */
-  createPadding(length)
-  {
-    return [].fill(-1, 0, length);
-  }
-
   padTop(size)
   {
-    // we append values only so reusing an
-    // array does not matter
-    let padding = this.createPadding(size);
+    this.height += size;
 
-    // append padding to the start of each column
-    for(let x = 0; x < this.width; x++)
-      this.pixels.splice(0, 0, ...padding);
+    // copy
+    let oldData = this.data;
 
-    this.canvas.height = this.height += size;
+    // clear to resize
+    this.clear();
+
+    // place old data
+    this.data.set(oldData, size * width * 4);
   }
 
   padBottom(size)
   {
-    let padding = this.createPadding(size);
+    this.height += size;
 
-    for(let x = 0; x < this.width; x++)
-    {
-      let column = this.pixels[x];
-
-      // append padding to the bottom of the column
-      column.splice(column.length, 0, ...padding);
-    }
-
-    this.canvas.height = this.height += size;
+    let oldData = this.data;
+    this.clear();
+    this.data.set(oldData, 0);
   }
 
   padLeft(size)
   {
+    this.width += size;
+
+    let oldData = this.data;
+    this.clear();
+
     for(let i = 0; i < size; i++)
-      this.pixels.splice(0, 0, this.createPadding(this.height));
-    
-    this.canvas.width = this.width += size;
+    {
+      let idx = i * this.width * 4;
+      let row = oldData.subarray(idx, idx + this.width * 4);
+
+      this.data.set(row, idx);
+    }
   }
 
   padRight(size)
   {
-    for(let i = 0; i < size; i++)
-      this.pixels.splice(this.pixels.length, 0, this.createPadding(this.height));
-    
-    this.canvas.width = this.width += size;
+    this.width += size;
+
+    let oldData = this.data;
+    this.clear();
+
+    for(let i = 1; i <= size; i++)
+    {
+      let idx = i * this.width * 4;
+      let row = oldData.subarray(idx, idx + this.width * 4);
+
+      this.data.set(row, idx);
+    }
   }
 
   render()
   {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-
-    for(let x = 0; x < this.width; x++)
-      for(let y = 0; y < this.height; y++)
-      {
-        let colorIndex = this.pixels[x][y];
-
-        // alpha
-        if(colorIndex == -1)
-          continue;
-
-        this.ctx.fillStyle = this.colors[colorIndex];
-        this.ctx.fillRect(x, y, 1, 1);
-      }
+    let imageData = new ImageData(this.data, this.width, this.height);
+    this.ctx.putImageData(imageData, 0, 0);
   }
 }
 
@@ -468,9 +598,6 @@ class Tool
   {
     this.spriteEditor = spriteEditor;
 
-    this.iconContainer = document.createElement("span");
-    this.iconContainer.className = "tool-icon-container";
-
     this.icon = document.createElement("span");
     this.icon.className = "tool-icon";
     this.icon.addEventListener("click", () => {
@@ -479,8 +606,6 @@ class Tool
 
       spriteEditor.tool = this;
     });
-
-    this.iconContainer.appendChild(this.icon);
   }
 
   /**
@@ -496,7 +621,7 @@ class Tool
   }
 }
 
-class Pencil extends Tool
+class PencilTool extends Tool
 {
   constructor(spriteEditor)
   {
@@ -514,18 +639,31 @@ class Pencil extends Tool
     let color = button == 0 ? this.spriteEditor.leftColor :
                               this.spriteEditor.rightColor;
 
-    let colorIndex = this.spriteEditor.getColorIndex(color);
-    this.spriteEditor.selectedLayer.setPixel(x, y, colorIndex);
+    // no need to update if the pixel we want to modify will stay the same
+    if(this.spriteEditor.selectedLayer.getPixel(x, y) == color)
+      return;
+    
+    session.send({
+      type: "editor",
+      action: "pencil",
+      editorId: this.spriteEditor.id,
+      layerName: this.spriteEditor.selectedLayer.name,
+      x: x,
+      y: y,
+      color: color
+    });
+
+    this.spriteEditor.selectedLayer.setPixel(x, y, color);
     this.spriteEditor.render();
   }
 }
 
-class Eraser extends Tool
+class EraserTool extends Tool
 {
   constructor(spriteEditor)
   {
     super(spriteEditor);
-    this.icon.classList.add("pencil");
+    this.icon.classList.add("eraser");
   }
 
   mouseEvent(name, x, y, button)
@@ -534,12 +672,75 @@ class Eraser extends Tool
       return;
     if(button == -1 || button == 1)
       return;
-    
-    let color = button == 0 ? this.spriteEditor.leftColor :
-                              this.spriteEditor.rightColor;
 
-    let colorIndex = this.spriteEditor.getColorIndex(color);
-    this.spriteEditor.selectedLayer.setPixel(x, y, colorIndex);
+    // transparent
+    let color = new Color(0, 0, 0, 0);
+    
+    session.send({
+      type: "editor",
+      action: "pencil",
+      editorId: this.spriteEditor.id,
+      layerName: this.spriteEditor.selectedLayer.name,
+      x: x,
+      y: y,
+      color: color
+    });
+    
+    this.spriteEditor.selectedLayer.setPixel(x, y, color);
     this.spriteEditor.render();
+  }
+}
+
+class MoveTool extends Tool
+{
+  constructor(spriteEditor)
+  {
+    super(spriteEditor);
+    this.icon.classList.add("move");
+
+    this.lastX = 0;
+    this.lastY = 0;
+  }
+
+  mouseEvent(name, x, y, button)
+  {
+    if(name == "mouseup")
+      return;
+    if(button == -1 || button == 1)
+      return;
+
+    if(name == "mousedown")
+    {
+      this.lastX = x;
+      this.lastY = y;
+    }
+
+    this.spriteEditor.x += x - this.lastX;
+    this.spriteEditor.y += y - this.lastY;
+    this.spriteEditor.render();
+  }
+}
+
+class DropperTool extends Tool
+{
+  constructor(spriteEditor)
+  {
+    super(spriteEditor);
+    this.icon.classList.add("dropper");
+  }
+
+  mouseEvent(name, x, y, button)
+  {
+    if(name == "mouseup")
+      return;
+    if(button == -1 || button == 1)
+      return;
+
+    let color = this.spriteEditor.selectedLayer.getPixel(x, y);
+
+    if(button == 0)
+      this.spriteEditor.leftColor = color;
+    else
+      this.spriteEditor.rightColor = color;
   }
 }

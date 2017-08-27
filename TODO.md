@@ -20,7 +20,8 @@
 * Image editor
   * Display other clients cursor location
   * Hiding layers
-  * Create tool classes
+  * Resize sprite
+  * .sprite files and animation tools
 * Chat
 * Convert file upload to a plugin
   * make FileTree from shared/filetree.js extend EventRaiser
