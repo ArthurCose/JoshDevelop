@@ -251,7 +251,7 @@ function upload(req, res)
   req.pipe(req.busboy);
 }
 
-async function uploadFile(fileManager, parentFolder, filename, readStream)
+function uploadFile(fileManager, parentFolder, filename, readStream)
 {
   fileManager.createNode(parentFolder.clientPath, filename, true);
 
