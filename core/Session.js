@@ -15,6 +15,9 @@ class Session extends EventRaiser
     this.project = undefined;
     this.editors = [];
     
+    this.socketReady = true;
+    this.messageQueue = [];
+
     this.websocket.on("message", (message) => this.messageReceived(message));
     this.websocket.on("close", () => this.disconnected());
     
@@ -130,7 +133,27 @@ class Session extends EventRaiser
   {
     message = JSON.stringify(message);
     
-    this.websocket.sendUTF(message);
+    this.messageQueue.push(message);
+
+    if(this.socketReady)
+      this.dequeueMessages();
+  }
+
+  dequeueMessages()
+  {
+    if(this.websocket.state == "closed")
+      return;
+
+    let message = this.messageQueue.shift();
+
+    this.socketReady = false;
+
+    this.websocket.sendUTF(message, () => {
+      this.socketReady = true;
+
+      if(this.messageQueue.length > 0)
+        this.dequeueMessages();
+    });
   }
   
   displayPopup(message)
