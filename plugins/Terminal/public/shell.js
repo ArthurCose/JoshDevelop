@@ -18,7 +18,7 @@ class Shell {
     });
 
     // send input
-    this.terminal.on('data', (input) => {
+    this.terminal.on("data", (input) => {
       session.send({
         type: "shell",
         action: "input",
@@ -27,7 +27,7 @@ class Shell {
       });
     });
     
-    /*this.terminal.on('title', (title) => {
+    /*this.terminal.on("title", (title) => {
       tab.name = title;
     });*/
   }

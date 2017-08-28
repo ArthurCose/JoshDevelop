@@ -5,7 +5,7 @@ class ThemeSettings extends SettingsSection
     super("Theme");
 
     this.contentElement.className = "theme-settings";
-    this.styleElement = document.createElement('style');
+    this.styleElement = document.createElement("style");
     document.head.appendChild(this.styleElement);
     
     let themes = [
@@ -53,7 +53,7 @@ class ThemeSettings extends SettingsSection
         if(callback)
           callback();
       });
-      xhr.open('GET', `/plugins/Theming/public/themes/${this.theme}.css`);
+      xhr.open("GET", `/plugins/Theming/public/themes/${this.theme}.css`);
       xhr.send();
     }
     else if(callback)

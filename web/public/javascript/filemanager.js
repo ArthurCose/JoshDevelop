@@ -98,8 +98,8 @@ class ClientFileNode extends FileNode
   onRightClick(e)
   {
     let menu = new ContextMenu(e.clientX, e.clientY);
-    menu.element.addEventListener('focus', () => this.controlElement.classList.add("selected"));
-    menu.element.addEventListener('blur', () => this.controlElement.classList.remove("selected"));
+    menu.element.addEventListener("focus", () => this.controlElement.classList.add("selected"));
+    menu.element.addEventListener("blur", () => this.controlElement.classList.remove("selected"));
     
     if(!this.isFile)
     {
@@ -129,16 +129,16 @@ class ClientFileNode extends FileNode
     {
       menu.addButton("Empty", () => {
         session.send({
-          type: 'filemanager',
-          action: 'empty',
+          type: "filemanager",
+          action: "empty",
           path: this.clientPath,
         });
       });
       
       menu.addButton("Refresh", () => {
         session.send({
-          type: 'filemanager',
-          action: 'refresh',
+          type: "filemanager",
+          action: "refresh",
           path: this.clientPath,
         });
       });
@@ -168,8 +168,8 @@ class ClientFileNode extends FileNode
     renameElement.addEventListener("change", () => renameElement.blur());
     renameElement.addEventListener("blur", () => {
       session.send({
-        type: 'filemanager',
-        action: 'rename',
+        type: "filemanager",
+        action: "rename",
         oldPath: this.clientPath,
         isFile: this.isFile,
         newName: renameElement.value
@@ -195,8 +195,8 @@ class ClientFileNode extends FileNode
   delete()
   {
     session.send({
-      type: 'filemanager',
-      action: 'delete',
+      type: "filemanager",
+      action: "delete",
       path: this.clientPath,
       isFile: this.isFile
     });
@@ -271,7 +271,7 @@ class ClientFolderNode extends ClientFileNode
     });
 
     xhr.open(
-      'POST',
+      "POST",
       `${window.location.origin}/upload?project=${projectName}&parentPath=${safeclientPath}`,
       true
     );
@@ -295,8 +295,8 @@ class ClientFolderNode extends ClientFileNode
         return;
       
       session.send({
-        type: 'filemanager',
-        action: 'add',
+        type: "filemanager",
+        action: "add",
         parentPath: this.clientPath,
         isFile: isFile,
         name: input.value
@@ -411,8 +411,8 @@ class FileClipboard
       return;
 
     session.send({
-      type: 'filemanager',
-      action: 'paste',
+      type: "filemanager",
+      action: "paste",
       parentPath: folderPath,
       path: this._node.clientPath,
       isFile: this._node.isFile,

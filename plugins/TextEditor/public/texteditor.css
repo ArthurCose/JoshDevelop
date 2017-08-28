@@ -1,6 +1,6 @@
 @font-face {
   font-family: DejaVu;
-  src: url('/plugins/TextEditor/web/fonts/DejaVuSans.ttf');
+  src: url("/plugins/TextEditor/web/fonts/DejaVuSans.ttf");
 }
 
 .ace-editor-container{

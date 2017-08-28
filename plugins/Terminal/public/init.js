@@ -2,7 +2,7 @@ let shells = [];
 let terminalTabs;
 
 
-/*  <div id=terminal-container class='tabbed-container'>
+/*  <div id=terminal-container class="tabbed-container">
  *   <div class=tab-header>
  *     <div class=tab-container></div>
  *     <div id=add-terminal>+</div>
@@ -45,7 +45,7 @@ session.on("load", () => {
     terminalTabs.element
   );
 
-  session.editorTabs.element.style.flex = 'none'
+  session.editorTabs.element.style.flex = "none";
   hsplit.splitElement.style.flex = 1;
 
   hsplit.on("resize", () => {

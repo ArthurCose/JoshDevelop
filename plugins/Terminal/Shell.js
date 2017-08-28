@@ -1,6 +1,6 @@
 "use strict";
 
-const pty = require('node-pty');
+const pty = require("node-pty");
 
 class Shell
 {

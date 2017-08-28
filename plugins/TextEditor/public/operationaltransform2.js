@@ -281,5 +281,5 @@ class OperationTransformer
 }
 
 
-if(typeof module !== 'undefined')
+if(typeof module !== "undefined")
     module.exports = OperationTransformer;

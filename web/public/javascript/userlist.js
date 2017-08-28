@@ -128,8 +128,8 @@ class Profile extends EventRaiser
 
   checkCookies()
   {
-    let name = session.cookiejar.getCookie('username');
-    let color = session.cookiejar.getCookie('usercolor');
+    let name = session.cookiejar.getCookie("username");
+    let color = session.cookiejar.getCookie("usercolor");
 
     if(color)
       this.color = color;

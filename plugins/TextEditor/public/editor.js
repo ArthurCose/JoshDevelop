@@ -155,7 +155,7 @@ class TextEditor extends Editor
   
   insert(operation)
   {
-    this.editor.aceEditor.session.insert(operation.start, operation.lines.join('\n'));
+    this.editor.aceEditor.session.insert(operation.start, operation.lines.join("\n"));
   }
   
   remove(operation)

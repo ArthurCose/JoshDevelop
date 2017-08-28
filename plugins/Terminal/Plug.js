@@ -15,7 +15,7 @@ class TerminalPlugin extends Plugin
     this.externalScripts = ["xterm/xterm.js", "xterm/addons/fit/fit.js"];
 
     this.extraRouting = (express, app) => {
-      app.use('/xterm', express.static('node_modules/xterm/dist'));
+      app.use("/xterm", express.static("node_modules/xterm/dist"));
     };
 
     this.sessionHooks = {

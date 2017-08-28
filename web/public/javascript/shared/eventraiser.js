@@ -71,5 +71,5 @@ class EventListener
   }
 }
 
-if(typeof module !== 'undefined')
+if(typeof module !== "undefined")
     module.exports = EventRaiser;

@@ -1,14 +1,14 @@
 
 function getFileName(filePath)
 {
-  let lastSlash = filePath.lastIndexOf('/') + 1;
+  let lastSlash = filePath.lastIndexOf("/") + 1;
   
   return filePath.slice(lastSlash, filePath.length);
 }
 
 function getParentPath(folderPath)
 {
-  let lastSlash = folderPath.lastIndexOf('/');
+  let lastSlash = folderPath.lastIndexOf("/");
   
   if(lastSlash == -1)
     return "";
@@ -43,7 +43,7 @@ class FileTree
       return;
 
     let folder = this.root;
-    let splitPath = folderPath.split('/');
+    let splitPath = folderPath.split("/");
     let index = 0;
     
     if(splitPath[index] == this.root.name)
@@ -93,5 +93,5 @@ class FileTree
   }
 }
 
-if(typeof module !== 'undefined')
+if(typeof module !== "undefined")
     module.exports = FileTree;

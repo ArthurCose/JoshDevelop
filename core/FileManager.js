@@ -1,10 +1,10 @@
 "use strict";
 
-const FileTree = require('../web/public/javascript/shared/filetree');
-const FileNode = require('../web/public/javascript/shared/filenode');
-const FileWatcher = require('./FileWatcher');
-const fs = require('fs-promise');
-const path = require('path');
+const FileTree = require("../web/public/javascript/shared/filetree");
+const FileNode = require("../web/public/javascript/shared/filenode");
+const FileWatcher = require("./FileWatcher");
+const fs = require("fs-promise");
+const path = require("path");
 
 
 class FileManager extends FileTree
@@ -208,16 +208,16 @@ class ServerFileNode extends FileNode
   async rename(newName)
   {
     let newPath = this.parentFolder == undefined ?
-                  this.filetree.parentPath + '/' + newName :
-                  this.parentFolder.serverPath + '/' + newName;
+                  this.filetree.parentPath + "/" + newName :
+                  this.parentFolder.serverPath + "/" + newName;
     
     await fs.move(this.serverPath, newPath).catch((err) => {
       throw err.message;
     });
 
     this.filetree.project.broadcast({
-      type: 'filetree',
-      action: 'rename',
+      type: "filetree",
+      action: "rename",
       oldPath: this.clientPath,
       isFile: this.isFile,
       newName: newName

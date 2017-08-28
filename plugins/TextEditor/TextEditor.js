@@ -1,6 +1,6 @@
 "use strict";
 
-const OperationTransformer = require('./public/operationaltransform');
+const OperationTransformer = require("./public/operationaltransform");
 const TextDocument = require("./TextDocument");
 const Editor = require("../../core/Editor");
 

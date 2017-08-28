@@ -15,9 +15,9 @@ class TextDocument
 
   open()
   {
-    let contents = fs.readFileSync(this.fileNode.serverPath, 'utf8');
-    contents = contents.replace(/\r/g, '');
-    this.lines = contents.split('\n');
+    let contents = fs.readFileSync(this.fileNode.serverPath, "utf8");
+    contents = contents.replace(/\r/g, "");
+    this.lines = contents.split("\n");
   }
   
   save()

@@ -1,7 +1,7 @@
 "use strict";
 
-const Session = require('./Session');
-const Project = require('./Project');
+const Session = require("./Session");
+const Project = require("./Project");
 const fs = require("fs");
 
 const DEFAULT_PROJECT_NAME = "new";

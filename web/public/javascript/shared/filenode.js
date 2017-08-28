@@ -1,4 +1,4 @@
-if(typeof EventRaiser == 'undefined')
+if(typeof EventRaiser == "undefined")
     EventRaiser = require("./eventraiser");
 
 class FileNode extends EventRaiser
@@ -33,7 +33,7 @@ class FileNode extends EventRaiser
     
     while(folder != undefined)
     {
-      clientPath = folder.name + '/' + clientPath;
+      clientPath = folder.name + "/" + clientPath;
       folder = folder.parentFolder;
     }
 
@@ -62,5 +62,5 @@ class FileNode extends EventRaiser
   }
 }
 
-if(typeof module !== 'undefined')
+if(typeof module !== "undefined")
     module.exports = FileNode;

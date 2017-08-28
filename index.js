@@ -1,16 +1,16 @@
 const Core = require("./core/Core");
-const WebSocketServer = require('websocket').server;
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const ejs = require('ejs');
-const logger = require('morgan');
-const busboy = require('connect-busboy');
+const WebSocketServer = require("websocket").server;
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const ejs = require("ejs");
+const logger = require("morgan");
+const busboy = require("connect-busboy");
 const archiver = require("archiver");
-const walkSync = require('walk-sync');
-const path = require('path');
-const fs = require('fs');
+const walkSync = require("walk-sync");
+const path = require("path");
+const fs = require("fs");
 
-const port = parseInt(process.argv[2] || '8080');
+const port = parseInt(process.argv[2] || "8080");
 
 const core = new Core();
 
@@ -21,7 +21,7 @@ function init()
   const app = express();
   app.use(busboy());
   app.use(cookieParser());
-  app.use(logger('dev'));
+  app.use(logger("dev"));
   
   let [javascripts, stylesheets] = loadPlugins(app);
 
@@ -79,19 +79,19 @@ function loadPlugins(app)
     
     if(plugin.publicPath)
     {
-      let publicPath = pluginFolder + '/' + plugin.publicPath;
+      let publicPath = pluginFolder + "/" + plugin.publicPath;
 
       // route url
-      app.use('/' + encodeURI(publicPath), express.static(publicPath));
+      app.use("/" + encodeURI(publicPath), express.static(publicPath));
       
       // add web content
       if(plugin.localScripts)
         for(let filePath of plugin.localScripts)
-          javascripts.add(publicPath + '/' + filePath);
+          javascripts.add(publicPath + "/" + filePath);
       
       if(plugin.stylesheets)
         for(let filePath of plugin.stylesheets)
-          stylesheets.add(publicPath + '/' + filePath);
+          stylesheets.add(publicPath + "/" + filePath);
     }
   }
 
@@ -101,10 +101,10 @@ function loadPlugins(app)
 
 function createServer(app, indexHTML)
 {
-  app.use(express.static('web/public'));
-  app.get('/download', (req, res) => download(req, res));
-  app.post('/upload', (req, res) => upload(req, res));
-  app.use('/', (req, res) => res.send(indexHTML).end());
+  app.use(express.static("web/public"));
+  app.get("/download", (req, res) => download(req, res));
+  app.post("/upload", (req, res) => upload(req, res));
+  app.use("/", (req, res) => res.send(indexHTML).end());
   let server = app.listen(port);
   
   setupWebsocketServer(server);
@@ -119,15 +119,15 @@ function setupWebsocketServer(server)
     maxReceivedMessageSize: 18446744073709551615
   });
 
-  socketServer.on('request', (request) => core.request(request));
-  socketServer.on('connect', (connection) => core.connect(connection));
+  socketServer.on("request", (request) => core.request(request));
+  socketServer.on("connect", (connection) => core.connect(connection));
 }
 
 function setupErrorHandlers(app, server)
 {
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    let err = new Error('Not Found');
+    let err = new Error("Not Found");
     err.status = 404;
     next(err);
   });
@@ -139,19 +139,19 @@ function setupErrorHandlers(app, server)
   });
 
   // server error
-  server.on('error', function(error) {
-    if (error.syscall != 'listen') 
+  server.on("error", function(error) {
+    if (error.syscall != "listen") 
       throw error;
 
-    let bind = typeof port == 'string' ? 'Pipe ' + port
-                                       : 'Port ' + port;
+    let bind = typeof port == "string" ? "Pipe " + port
+                                       : "Port " + port;
 
     switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       break;
     default:
       throw error;
@@ -163,7 +163,7 @@ function setupErrorHandlers(app, server)
 
 function download(req, res)
 {
-  let invalidPath = typeof req.query.path == 'undefined';
+  let invalidPath = typeof req.query.path == "undefined";
 
   if(invalidPath)
   {
@@ -223,7 +223,7 @@ function upload(req, res)
   let errors = 0;
   let filecount = 0;
 
-  req.busboy.on('file', (fieldname, filestream, filename, encoding, mimetype) => {
+  req.busboy.on("file", (fieldname, filestream, filename, encoding, mimetype) => {
     uploadFile(project.fileManager, parentFolder, filename, filestream)
       .catch((err) => {
         errors++;
@@ -233,7 +233,7 @@ function upload(req, res)
     filecount++;
   });
 
-  req.busboy.on('finish', function() {
+  req.busboy.on("finish", function() {
     let completed = filecount - errors;
 
     res.send(

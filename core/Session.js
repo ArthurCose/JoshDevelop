@@ -1,6 +1,6 @@
 "use strict";
 
-const EventRaiser = require('../web/public/javascript/shared/eventraiser');
+const EventRaiser = require("../web/public/javascript/shared/eventraiser");
 
 class Session extends EventRaiser
 {
@@ -15,8 +15,8 @@ class Session extends EventRaiser
     this.project = undefined;
     this.editors = [];
     
-    this.websocket.on('message', (message) => this.messageReceived(message));
-    this.websocket.on('close', () => this.disconnected());
+    this.websocket.on("message", (message) => this.messageReceived(message));
+    this.websocket.on("close", () => this.disconnected());
     
     this.addEvent("message");
     this.addEvent("join project");
@@ -91,12 +91,12 @@ class Session extends EventRaiser
     {
       if(maxCount < 2 && Math.random() > .5)
       {
-        color += 'F0';
+        color += "F0";
         maxCount++;
       }
       else
       {
-        color += '00';
+        color += "00";
       }
     }
 

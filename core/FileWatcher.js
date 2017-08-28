@@ -1,7 +1,7 @@
 "use strict";
 
-const chokidar = require('chokidar');
-const path = require('path');
+const chokidar = require("chokidar");
+const path = require("path");
 
 class FileWatcher
 {
@@ -24,11 +24,11 @@ class FileWatcher
       }
     );
 
-    this.watcher.on('add', (filePath) => this.add(filePath, true));
-    this.watcher.on('unlink', (filePath) => this.remove(filePath, true));
-    this.watcher.on('addDir', (folderPath) => this.add(folderPath, false));
-    this.watcher.on('unlinkDir', (folderPath) => this.remove(folderPath, false));
-    this.watcher.on('error', (err) => console.log(err));
+    this.watcher.on("add", (filePath) => this.add(filePath, true));
+    this.watcher.on("unlink", (filePath) => this.remove(filePath, true));
+    this.watcher.on("addDir", (folderPath) => this.add(folderPath, false));
+    this.watcher.on("unlinkDir", (folderPath) => this.remove(folderPath, false));
+    this.watcher.on("error", (err) => console.log(err));
   }
   
   stop()

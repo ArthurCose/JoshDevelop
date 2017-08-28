@@ -9,7 +9,7 @@ class CookieJar
     {
       cookie = cookie.split("=");
 
-      if(cookie.length == 0 || cookie[0] == 'undefined')
+      if(cookie.length == 0 || cookie[0] == "undefined")
         continue;
       
       let key = decodeURIComponent(cookie[0]);
