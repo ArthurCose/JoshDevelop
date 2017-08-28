@@ -224,14 +224,11 @@ function upload(req, res)
   let filecount = 0;
 
   req.busboy.on('file', (fieldname, filestream, filename, encoding, mimetype) => {
-    try{
-      uploadFile(project.fileManager, parentFolder, filename, filestream);
-    }
-    catch(err)
-    {
-      errors++;
-      filestream.resume();
-    }
+    uploadFile(project.fileManager, parentFolder, filename, filestream)
+      .catch((err) => {
+        errors++;
+        filestream.resume();
+      });
 
     filecount++;
   });
@@ -248,9 +245,9 @@ function upload(req, res)
   req.pipe(req.busboy);
 }
 
-function uploadFile(fileManager, parentFolder, filename, readStream)
+async function uploadFile(fileManager, parentFolder, filename, readStream)
 {
-  fileManager.createNode(parentFolder.clientPath, filename, true);
+  await fileManager.createNode(parentFolder.clientPath, filename, true);
 
   let filePath = parentFolder.clientPath + "/" + filename;
   let fileNode = fileManager.getFile(filePath);
