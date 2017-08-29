@@ -72,7 +72,7 @@ class Project
 
   delete()
   {
-    this.core.deleteProject(this.name);
+    this.core.removeProject(this.name);
 
     let projectList = Object.values(this.core.projects);
     let firstProject = projectList[0];

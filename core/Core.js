@@ -25,6 +25,7 @@ class Core
     if(this.projectCount > 0)
       throw "Core.loadProjects() can not be called more than once";
 
+    // search for projects in the projects folder
     let filenames = fs.readdirSync("projects");
 
     for(let file of filenames)
@@ -36,6 +37,7 @@ class Core
         this.addProject(file);
     }
 
+    // create the default project if no projects were found
     if(this.projectCount == 0)
       this.addProject(DEFAULT_PROJECT_NAME);
   }
@@ -63,16 +65,11 @@ class Core
     return project;
   }
 
-  deleteProject(name)
+  removeProject(name)
   {
     delete this.projects[name];
 
-    this.broadcast({
-      type: "project",
-      action: "remove",
-      name: name
-    });
-
+    // no projects, create the default project
     if(--this.projectCount == 0)
     {
       let newProject = this.addProject(DEFAULT_PROJECT_NAME);
@@ -80,6 +77,12 @@ class Core
       for(let session of this.sessions)
         session.setProject(newProject);
     }
+    
+    this.broadcast({
+      type: "project",
+      action: "remove",
+      name: name
+    });
   }
 
   // accept all websocket requests
@@ -93,8 +96,10 @@ class Core
   {
     let session = new Session(this, webSocketConnection, this.topId++);
 
+    // send the project list to the session
     for(let projectName in this.projects)
     {
+      // shove the session into a project if it didn't already happen
       if(session.project == undefined)
       {
         let project = this.projects[projectName];
@@ -122,12 +127,6 @@ class Core
 
     this.sessions.push(session);
     session.init();
-  }
-
-  broadcast(message)
-  {
-    for(let session of this.sessions)
-      session.send(message);
   }
 
   createEditor(project, fileNode)
@@ -159,6 +158,12 @@ class Core
     let editor = new supportedEditor(project, fileNode);
 
     return editor;
+  }
+  
+  broadcast(message)
+  {
+    for(let session of this.sessions)
+      session.send(message);
   }
 
   messageReceived(session, message)
