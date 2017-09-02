@@ -37,8 +37,44 @@ class ContextMenu
     parentElement.appendChild(this.element);
     this.element.focus();
   }
+
+  getButton(label)
+  {
+    for(let node of this.element.childNodes)
+      if(node.innerText == label)
+        return node;
+    return undefined;
+  }
   
   addButton(label, clickDelegate, destroy)
+  {
+    let menuItem = this.createButton(label, clickDelegate, destroy);
+    this.element.appendChild(menuItem);
+
+    return menuItem;
+  }
+  
+  addButtonBefore(nextLabel, label, clickDelegate, destroy)
+  {
+    let menuItem = this.createButton(label, clickDelegate, destroy);
+    let nextButton = this.getButton(nextLabel);
+
+    this.element.insertBefore(nextButton, menuItem);
+
+    return menuItem;
+  }
+  
+  addButtonAfter(previousLabel, label, clickDelegate, destroy)
+  {
+    let menuItem = this.createButton(label, clickDelegate, destroy);
+    let previousButton = this.getButton(previousLabel);
+    
+    this.element.insertBefore(previousButton.nextSibling, menuItem);
+
+    return menuItem;
+  }
+
+  createButton(label, clickDelegate, destroy)
   {
     if(destroy == null)
       destroy = true;
@@ -58,10 +94,7 @@ class ContextMenu
     menuItem.addEventListener("mouseover", () => {
       if(this.submenu != undefined)
         this.submenu.destroy();
-    });
-    
-    this.element.appendChild(menuItem);
-    return menuItem;
+  });
   }
 
   addBreak()
