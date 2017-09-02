@@ -88,20 +88,18 @@ class Profile extends EventRaiser
       this.colorElement.addEventListener("input", () => this.saveUpdate());
       this.nameElement.addEventListener("input", () => this.saveUpdate());
       this.nameElement.addEventListener("keydown", (e) => {
-        if (e.keyCode != 13)
+        if(e.keyCode != 13)
           return;
 
         e.preventDefault();
         window.getSelection().removeAllRanges();
       });
       this.nameElement.addEventListener("paste", (e) => e.preventDefault());
-
-      this.checkCookies();
     }
 
     this.element.appendChild(this.colorElement);
     this.element.appendChild(this.nameElement);
-    session.userlist.element.appendChild(this.element);
+    session.userList.element.appendChild(this.element);
   }
 
   get name()
@@ -126,24 +124,8 @@ class Profile extends EventRaiser
     this.triggerEvent("update");
   }
 
-  checkCookies()
-  {
-    let name = session.cookiejar.getCookie("username");
-    let color = session.cookiejar.getCookie("usercolor");
-
-    if(color)
-      this.color = color;
-    if(name)
-      this.name = name;
-    
-    this.saveUpdate();
-  }
-
   saveUpdate()
   {
-    session.cookiejar.setCookie("username", this.name);
-    session.cookiejar.setCookie("usercolor", this.color);
-
     session.send({
       type: "profile",
       action: "update",

@@ -3,9 +3,10 @@ class Session extends EventRaiser
   constructor()
   {
     super();
+    this.id = -1;
     this.project = undefined;
-    this.cookiejar = new CookieJar();
-
+    this.editors = [];
+    
     // <name, class>
     this.editorDictionary = {};
 
@@ -17,23 +18,17 @@ class Session extends EventRaiser
   windowLoaded()
   {
     this.toolbar = new Toolbar();
-    this.userlist = new UserList();
-    this.settings = new SettingsMenu();
+    this.userList = new UserList();
+    this.settingsMenu = new SettingsMenu();
     this.fileManager = this.initializeFileManager();
     this.projectList = new ProjectListMenu();
-
+    
     this.editorTabs = new TabbedContainer("#editor-container");
-
-    this.websocket = this.connect(() => {
-      this.editors = [];
-      this.id = -1;
-      
-      this.triggerEvent("connect");
-    });
-
     this.initializeSplitters();
-
+    
     this.triggerEvent("load");
+
+    this.websocket = this.connect();
   }
   
   initializeSplitters()
@@ -138,9 +133,6 @@ class Session extends EventRaiser
 
     websocket.onopen = (e) => {
       document.getElementById("connection").style.backgroundColor = "lime";
-
-      if(onConnect)
-        onConnect();
     };
 
     websocket.onclose = (e) => {
@@ -188,6 +180,8 @@ class Session extends EventRaiser
     {
     case "init":
       this.id = message.id;
+      this.settings = message.settings;
+      this.triggerEvent("connect");
       break;
     case "popup":
       this.displayPopup(message.message);
@@ -199,7 +193,7 @@ class Session extends EventRaiser
       this.projectList.messageReceived(message);
       break;
     case "profile":
-      this.userlist.messageReceived(message);
+      this.userList.messageReceived(message);
       break;
     case "editor":
       if(message.action == "initialize")

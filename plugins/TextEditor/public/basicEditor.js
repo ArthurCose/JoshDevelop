@@ -28,7 +28,7 @@ class BasicTextEditor
     let aceEditor = ace.edit(editorElement);
     aceEditor.$blockScrolling = Infinity;
     aceEditor.session.selection.clearSelection();
-    session.settings.sections["Text Editor"].applySettings(aceEditor);
+    session.settingsMenu.sections["Text Editor"].applySettings(aceEditor);
 
     this.element.appendChild(editorElement);
 

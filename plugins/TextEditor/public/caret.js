@@ -3,7 +3,7 @@ class Caret
   constructor(userid, aceEditor)
   {
     this._range = new Range(0,0,0,0);
-    this._user = session.userlist.getUser(userid);
+    this._user = session.userList.getUser(userid);
 
     if(!this._user)
     {

@@ -49,7 +49,7 @@ class Shell {
 
   messageReceived(message)
   {
-    switch (message.action) {
+    switch(message.action) {
     case "output":
       this.terminal.write(message.value);
       break;

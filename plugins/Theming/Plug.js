@@ -1,10 +1,12 @@
+const User = require("../../core/User");
+
 module.exports = {
   publicPath: "public",
   localScripts: ["ThemeSettings.js"],
   stylesheets: ["stylesheet.css"],
   extraRouting: (express, app) => {
     app.use("/plugins/Theming/public/stylesheet.css", (req, res) => {
-      let theme = getThemeFromCookies(req.cookies);
+      let theme = getThemeFromSession(req.session);
       
       if(theme === undefined)
         res.end();
@@ -14,15 +16,9 @@ module.exports = {
   }
 }
 
-function getThemeFromCookies(cookies)
+function getThemeFromSession(session)
 {
-  let themeSettings = cookies["Theme%20Settings"];
+  let user = new User(session.username);
 
-  if(!themeSettings)
-    return;
-  
-  themeSettings = JSON.parse(themeSettings);
-  let theme = themeSettings["theme"];
-
-  return theme;
+  return user.get("settings").theme;
 }

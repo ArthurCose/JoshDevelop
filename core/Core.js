@@ -1,6 +1,7 @@
 "use strict";
 
 const Session = require("./Session");
+const User = require("./User");
 const Project = require("./Project");
 const fs = require("fs");
 
@@ -8,8 +9,9 @@ const DEFAULT_PROJECT_NAME = "new";
 
 class Core
 {
-  constructor()
+  constructor(sessionStore)
   {
+    this.sessionStore = sessionStore;
     this.sessionHooks = [];
     this.editorPlugins = [];
     this.sessions = [];
@@ -88,13 +90,26 @@ class Core
   // accept all websocket requests
   request(request)
   {
-    request.accept();
+    let sid;
+
+    for(let cookie of request.cookies)
+      if(cookie.name == "connect.sid")
+        sid = cookie.value.slice(2).split(".")[0];
+
+    this.sessionStore.get(sid, (err, sessionData) => {
+      if(!sessionData.username)
+        return;
+
+      let webSocketConnection = request.accept();
+      this.connect(webSocketConnection, sessionData.username);
+    });
   }
 
   // create a session for any new connection
-  connect(webSocketConnection)
+  connect(webSocketConnection, username)
   {
-    let session = new Session(this, webSocketConnection, this.topId++);
+    let user = new User(username);
+    let session = new Session(this, webSocketConnection, user, this.topId++);
 
     // send the project list to the session
     for(let projectName in this.projects)

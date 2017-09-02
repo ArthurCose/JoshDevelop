@@ -1,4 +1,3 @@
-session.on("load", () => {
-  //session.settings.addSection(new SpriteEditorSettings());
+session.on("connect", () => {
   session.editorDictionary["SpriteEditor"] = SpriteEditor;
 });

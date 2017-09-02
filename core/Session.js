@@ -4,14 +4,14 @@ const EventRaiser = require("../web/public/javascript/shared/eventraiser");
 
 class Session extends EventRaiser
 {
-  constructor(core, websocketConnection, id)
+  constructor(core, websocketConnection, user, id)
   {
     super();
-    this.websocket = websocketConnection;
     this.core = core;
+    this.websocket = websocketConnection;
+    this.user = user;
     this.id = id;
-    this.name = "Anonymous";
-    this.color = this.generateColor();
+
     this.project = undefined;
     this.editors = [];
     
@@ -32,7 +32,8 @@ class Session extends EventRaiser
     // give the client their ID
     this.send({
       type: "init",
-      id: this.id
+      id: this.id,
+      settings: this.user.get("settings")
     });
 
     // broadcast the addition of this
@@ -40,8 +41,8 @@ class Session extends EventRaiser
     this.core.broadcast({
       type: "profile",
       action: "add",
-      name: this.name,
-      color: this.color,
+      name: this.user.get("nickname"),
+      color: this.user.get("color"),
       sessionID: this.id
     });
 
@@ -52,8 +53,8 @@ class Session extends EventRaiser
         this.send({
           type: "profile",
           action: "add",
-          name: session.name,
-          color: session.color,
+          name: session.user.get("nickname"),
+          color: session.user.get("color"),
           sessionID: session.id
         });
   }
@@ -83,28 +84,6 @@ class Session extends EventRaiser
   get fileManager()
   {
     return this.project.fileManager;
-  }
-
-  generateColor()
-  {
-    let maxCount = 0;
-    let color = "#";
-
-    for(let i = 0; i < 3; i++)
-    {
-      if(maxCount < 2 && Math.random() > .5)
-      {
-        color += "F0";
-        maxCount++;
-      }
-      else
-      {
-        color += "00";
-      }
-    }
-
-    // reroll if we get black;
-    return color == "#000000" ? this.generateColor() : color;
   }
 
   openEditor(path)
@@ -188,18 +167,23 @@ class Session extends EventRaiser
       case "project":
         this.core.messageReceived(this, message);
         break;
+      case "settings":
+        let settings = this.user.get("settings");
+        settings[message.section] = message.data;
+        this.user.set("settings", settings);
+        break;
       case "profile":
         if(message.action != "update")
           return;
 
-        this.name = message.name;
-        this.color = message.color;
+        this.user.set("nickname", message.name);
+        this.user.set("color", message.color);
 
         this.core.broadcast({
           type: "profile",
           action: "update",
-          name: this.name,
-          color: this.color,
+          name: message.name,
+          color: message.color,
           sessionID: this.id
         });
         break;

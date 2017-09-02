@@ -3,7 +3,7 @@
 const FileTree = require("../web/public/javascript/shared/filetree");
 const FileNode = require("../web/public/javascript/shared/filenode");
 const FileWatcher = require("./FileWatcher");
-const fs = require("fs-promise");
+const fs = require("fs-extra");
 const path = require("path");
 
 

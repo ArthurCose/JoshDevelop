@@ -9,7 +9,10 @@
       * A "FollowUser" request seems like a good name
     * Only show the path, editors will handle details when requested
   * add to the User class as location
-
+* File writing tools in ServerFileNode
+* Login
+  * admins should be able to give/withdraw privileges - such as terminal
+    * privilege api for plugins
 
 ## Plugin Additions
 
@@ -39,15 +42,3 @@
 
 * convert to ES6 modules
 * documentation
-
-
-## Uncertain
-
-## Core
-
-* Login
-  * get rid of current cookie system and save/load to server
-  * registering should notify users marked as administrators and 
-    require verification
-  * admins should be able to give/withdraw privileges - such as terminal
-    * privilege api for plugins

@@ -1,7 +1,7 @@
 const Animation = require("./Animation.js");
 const Layer = require("./Layer.js");
 const path = require("path");
-const fs = require("fs-promise");
+const fs = require("fs-extra");
 const PNG = require("pngjs").PNG;
 
 class SpriteFile

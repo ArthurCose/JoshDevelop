@@ -1,0 +1,59 @@
+body{
+  background: #f8f8f8;
+}
+
+body, input{
+  font: 15px Arial;
+}
+
+a{
+  color: #888;
+  text-decoration: underline;
+}
+
+a:hover{
+  color: #999;
+}
+
+input{
+  display: block;
+  padding: 2px;
+  border: 1px solid #A9A9A9;
+}
+
+input[type=submit]{
+  background: #eee;
+  border: 1px solid #aaa;
+  border: 0;
+  padding: 5px 10px;
+}
+
+input[type=submit]:active{
+  background: #e7e7e7;
+}
+
+input:focus{
+  outline: 0;
+}
+
+input[type=submit], a{
+  cursor: pointer;
+}
+
+#form{
+  background: #ddd;
+  width: 300px;
+  margin: 50px auto;
+  padding: 15px;
+  display: block;
+}
+
+#verify-password-container{
+  display: none;
+}
+
+#submit{
+  display: block;
+  margin-left: auto;
+  margin-top: 10px;
+}

@@ -1,4 +1,5 @@
-class AceSettings extends SettingsSection{
+class AceSettings extends SettingsSection
+{
   constructor()
   {
     super("Text Editor");

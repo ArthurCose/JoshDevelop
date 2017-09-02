@@ -1,3 +1,7 @@
+session.on("connect", (session) => {
+  session.settingsMenu.addSection(new ThemeSettings());
+});
+
 class ThemeSettings extends SettingsSection
 {
   constructor()
@@ -25,7 +29,6 @@ class ThemeSettings extends SettingsSection
       document.querySelector("link[href='plugins/Theming/public/stylesheet.css']")
               .remove();
     });
-
   }
 
   get theme()
@@ -60,7 +63,3 @@ class ThemeSettings extends SettingsSection
       callback();
   }
 }
-
-session.on("load", (session) => {
-  session.settings.addSection(new ThemeSettings());
-});

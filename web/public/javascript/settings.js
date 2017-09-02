@@ -61,23 +61,20 @@ class SettingsSection
   {
     // title couples as an identifier
     this.title = title;
-    this.settings = this.loadSavedSettings();
+    this.settings = session.settings[title] || {};
 
     this.contentElement = document.createElement("div");
     this.contentElement.style.display = "none";
     this.contentElement.style.width = "100%";
   }
 
-  loadSavedSettings()
-  {
-    let settings = session.cookiejar.getCookie(this.title + " Settings");
-
-    return settings ? JSON.parse(settings) : {};
-  }
-
   saveSettings()
   {
-    session.cookiejar.setCookie(this.title + " Settings", JSON.stringify(this.settings));
+    session.send({
+      type: "settings",
+      section: this.title,
+      data: this.settings
+    });
   }
 
   createTextInput(startValue, onChange)

@@ -1,2 +1,4 @@
 /node_modules
+/sessions
+/users
 package-lock.json

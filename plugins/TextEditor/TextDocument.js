@@ -1,4 +1,4 @@
-const fs = require("fs-promise");
+const fs = require("fs-extra");
 
 class TextDocument
 {
@@ -20,7 +20,7 @@ class TextDocument
     this.lines = contents.split("\n");
   }
   
-  save()
+  async save()
   {
     // don't try to save while already saving
     if(this.saving)
@@ -33,17 +33,17 @@ class TextDocument
     
     this.saving = true;
     
-    this.fileNode.parentFolder.make().then(() => {
-      fs.writeFile(this.fileNode.serverPath, this.lines.join("\r\n")).then(() => {
-        this.saving = false;
+    await this.fileNode.parentFolder.make();
 
-        // save again
-        if(this.saveQueued)
-          this.save();
-        
-        this.saveQueued = false;
-      }).catch((err) => console.log(err));
-    });
+    await fs.writeFile(this.fileNode.serverPath, this.lines.join("\r\n"));
+
+    this.saving = false;
+
+    // save again
+    if(this.saveQueued)
+      this.save();
+    
+    this.saveQueued = false;
   }
   
   applyOperation(operation)
