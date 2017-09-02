@@ -8,10 +8,8 @@ const ejs = require("ejs");
 const logger = require("morgan");
 const busboy = require("connect-busboy");
 const bodyParser = require('body-parser');
-const archiver = require("archiver");
 const walkSync = require("walk-sync");
 const path = require("path");
-const fs = require("fs");
 
 const port = parseInt(process.argv[2] || "8080");
 
@@ -54,44 +52,44 @@ function loadPlugins(app) {
 
   for(let plugLocation of plugLocations) {
     plugLocation = `plugins/${plugLocation}`;
-    let plugin = require(`./${plugLocation}`);
     let pluginFolder = path.dirname(plugLocation);
 
-    if(plugin.initialize)
-      plugin.initialize(core);
+    let Plugin = require(`./${plugLocation}`);
+
+    let plug = new Plugin(core);
 
     // append editors to a list
-    if(plugin.editors)
-      core.editorPlugins.splice(0, 0, ...plugin.editors);
+    if(plug.editors)
+      core.editorPlugins.splice(0, 0, ...plug.editors);
 
-    if(plugin.sessionHooks)
-      core.sessionHooks.push(plugin.sessionHooks);
+    if(plug.sessionHooks)
+      core.sessionHooks.push(plug.sessionHooks);
 
-    if(plugin.extraRouting)
-      plugin.extraRouting(express, app);
+    if(plug.extraRouting)
+      plug.extraRouting(express, app);
 
-    if(plugin.externalStylesheets)
-      for(let filePath of plugin.externalStylesheets)
+    if(plug.externalStylesheets)
+      for(let filePath of plug.externalStylesheets)
         stylesheets.add(filePath);
 
     // add dependency scripts before any other web content
-    if(plugin.externalScripts)
-      for(let filePath of plugin.externalScripts)
+    if(plug.externalScripts)
+      for(let filePath of plug.externalScripts)
         scripts.add(filePath);
 
-    if(plugin.publicPath) {
-      let publicPath = pluginFolder + "/" + plugin.publicPath;
+    if(plug.publicPath) {
+      let publicPath = pluginFolder + "/" + plug.publicPath;
 
       // route url
       app.use("/" + encodeURI(publicPath), express.static(publicPath));
 
       // add web content
-      if(plugin.localScripts)
-        for(let filePath of plugin.localScripts)
+      if(plug.localScripts)
+        for(let filePath of plug.localScripts)
           scripts.add(publicPath + "/" + filePath);
 
-      if(plugin.stylesheets)
-        for(let filePath of plugin.stylesheets)
+      if(plug.stylesheets)
+        for(let filePath of plug.stylesheets)
           stylesheets.add(publicPath + "/" + filePath);
     }
   }
@@ -102,8 +100,6 @@ function loadPlugins(app) {
 
 function createServer(app, indexHTML) {
   app.use(express.static("web/public"));
-  app.get("/download", (req, res) => download(req, res));
-  app.post("/upload", (req, res) => upload(req, res));
   app.use("/auth", (req, res) => Authentication.respond(req, res));
   app.use("/logout", (req, res) => Authentication.logout(req, res));
   app.use("/", (req, res) => {
@@ -164,92 +160,4 @@ function setupErrorHandlers(app, server) {
 
     process.exit(1);
   });
-}
-
-function download(req, res) {
-  let invalidPath = typeof req.query.path == "undefined";
-
-  if(invalidPath) {
-    res.status(400).end();
-    return;
-  }
-
-  let filePath = `projects/${req.query.path}`;
-
-  fs.stat(filePath, (err, stats) => {
-    if(err) {
-      res.status(500).send(err);
-      return;
-    }
-
-    if(stats.isDirectory()) {
-      let archive = archiver.create("zip");
-      archive.pipe(res);
-      archive.directory(filePath);
-      archive.finalize();
-    }
-    else {
-      res.download(filePath);
-    }
-  });
-}
-
-function upload(req, res) {
-  let parentPath = req.query.parentPath;
-  let projectName = req.query.project;
-  let project = core.projects[projectName];
-
-  if(!project) {
-    res.status(400).send(`Project "${projectName}" does not exist.`);
-    return;
-  }
-
-  if(req.busboy == undefined) {
-    res.status(500).send(`Busboy is missing.`);
-    return;
-  }
-
-  let parentFolder = project.fileManager.getFolder(parentPath);
-
-  if(parentFolder == undefined) {
-    res.status(400).send(`${parentPath} is not a folder.`);
-    return;
-  }
-
-  let errors = 0;
-  let filecount = 0;
-
-  req.busboy.on("file", (fieldname, filestream, filename, encoding, mimetype) => {
-    uploadFile(project.fileManager, parentFolder, filename, filestream)
-      .catch((err) => {
-        errors++;
-        filestream.resume();
-      });
-
-    filecount++;
-  });
-
-  req.busboy.on("finish", function () {
-    let completed = filecount - errors;
-
-    res.send(
-      `${completed}/${filecount} File(s) uploaded\n` +
-      `(${errors}) errors.`
-    );
-  });
-
-  req.pipe(req.busboy);
-}
-
-async function uploadFile(fileManager, parentFolder, filename, readStream) {
-  await fileManager.createNode(parentFolder.clientPath, filename, true);
-
-  let filePath = parentFolder.clientPath + "/" + filename;
-  let fileNode = fileManager.getFile(filePath);
-
-  if(fileNode == undefined)
-    throw "Couldn't get file by path";
-
-  let writeStream = fs.createWriteStream(fileNode.serverPath);
-  readStream.pipe(writeStream);
 }

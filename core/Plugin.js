@@ -1,6 +1,8 @@
-class Plugin{
-  constructor()
+class Plugin
+{
+  constructor(core)
   {
+    this.core = core;
     /**
      * Folder relative to this folder used to serve web files.
      * @prop {?string}
@@ -29,13 +31,6 @@ class Plugin{
      * @prop {string[]} externalStylesheets
      */
     this.externalStylesheets;
-    /**
-     * Provides access to the Core class for more control
-     * 
-     * @function initialize
-     * @param {Core} core
-     */
-    this.initialize;
     /** 
      * Provides access to Express for more control 
      * @function extraRouting

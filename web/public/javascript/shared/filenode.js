@@ -3,17 +3,25 @@ if(typeof EventRaiser == "undefined")
 
 class FileNode extends EventRaiser
 {
-  constructor(filetree, parentFolder, name)
+  constructor(filetree, parentFolder, name, isFile)
   {
     super();
     this.filetree = filetree;
     this.parentFolder = parentFolder;
-    this.isFile = true;
+    this.isFile = isFile;
     this._name = name;
     this.deleted = false;
 
     this.addEvent("unlist");
     this.addEvent("rename");
+
+    // specific to client file/folder nodes
+    // (node, menu)
+    this.addEvent("menu");
+
+    this.filetree.triggerEvent("add", this);
+    this.on("unlist", () => this.filetree.triggerEvent("unlist", this));
+    this.on("rename", () => this.filetree.triggerEvent("rename", this));
   }
   
   get name()
@@ -38,6 +46,17 @@ class FileNode extends EventRaiser
     }
 
     return clientPath;
+  }
+  
+  containsChild(name)
+  {
+    if(this.isFile)
+      throw "File can not contain children";
+
+    for(let child of this.children)
+      if(child.name == name)
+        return true;
+    return false;
   }
   
   unlink()

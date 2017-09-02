@@ -59,7 +59,7 @@ class ContextMenu
     let menuItem = this.createButton(label, clickDelegate, destroy);
     let nextButton = this.getButton(nextLabel);
 
-    this.element.insertBefore(nextButton, menuItem);
+    this.element.insertBefore(menuItem, nextButton);
 
     return menuItem;
   }
@@ -69,7 +69,7 @@ class ContextMenu
     let menuItem = this.createButton(label, clickDelegate, destroy);
     let previousButton = this.getButton(previousLabel);
     
-    this.element.insertBefore(previousButton.nextSibling, menuItem);
+    this.element.insertBefore(menuItem, previousButton.nextSibling);
 
     return menuItem;
   }
@@ -94,7 +94,9 @@ class ContextMenu
     menuItem.addEventListener("mouseover", () => {
       if(this.submenu != undefined)
         this.submenu.destroy();
-  });
+    });
+
+    return menuItem;
   }
 
   addBreak()

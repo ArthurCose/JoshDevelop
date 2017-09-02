@@ -1,11 +1,11 @@
-const Shell = require("./Shell");
 const Plugin = require("../../core/Plugin");
+const Shell = require("./Shell");
 
 class TerminalPlugin extends Plugin
 {
-  constructor()
+  constructor(core)
   {
-    super();
+    super(core);
     this.publicPath = "public";
 
     this.localScripts = ["init.js", "shell.js"];
@@ -40,4 +40,4 @@ class TerminalPlugin extends Plugin
   }
 }
 
-module.exports = process.env.DISABLE_SHELL ? {} : new TerminalPlugin();
+module.exports = TerminalPlugin;

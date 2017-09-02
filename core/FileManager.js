@@ -177,6 +177,11 @@ class FileManager extends FileTree
 
 class ServerFileNode extends FileNode
 {
+  constructor(filetree, parentFolder, name, isFile)
+  {
+    super(filetree, parentFolder, name, isFile == undefined || isFile);
+  }
+
   get serverPath()
   {
     return this.filetree.parentPath + this.clientPath;
@@ -257,8 +262,7 @@ class ServerFolderNode extends ServerFileNode
 {
   constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name);
-    this.isFile = false;
+    super(filetree, parentFolder, name, false);
     this.children = [];
   }
   
@@ -291,7 +295,7 @@ class ServerFolderNode extends ServerFileNode
   registerSubFolder(name)
   {
     let folder = new ServerFolderNode(this.filetree, this, name);
-    this.children.push(folder);
+    this.registerNode(folder);
     
     return folder;
   }
@@ -299,17 +303,14 @@ class ServerFolderNode extends ServerFileNode
   registerFile(name)
   {
     let file = new ServerFileNode(this.filetree, this, name);
-    this.children.push(file);
+    this.registerNode(file);
     
     return file;
   }
 
-  containsChild(name)
+  registerNode(node)
   {
-    for(let child of this.children)
-      if(child.name == name)
-        return true;
-    return false;
+    this.children.push(node);
   }
 
   unlist()

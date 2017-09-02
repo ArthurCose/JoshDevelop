@@ -71,9 +71,9 @@ class ClientFileManager extends FileTree
 
 class ClientFileNode extends FileNode
 {
-  constructor(filetree, parentFolder, name)
+  constructor(filetree, parentFolder, name, isFile)
   {
-    super(filetree, parentFolder, name);
+    super(filetree, parentFolder, name, isFile == undefined || isFile);
 
     this.controlElement = document.createElement("li");
     this.nameElement = document.createElement("span");
@@ -116,13 +116,6 @@ class ClientFileNode extends FileNode
     
     menu.addButton("Rename", () => this.rename());
 
-    menu.addButton("Download", () => {
-      let filePath = encodeURIComponent(this.clientPath);
-      let projectName = encodeURIComponent(session.project);
-
-      window.location = `/download?project=${projectName}&path=${filePath}`;
-    });
-    
     menu.addButton("Delete", () => this.delete());
     
     if(!this.isFile)
@@ -143,6 +136,8 @@ class ClientFileNode extends FileNode
         });
       });
     }
+
+    this.triggerEvent("menu", menu);
 
     menu.appendToElement(document.body);
     
@@ -216,8 +211,7 @@ class ClientFolderNode extends ClientFileNode
 {
   constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name);
-    this.isFile = false;
+    super(filetree, parentFolder, name, false);
     this.children = [];
     
     this.expandButton = document.createElement("span");
@@ -229,13 +223,6 @@ class ClientFolderNode extends ClientFileNode
     
     this.controlElement.insertBefore(this.expandButton, this.controlElement.firstChild);
     this.controlElement.addEventListener("click", () => this.toggleDisplay());
-
-    // allow dragging files
-    this.controlElement.addEventListener("dragover", (e) => e.preventDefault());
-    this.listElement.addEventListener("dragover", (e) => e.preventDefault());
-
-    this.controlElement.addEventListener("drop", (e) => this.dropFiles(e));
-    this.listElement.addEventListener("drop", (e) => this.dropFiles(e));
   }
 
   get expanded()
@@ -247,36 +234,6 @@ class ClientFolderNode extends ClientFileNode
   {
     this.listElement.style.display = this.expanded ? "none" : "block";
     this.expandButton.innerHTML = this.expanded ? "&#x1f4c2;" : "&#x1f4c1;";
-  }
-
-  dropFiles(e)
-  {
-    e.stopPropagation();
-    e.preventDefault();
-
-    let files = e.target.files || e.dataTransfer.files;
-    let projectName = encodeURIComponent(session.project);
-    let safeclientPath = encodeURIComponent(this.clientPath);
-    
-    let xhr = new XMLHttpRequest();
-    let formData = new FormData();
-
-    for(let file of files)
-      formData.append(file.name, file);
-
-    session.displayPopup(`Uploading ${files.length} file(s).`);
-    
-    xhr.addEventListener("loadend", () => {
-      session.displayPopup(xhr.responseText);
-    });
-
-    xhr.open(
-      "POST",
-      `${window.location.origin}/upload?project=${projectName}&parentPath=${safeclientPath}`,
-      true
-    );
-
-    xhr.send(formData);
   }
   
   createNewNode(isFile)
@@ -326,8 +283,7 @@ class ClientFolderNode extends ClientFileNode
   registerSubFolder(name)
   {
     let folder = new ClientFolderNode(this.filetree, this, name);
-    this.insertNode(folder);
-    folder.append();
+    this.registerNode(folder);
     
     return folder;
   }
@@ -335,10 +291,15 @@ class ClientFolderNode extends ClientFileNode
   registerFile(name)
   {
     let file = new ClientFileNode(this.filetree, this, name);
-    this.insertNode(file);
-    file.append();
-    
+    this.registerNode(file);
+
     return file;
+  }
+  
+  registerNode(node)
+  {
+    this.insertNode(node);
+    node.append();
   }
   
   append()

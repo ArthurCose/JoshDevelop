@@ -1,3 +1,5 @@
+if(typeof module !== "undefined")
+  EventRaiser = require("./eventraiser");
 
 function getFileName(filePath)
 {
@@ -16,8 +18,16 @@ function getParentPath(folderPath)
   return folderPath.slice(0, lastSlash);
 }
 
-class FileTree
+class FileTree extends EventRaiser
 {
+  constructor()
+  {
+    super();
+    this.addEvent("add");
+    this.addEvent("unlist");
+    this.addEvent("rename");
+  }
+
   getFile(filePath)
   {
     if(typeof filePath != "string")
