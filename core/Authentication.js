@@ -74,7 +74,6 @@ class Authentication
       .catch(() => {throw "User already exists"});
 
     let data = {
-      admin: false,
       username: username,
       password: await bcrypt.hash(password, 8),
       nickname: username,
