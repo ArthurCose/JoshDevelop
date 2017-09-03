@@ -14,8 +14,7 @@ class SpriteEditor extends Editor
   {
     let extension = path.extname(fileName);
 
-    switch(extension)
-    {
+    switch(extension) {
     case ".sprite":
       return 1;
     case ".png":
@@ -44,8 +43,7 @@ class SpriteEditor extends Editor
   {
     super.messageReceived(session, message);
 
-    switch(message.action)
-    {
+    switch(message.action) {
     case "scale":
       this.sprite.scale(message.width, message.height);
       
@@ -105,8 +103,7 @@ class SpriteEditor extends Editor
       });
       break;
     case "rename layer":
-      if(this.sprite.getLayer(message.newName))
-      {
+      if(this.sprite.getLayer(message.newName)) {
         session.displayPopup(`Layer "${message.newName}" exists`);
         break;
       }

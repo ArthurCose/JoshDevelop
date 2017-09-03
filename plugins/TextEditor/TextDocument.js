@@ -23,8 +23,7 @@ class TextDocument
   async save()
   {
     // don't try to save while already saving
-    if(this.saving)
-    {
+    if(this.saving) {
       // queue a new save for after
       // the current save is finished
       this.saveQueued = true;
@@ -48,8 +47,7 @@ class TextDocument
   
   applyOperation(operation)
   {
-    switch(operation.action)
-    {
+    switch(operation.action) {
     case "insert":
       this.insert(operation);
       break;
@@ -68,8 +66,7 @@ class TextDocument
     let lineEnd = line.slice(operation.start.column, line.length);
     lineEnd = operation.lines[operation.lines.length - 1] + lineEnd;
     
-    if(operation.lines.length == 1)
-    {
+    if(operation.lines.length == 1) {
       this.lines[operation.start.row] = lineStart + lineEnd;
       return;
     }

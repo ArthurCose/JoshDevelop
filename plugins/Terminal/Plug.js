@@ -26,13 +26,11 @@ class TerminalPlugin extends Plugin
         if(message.type != "shell")
           return;
         
-        if(message.action == "create")
-        {
+        if(message.action == "create") {
           let shell = new Shell(session, session.shells.length);
           session.shells.push(shell);
         }
-        else
-        {
+        else {
           session.shells[message.id].messageReceived(message);
         }
       }

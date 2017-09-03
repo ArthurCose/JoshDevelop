@@ -75,8 +75,7 @@ class Editor
   broadcast(sessionIgnore, message)
   {
     for(let session of this.connectedSessions)
-      if(session.id != sessionIgnore.id)
-      {
+      if(session.id != sessionIgnore.id) {
         message.editorId = session.editors.indexOf(this);
         session.send(message);
       }
@@ -84,8 +83,7 @@ class Editor
 
   messageReceived(session, message)
   {
-    switch(message.action)
-    {
+    switch(message.action) {
     case "join":
       this.addSession(session);
       break;

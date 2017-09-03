@@ -35,8 +35,7 @@ class UserList
 
   messageReceived(message)
   {
-    switch(message.action)
-    {
+    switch(message.action) {
     case "add":
       this.addUser(message.name, message.color, message.sessionID);
       break;
@@ -79,8 +78,7 @@ class Profile extends EventRaiser
     this.color = color;
     this.id = id;
 
-    if(session.id == id)
-    {
+    if(session.id == id) {
       this.nameElement.contentEditable = true;
       this.nameElement.style.fontWeight = "bold";
       this.colorElement.disabled = false;

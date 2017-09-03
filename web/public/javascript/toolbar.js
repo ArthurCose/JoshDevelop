@@ -99,8 +99,7 @@ class DropDownMenu
 
   indexOf(label)
   {
-    for(let i = 0; i < this.elements.length; i++)
-    {
+    for(let i = 0; i < this.elements.length; i++) {
       let element = this.elements[i];
 
       if(element.label == label)
@@ -119,8 +118,7 @@ class DropDownMenu
   {
     this.contextMenu = new ContextMenu(x, y);
 
-    for(let element of this.elements)
-    {
+    for(let element of this.elements) {
       if(element.type == "button")
         this.contextMenu.addButton(element.label, element.clickDelegate, element.destroy);
       else if(element.type == "break")

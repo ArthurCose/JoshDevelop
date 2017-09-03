@@ -87,8 +87,7 @@ class Layer
     let oldData = this.data;
     this.clear();
 
-    for(let i = 0; i < size; i++)
-    {
+    for(let i = 0; i < size; i++) {
       let idx = i * this.width * 4;
       let row = oldData.subarray(idx, idx + this.width * 4);
 
@@ -103,8 +102,7 @@ class Layer
     let oldData = this.data;
     this.clear();
 
-    for(let i = 1; i <= size; i++)
-    {
+    for(let i = 1; i <= size; i++) {
       let idx = i * this.width * 4;
       let row = oldData.subarray(idx, idx + this.width * 4);
 

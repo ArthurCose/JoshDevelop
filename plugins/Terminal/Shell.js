@@ -29,8 +29,7 @@ class Shell
     if(!this.term)
       return;
 
-    switch(message.action)
-    {
+    switch(message.action) {
     case "destroy":
       this.destroy();
       break;

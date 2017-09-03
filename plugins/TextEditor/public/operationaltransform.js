@@ -5,12 +5,10 @@ class OperationTransformer
   // alters operationsA by operationsB
   static transformOperations(operationsA, operationsB)
   {
-    for(let operationB of operationsB)
-    {
+    for(let operationB of operationsB) {
       let clones = [];
       
-      for(let operationA of operationsA)
-      {
+      for(let operationA of operationsA) {
         // if operationB's owners contains operationA's original owner, skip
         if(operationB.owners.includes(operationA.owners[0]))
           continue;
@@ -29,8 +27,7 @@ class OperationTransformer
     
     // we don't want clones to conflict with themselves
     // this loop transforms the cloned operations by their orginal
-    for(let i = 0; i < operationsA.length - 1; i++)
-    {
+    for(let i = 0; i < operationsA.length - 1; i++) {
       let operationA = operationsA[i];
       let operationAClone = operationsA[i + 1];
       
@@ -58,8 +55,7 @@ class OperationTransformer
     operationA.end.row = newPosition.row + rowOffset;
     
     
-    if(operationA.action == "remove" && operationB.action == "remove")
-    {
+    if(operationA.action == "remove" && operationB.action == "remove") {
       let startAfter = this.comparePosition(operationA.start, operationB.start) >= 0;
       let endBefore = this.comparePosition(operationA.end, operationB.end) <= 0;
       // A's end is after B's start
@@ -68,8 +64,7 @@ class OperationTransformer
       let startBeforeEnd = this.comparePosition(operationA.start, operationB.end) < 0;
       
       // entirely inside, split operation B around operation A
-      if(startAfter && endBefore)
-      {
+      if(startAfter && endBefore) {
         clone = this.cloneOperation(operationB);
         clone.start = this.clonePosition(operationA.end);
         clone.end = this.clonePosition(operationB.end);
@@ -82,8 +77,7 @@ class OperationTransformer
         operationA.owners = operationA.owners.concat(operationB.owners);
       }
       // trim the end to the start of operation B
-      else if(endAfterStart && endBefore)
-      {
+      else if(endAfterStart && endBefore) {
         // create a clone of the parts that match
         clone = this.cloneOperation(operationA);
         clone.start = this.clonePosition(operationB.start);
@@ -100,8 +94,7 @@ class OperationTransformer
       }
       // create a clone of the parts that match
       // trim the start to the end of operation B
-      else if(startBeforeEnd && startAfter)
-      {
+      else if(startBeforeEnd && startAfter) {
         clone = this.cloneOperation(operationA);
         clone.start = this.clonePosition(operationA.start);
         clone.end = this.clonePosition(operationB.end);
@@ -116,8 +109,7 @@ class OperationTransformer
         operationA.start = this.clonePosition(operationB.end);
       }
     }
-    else if(operationA.action == "remove" && operationB.action == "insert")
-    {
+    else if(operationA.action == "remove" && operationB.action == "insert") {
       // if text was inserted in the area where text was deleted
       // we're going to split the deletion into two parts to preserve
       // text deletion and insertion
@@ -126,10 +118,8 @@ class OperationTransformer
       let startBeforeBStarts = this.comparePosition(operationA.start, operationB.start) <= 0;
       
       // operation B must be inside of operation A
-      if(endAfterBStarts && startBeforeBStarts)
-      {
-        if(this.comparePosition(operationA.end, operationB.end) >= 0)
-        {
+      if(endAfterBStarts && startBeforeBStarts) {
+        if(this.comparePosition(operationA.end, operationB.end) >= 0) {
           clone = this.cloneOperation(operationA);
           clone.start = this.clonePosition(operationB.end);
           clone.end = this.transformPosition(operationA.end, operationB);
@@ -138,16 +128,14 @@ class OperationTransformer
         operationA.end = this.clonePosition(operationB.start);
       }
     }
-    else if(operationA.action == "insert" && operationB.action == "remove")
-    {
+    else if(operationA.action == "insert" && operationB.action == "remove") {
       // if text was inserted in the area where text was deleted
       // then we move the insertion to the start of where the text deletion happened
       
       let startAfter = this.comparePosition(operationA.start, operationB.start) >= 0;
       let startBeforeEnd = this.comparePosition(operationA.start, operationB.end) < 0;
       
-      if(startAfter && startBeforeEnd)
-      {
+      if(startAfter && startBeforeEnd) {
         operationA.end.row = operationB.start.row + operationA.end.row - operationA.start.row;
         
         if(operationA.start.row == operationA.end.row)
@@ -183,15 +171,13 @@ class OperationTransformer
     if(rowOffset > 0)
       startColumn = 0;
     
-    if(operation.action == "remove")
-    {
+    if(operation.action == "remove") {
       newPosition.row -= rowOffset;
       
       if(newPosition.row == operation.start.row)
         newPosition.column = startColumn + newPosition.column - operation.end.column;
     }
-    else if(operation.action == "insert")
-    {
+    else if(operation.action == "insert") {
       newPosition.row += rowOffset;
       
       if(newPosition.row == operation.end.row)

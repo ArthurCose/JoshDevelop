@@ -39,8 +39,7 @@ class FileNode extends EventRaiser
     let clientPath = this.name;
     let folder = this.parentFolder;
     
-    while(folder != undefined)
-    {
+    while(folder != undefined) {
       clientPath = folder.name + "/" + clientPath;
       folder = folder.parentFolder;
     }

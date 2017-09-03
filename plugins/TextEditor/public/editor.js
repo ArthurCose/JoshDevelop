@@ -93,8 +93,7 @@ class TextEditor extends Editor
   {
     this.writingData = true;
     
-    switch(message.action)
-    {
+    switch(message.action) {
     case "join":
       this.editor.aceEditor.setValue(message.value, -1);
       
@@ -142,8 +141,7 @@ class TextEditor extends Editor
   
   applyOperation(operation)
   {
-    switch(operation.action)
-    {
+    switch(operation.action) {
     case "insert":
       this.insert(operation);
       break;

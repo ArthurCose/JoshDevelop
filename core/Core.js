@@ -30,8 +30,7 @@ class Core
     // search for projects in the projects folder
     let filenames = fs.readdirSync("projects");
 
-    for(let file of filenames)
-    {
+    for(let file of filenames) {
       let filePath = `projects/${file}`;
 
       // file is a directory
@@ -72,8 +71,7 @@ class Core
     delete this.projects[name];
 
     // no projects, create the default project
-    if(--this.projectCount == 0)
-    {
+    if(--this.projectCount == 0) {
       let newProject = this.addProject(DEFAULT_PROJECT_NAME);
 
       for(let session of this.sessions)
@@ -112,11 +110,9 @@ class Core
     let session = new Session(this, webSocketConnection, user, this.topId++);
 
     // send the project list to the session
-    for(let projectName in this.projects)
-    {
+    for(let projectName in this.projects) {
       // shove the session into a project if it didn't already happen
-      if(session.project == undefined)
-      {
+      if(session.project == undefined) {
         let project = this.projects[projectName];
 
         session.setProject(project);
@@ -130,8 +126,7 @@ class Core
     }
 
     // attach hooks
-    for(let hookList of this.sessionHooks)
-    {
+    for(let hookList of this.sessionHooks) {
       if(hookList.connect)
         hookList.connect(session);
       if(hookList.message)
@@ -150,8 +145,7 @@ class Core
     let supportedEditor;
 
     // search for an editor that supports this file
-    for(let editorPlugin of this.editorPlugins)
-    {
+    for(let editorPlugin of this.editorPlugins) {
       let supportLevel = editorPlugin.getSupportLevelFor(fileNode.name);
 
       // higher number means lower priority
@@ -175,32 +169,27 @@ class Core
     return editor;
   }
   
-  broadcast(message)
-  {
+  broadcast(message) {
     for(let session of this.sessions)
       session.send(message);
   }
 
-  messageReceived(session, message)
-  {
+  messageReceived(session, message) {
     if(message.type != "project")
       return;
 
-    switch(message.action)
-    {
+    switch(message.action) {
     case "swap":
       let project = this.projects[message.name];
 
       session.setProject(project);
       break;
     case "add":
-      try
-      {
+      try {
         // create the project
         this.addProject(message.name);
       }
-      catch(err)
-      {
+      catch(err) {
         session.displayPopup(err);
       }
       break;

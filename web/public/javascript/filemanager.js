@@ -38,8 +38,7 @@ class ClientFileManager extends FileTree
   {
     let node;
     
-    switch(e.action)
-    {
+    switch(e.action) {
     case "add":
       node = this.registerNode(e.path, e.isFile);
 
@@ -55,8 +54,7 @@ class ClientFileManager extends FileTree
       node = this.getNode(e.oldPath, e.isFile);
       node.name = e.newName;
 
-      if(node.parentFolder != undefined)
-      {
+      if(node.parentFolder != undefined) {
         // remove and add the node back, to sort it
         node.destroy();
         node.parentFolder.insertNode(node);
@@ -101,8 +99,7 @@ class ClientFileNode extends FileNode
     menu.element.addEventListener("focus", () => this.controlElement.classList.add("selected"));
     menu.element.addEventListener("blur", () => this.controlElement.classList.remove("selected"));
     
-    if(!this.isFile)
-    {
+    if(!this.isFile) {
       let addMenu = menu.addSubmenu("Add New");
       addMenu.addButton("File", () => this.createNewNode(true));
       addMenu.addButton("Folder",  () => this.createNewNode(false));
@@ -118,8 +115,7 @@ class ClientFileNode extends FileNode
 
     menu.addButton("Delete", () => this.delete());
     
-    if(!this.isFile)
-    {
+    if(!this.isFile) {
       menu.addButton("Empty", () => {
         session.send({
           type: "filemanager",
@@ -314,8 +310,7 @@ class ClientFolderNode extends ClientFileNode
   {
     let index = 0;
     
-    for(index; index < this.children.length; index++)
-    {
+    for(index; index < this.children.length; index++) {
       let child = this.children[index];
       
       // found a file, this folder should go before it

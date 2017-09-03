@@ -40,8 +40,7 @@ class ProjectListMenu
     let index = 0;
 
     // get the index for alphabetical sort
-    for(let element of this.dropdown.elements)
-    {
+    for(let element of this.dropdown.elements) {
       if(projectName < element.label || element.label == "/list end")
         break;
 
@@ -71,8 +70,7 @@ class ProjectListMenu
 
   messageReceived(message)
   {
-    switch(message.action)
-    {
+    switch(message.action) {
     case "swap":
       session.setProject(message.name);
       break;

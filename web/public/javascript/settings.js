@@ -98,8 +98,7 @@ class SettingsSection
   {
     let dropdown = document.createElement("select");
     
-    for(let option of options)
-    {
+    for(let option of options) {
       let optionElement = document.createElement("option");
       optionElement.value = option;
       optionElement.text = option

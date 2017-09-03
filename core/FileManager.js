@@ -23,8 +23,7 @@ class FileManager extends FileTree
   
   sendFolder(session, folder)
   {
-    for(let childFolder of folder.children)
-    {
+    for(let childFolder of folder.children) {
       session.send({
         type: "filetree",
         action: "add",
@@ -88,8 +87,7 @@ class FileManager extends FileTree
   {
     let node, folder;
 
-    switch(message.action)
-    {
+    switch(message.action) {
     case "add":
       this.createNode(
         message.parentPath,
@@ -119,12 +117,10 @@ class FileManager extends FileTree
 
       let error = this.validateName(newName);
 
-      if(error)
-      {
+      if(error) {
         session.displayPopup(error);
       }
-      else
-      {
+      else {
         node.rename(newName).catch((err) => {
           session.displayPopup(err);
         });
@@ -139,8 +135,7 @@ class FileManager extends FileTree
 
       if(folder == undefined)
         return;
-      if(destinationNode != undefined)
-      {
+      if(destinationNode != undefined) {
         session.displayPopup(
           `"${destination}" already exists.\n` +
           `Could not move "${message.path}"`
@@ -201,8 +196,7 @@ class ServerFileNode extends FileNode
           throw err.message;
     });
 
-    if(fileExists)
-    {
+    if(fileExists) {
       let stats = await fs.stat(this.serverPath);
       
       if(!stats.isFile())
@@ -282,8 +276,7 @@ class ServerFolderNode extends ServerFileNode
         throw err.message;
     });
 
-    if(fileExists)
-    {
+    if(fileExists) {
       let stats = await fs.stat(this.serverPath);
 
       // if it's a file throw an error
@@ -326,8 +319,7 @@ class ServerFolderNode extends ServerFileNode
   {
     let skipped = 0;
 
-    while(this.children.length > skipped)
-    {
+    while(this.children.length > skipped) {
       // try to delete this child, if it fails
       // increment skipped to skip it
       // failed deletions will remain in the front

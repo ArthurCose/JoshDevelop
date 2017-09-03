@@ -23,8 +23,7 @@ class SpriteFile
 
   open()
   {
-    switch(this.extension)
-    {
+    switch(this.extension) {
     case ".sprite":
       this.addLayer("Layer 1");
       break;
@@ -45,8 +44,7 @@ class SpriteFile
   async save()
   {
     // don't try to save while already saving
-    if(this.saving)
-    {
+    if(this.saving) {
       // queue a new save for after
       // the current save is finished
       this.saveQueued = true;
@@ -57,8 +55,7 @@ class SpriteFile
     
     await this.fileNode.parentFolder.make();
 
-    switch(this.extension)
-    {
+    switch(this.extension) {
     case ".sprite":
       break
     case ".png":
@@ -101,13 +98,11 @@ class SpriteFile
   {
     let animation = this.animations[name];
 
-    if(animation == undefined)
-    {
+    if(animation == undefined) {
       animation = new Animation(name, start, end);
       this.animations[name] = animation;
     }
-    else
-    {
+    else {
       animation.start = start;
       animation.end = end;
     }
@@ -172,8 +167,7 @@ class SpriteFile
 
   pad(size, direction)
   {
-    switch(direction)
-    {
+    switch(direction) {
     case "left":
       this.padLeft(size);
       break;

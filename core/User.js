@@ -26,15 +26,12 @@ class User
     let maxCount = 0;
     let color = "#";
 
-    for(let i = 0; i < 3; i++)
-    {
-      if(maxCount < 2 && Math.random() > .5)
-      {
+    for(let i = 0; i < 3; i++) {
+      if(maxCount < 2 && Math.random() > .5) {
         color += "F0";
         maxCount++;
       }
-      else
-      {
+      else {
         color += "00";
       }
     }
@@ -57,8 +54,7 @@ class User
 
   async save()
   {
-    if(this.saving)
-    {
+    if(this.saving) {
       this.saveQueued = true;
       return;
     }
@@ -70,8 +66,7 @@ class User
     await fs.writeFile(filePath, data);
     this.saving = false;
 
-    if(this.saveQueued)
-    {
+    if(this.saveQueued) {
       this.saveQueued = false;
       this.save();
     }

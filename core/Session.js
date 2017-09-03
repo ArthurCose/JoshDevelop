@@ -71,8 +71,7 @@ class Session extends EventRaiser
       name: project.name
     });
 
-    if(lastProject != undefined)
-    {
+    if(lastProject != undefined) {
       lastProject.disconnect(this);
       this.triggerEvent("leave project", lastProject);
     }
@@ -90,8 +89,7 @@ class Session extends EventRaiser
   {
     let editor = this.project.getEditor(path);
 
-    if(!editor)
-    {
+    if(!editor) {
       this.displayPopup(`No editor available for ${path}`);
       return;
     }
@@ -147,12 +145,10 @@ class Session extends EventRaiser
   
   messageReceived(message)
   {
-    try
-    {
+    try {
       message = JSON.parse(message.utf8Data);
       
-      switch(message.type)
-      {
+      switch(message.type) {
       case "editor":
         let editor = this.editors[message.editorId] ||
                      this.openEditor(message.path);

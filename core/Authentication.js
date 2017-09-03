@@ -10,8 +10,7 @@ class Authentication
 {
   static respond(req, res)
   {
-    if(!req.body.action)
-    {
+    if(!req.body.action) {
       res.sendFile(LOGIN_PAGE);
       return;
     }
@@ -20,8 +19,7 @@ class Authentication
     let password = req.body.password;
     let verifyPassword = req.body.verifyPassword;
 
-    if(!VALID_USERNAME_REGEX.test(username))
-    {
+    if(!VALID_USERNAME_REGEX.test(username)) {
       res.send("Invalid username.");
       return;
     }

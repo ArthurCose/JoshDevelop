@@ -47,8 +47,7 @@ class ThemeSettings extends SettingsSection
 
   updateCSS(callback)
   {
-    if(this.theme != "custom -todo")
-    {
+    if(this.theme != "custom -todo") {
       let xhr = new XMLHttpRequest();
       
       xhr.addEventListener("load", (e) => {

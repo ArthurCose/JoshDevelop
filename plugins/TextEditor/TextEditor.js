@@ -34,8 +34,7 @@ class TextEditor extends Editor
       editorId: editorId
     });
 
-    for(let key in this.carets)
-    {
+    for(let key in this.carets) {
       let caretRange = this.carets[key];
 
       if(caretRange == undefined)
@@ -82,8 +81,7 @@ class TextEditor extends Editor
   {
     super.messageReceived(session, message);
     
-    switch(message.action)
-    {
+    switch(message.action) {
     case "operation":
       message.operation.skip = false;
       message.operation.owners = [session.id];
@@ -111,8 +109,7 @@ class TextEditor extends Editor
       this.document.revisions.slice(lastRevision, this.document.revisions.length)
     );
     
-    for(let operation of operations)
-    {
+    for(let operation of operations) {
       if(!operation.skip)
         this.document.applyOperation(operation);
       else

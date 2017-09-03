@@ -62,8 +62,7 @@ class Session extends EventRaiser
     let tab = this.editorTabs.getTab(fileNode.clientPath);
 
     // if the tab already exists, then make it active
-    if(tab)
-    {
+    if(tab) {
       tab.makeActive();
       return;
     }
@@ -176,8 +175,7 @@ class Session extends EventRaiser
   {
     message = JSON.parse(message);
 
-    switch(message.type)
-    {
+    switch(message.type) {
     case "init":
       this.id = message.id;
       this.settings = message.settings;
@@ -196,8 +194,7 @@ class Session extends EventRaiser
       this.userList.messageReceived(message);
       break;
     case "editor":
-      if(message.action == "initialize")
-      {
+      if(message.action == "initialize") {
         this.initializeEditor(message.name, message.id);
         break;
       }

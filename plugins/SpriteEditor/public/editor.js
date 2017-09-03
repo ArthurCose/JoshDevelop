@@ -118,8 +118,7 @@ class SpriteEditor extends Editor
       mouseX = mouseX / this.zoom - this.x + this.width / 2;
       mouseY = mouseY / this.zoom - this.y + this.height / 2;
       
-      if(mouseButton == 1)
-      {
+      if(mouseButton == 1) {
         // add deltas to transform
         this.x += (e.clientX - mouseOldX) / this.zoom;
         this.y += (e.clientY - mouseOldY) / this.zoom;
@@ -234,8 +233,7 @@ class SpriteEditor extends Editor
 
   pad(size, direction)
   {
-    switch(direction)
-    {
+    switch(direction) {
     case "left":
       this.padLeft(size);
       break;
@@ -255,8 +253,7 @@ class SpriteEditor extends Editor
   {
     this.width += size;
 
-    for(let layer of this.layers)
-    {
+    for(let layer of this.layers) {
       layer.padLeft(size);
       layer.render();
     }
@@ -268,8 +265,7 @@ class SpriteEditor extends Editor
   {
     this.width += size;
 
-    for(let layer of this.layers)
-    {
+    for(let layer of this.layers) {
       layer.padRight(size);
       layer.render();
     }
@@ -281,8 +277,7 @@ class SpriteEditor extends Editor
   {
     this.height += size;
 
-    for(let layer of this.layers)
-    {
+    for(let layer of this.layers) {
       layer.padTop(size);
       layer.render();
     }
@@ -294,8 +289,7 @@ class SpriteEditor extends Editor
   {
     this.height += size;
 
-    for(let layer of this.layers)
-    {
+    for(let layer of this.layers) {
       layer.padBottom(size);
       layer.render();
     }
@@ -322,10 +316,8 @@ class SpriteEditor extends Editor
 
   renderBackground()
   {
-    for(let y = 0; y < this.height; y += 16)
-    {
-      for(let x = 0; x < this.width; x += 16)
-      {
+    for(let y = 0; y < this.height; y += 16) {
+      for(let x = 0; x < this.width; x += 16) {
         this.ctx.fillStyle = (x + y) % 32 == 0 ? "#ccc" : "#777";
         let width = Math.min(16, this.width - x);
         let height = Math.min(16, this.height - y);
@@ -339,8 +331,7 @@ class SpriteEditor extends Editor
     this.width = message.width;
     this.height = message.height;
 
-    for(let layerData of message.layers)
-    {
+    for(let layerData of message.layers) {
       let layer = this.addLayer(layerData.name);
       let dataArray = Object.values(layerData.data);
 
@@ -348,8 +339,7 @@ class SpriteEditor extends Editor
       layer.render();
     }
 
-    for(let animationName in message.animations)
-    {
+    for(let animationName in message.animations) {
       let animation = message.animations[animationName];
 
       this.modifyAnimation(animation.name, animation.startFrame, animation.endFrame);
@@ -358,8 +348,7 @@ class SpriteEditor extends Editor
 
   messageReceived(message)
   {
-    switch(message.action)
-    {
+    switch(message.action) {
     case "join":
       this.loadSprite(message);
       break;
@@ -560,8 +549,7 @@ class Layer
     let oldData = this.data;
     this.clear();
 
-    for(let i = 0; i < size; i++)
-    {
+    for(let i = 0; i < size; i++) {
       let idx = i * this.width * 4;
       let row = oldData.subarray(idx, idx + this.width * 4);
 
@@ -576,8 +564,7 @@ class Layer
     let oldData = this.data;
     this.clear();
 
-    for(let i = 1; i <= size; i++)
-    {
+    for(let i = 1; i <= size; i++) {
       let idx = i * this.width * 4;
       let row = oldData.subarray(idx, idx + this.width * 4);
 
@@ -709,8 +696,7 @@ class MoveTool extends Tool
     if(button == -1 || button == 1)
       return;
 
-    if(name == "mousedown")
-    {
+    if(name == "mousedown") {
       this.lastX = x;
       this.lastY = y;
     }

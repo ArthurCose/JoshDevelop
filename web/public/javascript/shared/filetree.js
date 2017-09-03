@@ -62,8 +62,7 @@ class FileTree extends EventRaiser
     if(folderPath == this.root.name || folderPath == this.root.name + "/")
       return folder;
     
-    for(let i = 0; i < folder.children.length; i++)
-    {
+    for(let i = 0; i < folder.children.length; i++) {
       let child = folder.children[i];
       
       // must be a folder and name must match

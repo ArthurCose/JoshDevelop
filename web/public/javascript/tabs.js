@@ -59,8 +59,7 @@ class Tab extends EventRaiser
 
   mouseup(e)
   {
-    switch(e.which)
-    {
+    switch(e.which) {
     case 1:
       this.makeActive();
       break;
@@ -73,8 +72,7 @@ class Tab extends EventRaiser
   
   makeActive()
   {
-    if(this.container.activeTab != undefined)
-    {
+    if(this.container.activeTab != undefined) {
       this.container.activeTab.content.style.display = "none";
       this.container.activeTab.tabElement.className = "tab";
     }
@@ -95,8 +93,7 @@ class Tab extends EventRaiser
   {
     let index = this.container.tabs.indexOf(this);
     
-    if(this.isActive && this.container.tabs.length > 1)
-    {
+    if(this.isActive && this.container.tabs.length > 1) {
       let activeIndex = index == 0 ? 1 : index - 1;
 
       this.container.tabs[activeIndex].makeActive();

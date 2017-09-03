@@ -22,8 +22,7 @@ class ContextMenu
   
   isChildElement(element)
   {
-    while(element != null)
-    {
+    while(element != null) {
       if(this.element == element)
         return true;
       
