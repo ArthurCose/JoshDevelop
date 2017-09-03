@@ -3,9 +3,9 @@ const Shell = require("./Shell");
 
 class TerminalPlugin extends Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
-    super(core);
+    super(core, internalPath);
     this.publicPath = "public";
 
     this.localScripts = ["init.js", "shell.js"];
@@ -13,10 +13,6 @@ class TerminalPlugin extends Plugin
 
     this.externalStylesheets = ["xterm/xterm.css"];
     this.externalScripts = ["xterm/xterm.js", "xterm/addons/fit/fit.js"];
-
-    this.extraRouting = (express, app) => {
-      app.use("/xterm", express.static("node_modules/xterm/dist"));
-    };
 
     this.sessionHooks = {
       connect: (session) => {
@@ -35,6 +31,11 @@ class TerminalPlugin extends Plugin
         }
       }
     }
+  }
+
+  addStaticRoutes(express, app)
+  {
+    app.use("/xterm", express.static("node_modules/xterm/dist"));
   }
 }
 

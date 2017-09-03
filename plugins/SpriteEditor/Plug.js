@@ -3,9 +3,9 @@ const SpriteEditor = require("./SpriteEditor");
 
 class SpriteEditorPlugin extends Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
-    super(core);
+    super(core, internalPath);
     this.publicPath = "public";
     this.editors = [SpriteEditor];
     this.localScripts = ["init.js", "editor.js"];

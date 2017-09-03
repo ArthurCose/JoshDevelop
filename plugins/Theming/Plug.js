@@ -3,15 +3,15 @@ const User = require("../../core/User");
 
 class ThemingPlugin extends Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
-    super(core);
+    super(core, internalPath);
     this.publicPath = "public";
     this.localScripts = ["ThemeSettings.js"];
     this.stylesheets = ["stylesheet.css"];
   }
 
-  extraRouting(express, app)
+  addDynamicRoutes(express, app)
   {
     app.use("/plugins/Theming/public/stylesheet.css", (req, res) => {
       let theme = this.getThemeFromSession(req.session);

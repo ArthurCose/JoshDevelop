@@ -4,14 +4,14 @@ const archiver = require("archiver");
 
 class FileTransferPlugin extends Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
-    super(core);
+    super(core, internalPath);
     this.publicPath = "public";
     this.localScripts = ["init.js"];
   }
 
-  extraRouting(express, app)
+  addDynamicRoutes(express, app)
   {
     app.get("/download", (req, res) => this.download(req, res));
     app.post("/upload", (req, res) => this.upload(req, res));

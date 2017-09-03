@@ -3,9 +3,9 @@ const TextEditor = require("./TextEditor");
 
 class TextEditorPlugin extends Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
-    super(core);
+    super(core, internalPath);
 
     this.editors = [TextEditor];
 
@@ -17,7 +17,7 @@ class TextEditorPlugin extends Plugin
     this.externalScripts = ["ace/ace.js", "ace/ext-modelist.js", "ace/ext-themelist.js"];
   }
 
-  extraRouting(express, app)
+  addStaticRoutes(express, app)
   {
     app.use("/ace", express.static("node_modules/ace-builds/src-min-noconflict"));
   }

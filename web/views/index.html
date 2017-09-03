@@ -21,15 +21,14 @@
     <script src="javascript/shared/filenode.js"></script>
     <script src="javascript/filemanager.js"></script>
 
-    <% for(let location of stylesheets) { -%>
-      <link rel="stylesheet" href="<%= location %>" />
-    <% } -%>
+<% for(let location of stylesheets) { -%>
+    <link rel="stylesheet" href="<%= location %>" />
+<% } -%>
 
-    <% for(let location of scripts) { -%>
-      <script src="<%= location %>"></script>
-    <% } -%>
+<% for(let location of scripts) { -%>
+    <script src="<%= location %>"></script>
+<% } -%>
   </head>
-
   <body>
     <div id=toolbar>
       <div class=left>

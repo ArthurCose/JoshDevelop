@@ -1,8 +1,9 @@
 class Plugin
 {
-  constructor(core)
+  constructor(core, internalPath)
   {
     this.core = core;
+    this.internalPath = internalPath;
     /**
      * Folder relative to this folder used to serve web files.
      * @prop {?string}
@@ -31,13 +32,6 @@ class Plugin
      * @prop {string[]} externalStylesheets
      */
     this.externalStylesheets;
-    /** 
-     * Provides access to Express for more control 
-     * @function extraRouting
-     * @param express
-     * @param app
-     */
-    this.extraRouting;
     /**
      * Current hooks:
      *  connect(session)
@@ -47,6 +41,20 @@ class Plugin
      */
     this.sessionHooks;
   }
+
+  /** 
+   * Provides access to Express no parsers
+   * @param express
+   * @param app
+   */
+  addStaticRoutes(express, app) {}
+
+  /** 
+   * Provides access to Express and parsers
+   * @param express
+   * @param app
+   */
+  addDynamicRoutes(express, app) {}
 }
 
 module.exports = Plugin;

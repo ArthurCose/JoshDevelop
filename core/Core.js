@@ -9,9 +9,9 @@ const DEFAULT_PROJECT_NAME = "new";
 
 class Core
 {
-  constructor(sessionStore)
+  constructor(server)
   {
-    this.sessionStore = sessionStore;
+    this.server = server;
     this.sessionHooks = [];
     this.editorPlugins = [];
     this.sessions = [];
@@ -94,7 +94,7 @@ class Core
       if(cookie.name == "connect.sid")
         sid = cookie.value.slice(2).split(".")[0];
 
-    this.sessionStore.get(sid, (err, sessionData) => {
+    this.server.sessionStore.get(sid, (err, sessionData) => {
       if(!sessionData.username)
         return;
 
