@@ -19,6 +19,7 @@ class ThemeSettings extends SettingsSection
       "sea green",
       "strawberry",
       "code",
+      "hackerman",
       "custom -todo"
     ];
 
