@@ -76,11 +76,12 @@ class Tab extends EventRaiser
       this.container.activeTab.content.style.display = "none";
       this.container.activeTab.tabElement.className = "tab";
     }
-    
+
     this.container.activeTab = this;
     this.content.style.display = "";
     this.tabElement.className = "tab active";
-    
+
+    this.container.triggerEvent("swap", this);
     this.triggerEvent("active");
   }
   
@@ -118,11 +119,13 @@ class TabbedContainer extends EventRaiser
       element = document.querySelector(element);
 
     this.element = element;
-    this.tabcontainer = element.querySelector(".tab-container");
-    this.tabcontent = element.querySelector(".tab-content");
     this.activeTab = undefined;
     this.tabs = [];
+    
+    this.tabcontainer = element.querySelector(".tab-container");
+    this.tabcontent = element.querySelector(".tab-content");
 
+    this.addEvent("swap");
     this.addEvent("resize");
   }
 

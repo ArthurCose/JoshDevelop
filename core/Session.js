@@ -14,6 +14,7 @@ class Session extends EventRaiser
 
     this.project = undefined;
     this.editors = [];
+    this.location = "";
     
     this.socketReady = true;
     this.messageQueue = [];
@@ -43,6 +44,7 @@ class Session extends EventRaiser
       action: "add",
       name: this.user.get("nickname"),
       color: this.user.get("color"),
+      location: "",
       sessionID: this.id
     });
 
@@ -55,6 +57,7 @@ class Session extends EventRaiser
           action: "add",
           name: session.user.get("nickname"),
           color: session.user.get("color"),
+          location: session.location,
           sessionID: session.id
         });
   }
@@ -181,6 +184,16 @@ class Session extends EventRaiser
           action: "update",
           name: message.name,
           color: message.color,
+          sessionID: this.id
+        });
+        break;
+      case "location":
+        this.location = message.location;
+
+        this.core.broadcast({
+          type: "profile",
+          action: "update",
+          location: this.location,
           sessionID: this.id
         });
         break;

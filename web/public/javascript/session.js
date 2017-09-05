@@ -4,6 +4,7 @@ class Session extends EventRaiser
   {
     super();
     this.id = -1;
+    this.profile = undefined;
     this.project = undefined;
     this.editors = [];
     
@@ -50,16 +51,16 @@ class Session extends EventRaiser
       if(!node.isFile)
         return;
 
-      this.openEditor(node);
+      this.openEditor(node.clientPath);
     });
 
     return fileManager;
   }
 
-  openEditor(fileNode)
+  openEditor(filePath)
   {
     // get the tab for the editor
-    let tab = this.editorTabs.getTab(fileNode.clientPath);
+    let tab = this.editorTabs.getTab(filePath);
 
     // if the tab already exists, then make it active
     if(tab) {
@@ -73,14 +74,14 @@ class Session extends EventRaiser
     this.send({
       type: "editor",
       action: "join",
-      path: fileNode.clientPath,
+      path: filePath,
       editorId: this.editors.length
     });
 
     // allocate a space for the editor
     // save the path of the file there so we don't
     // have to send it back and forth
-    this.editors.push(fileNode.clientPath);
+    this.editors.push(filePath);
   }
 
   initializeEditor(editorName, id)

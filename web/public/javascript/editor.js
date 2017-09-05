@@ -8,6 +8,7 @@ class Editor
     this.id = id;
     this.fileNodeListeners = [];
 
+    tab.on("active", () => session.profile.location = this.fileNode.clientPath);
     tab.on("close", () => this.closed());
 
     this.fileNodeListeners.push(
@@ -18,22 +19,28 @@ class Editor
 
   renamed()
   {
+    if(this.tab.isActive)
+      session.profile.location = this.fileNode.clientPath;
+
     this.tab.identifier = this.fileNode.clientPath;
     this.tab.name = this.fileNode.name;
   }
   
   closed()
   {
+    session.editors[this.id] = undefined;
+
+    for(let listener of this.fileNodeListeners)
+      listener.destroy();
+
+    if(session.editorTabs.tabs.length == 0)
+      session.profile.location = "";
+
     session.send({
       type: "editor",
       action: "close",
       editorId: this.id
     });
-
-    session.editors[this.id] = undefined;
-
-    for(let listener of this.fileNodeListeners)
-      listener.destroy();
   }
   
   messageReceived(message)

@@ -3,25 +3,24 @@
 }
 
 #user-list{
+  display: none;
   position: absolute;
   top: 17px;
   right: 0;
-  width: 250px;
+  min-width: 250px;
+  max-width: 300px;
+  max-height: 400px;
   background: #F2F2F2;
   border: 3px solid #DDD;
   border-top: none;
   border-right: none;
-  z-index: 5;
-  display: none;
-  max-height: 400px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   z-index: 100;
 }
 
 #user-list:focus,
-.username:focus,
-.usercolor:focus{
+.user-name:focus,
+.user-color:focus{
   outline: 0;
 }
 
@@ -29,15 +28,31 @@
   border-bottom: 1px solid #DDD;
   padding: 2px;
   white-space: nowrap;
-  overflow-x: auto;
 }
 
-.username{
+.user-name{
+  display: inline-block;
+  min-width: 10px;
   margin-left: 7px;
 }
 
-.usercolor{
+.user-color{
   display: inline-block;
   margin: auto 0;
   vertical-align: text-bottom;
+}
+
+.user-location{
+  text-decoration: underline;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.user-location:hover{
+  color: #999;
+}
+
+.user-location,
+.user-location-before{
+    color: #888;
 }

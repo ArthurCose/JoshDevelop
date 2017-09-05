@@ -16,9 +16,15 @@ class UserList
     this.element.style.display = show ? "block" : "none";
   }
 
-  addUser(name, color, id)
+  addUser(id, name, color, location)
   {
-    this._users[id] = new Profile(name, color, id);
+    let user = new Profile(id, name, color, location);
+    
+    this.element.appendChild(user.element);
+
+    this._users[id] = user;
+
+    return user;
   }
 
   removeUser(id)
@@ -37,7 +43,15 @@ class UserList
   {
     switch(message.action) {
     case "add":
-      this.addUser(message.name, message.color, message.sessionID);
+      let profile = this.addUser(
+        message.sessionID,
+        message.name,
+        message.color,
+        message.location
+      );
+
+      if(profile.id == session.id)
+        session.profile = profile;
       break;
     case "update":
       if(message.sessionID == session.id)
@@ -45,8 +59,14 @@ class UserList
 
       let user = this.getUser(message.sessionID);
 
-      user.name = message.name;
-      user.color = message.color;
+      if(message.name)
+        user.name = message.name;
+
+      if(message.color)
+        user.color = message.color;
+
+      if(message.location)
+        user.location = message.location;
       break;
     case "remove":
       this.removeUser(message.sessionID);
@@ -57,47 +77,46 @@ class UserList
 
 class Profile extends EventRaiser
 {
-  constructor(name, color, id)
+  constructor(id, name, color, location)
   {
     super();
+    this.id = id;
 
+    this.generate();
     this.addEvent("update");
-
-    this.element = document.createElement("div");
-    this.element.className = "user";
-
-    this.colorElement = document.createElement("input");
-    this.colorElement.type = "color";
-    this.colorElement.className = "usercolor";
-    this.colorElement.disabled = true;
-
-    this.nameElement = document.createElement("span");
-    this.nameElement.className = "username";
 
     this.name = name;
     this.color = color;
-    this.id = id;
+    this.location = location;
+  }
 
-    if(session.id == id) {
-      this.nameElement.contentEditable = true;
-      this.nameElement.style.fontWeight = "bold";
-      this.colorElement.disabled = false;
+  generate()
+  {
+    this.element = document.createElement("div");
+    this.element.className = "user";
 
-      this.colorElement.addEventListener("input", () => this.saveUpdate());
-      this.nameElement.addEventListener("input", () => this.saveUpdate());
-      this.nameElement.addEventListener("keydown", (e) => {
-        if(e.keyCode != 13)
-          return;
+    this.nameElement = document.createElement("span");
+    this.nameElement.className = "user-name";
 
-        e.preventDefault();
-        window.getSelection().removeAllRanges();
-      });
-      this.nameElement.addEventListener("paste", (e) => e.preventDefault());
-    }
+    this.colorElement = document.createElement("input");
+    this.colorElement.type = "color";
+    this.colorElement.className = "user-color";
+    this.colorElement.disabled = true;
+
+    this.locationBeforeElement = document.createElement("span");
+    this.locationBeforeElement.className = "user-location-before";
+
+    this.locationElement = document.createElement("span");
+    this.locationElement.className = "user-location";
+    this.locationElement.addEventListener("click", () => this.follow());
+
+    if(this.id == session.id)
+      this.enableModification();
 
     this.element.appendChild(this.colorElement);
     this.element.appendChild(this.nameElement);
-    session.userList.element.appendChild(this.element);
+    this.element.appendChild(this.locationBeforeElement);
+    this.element.appendChild(this.locationElement);
   }
 
   get name()
@@ -108,6 +127,7 @@ class Profile extends EventRaiser
   set name(value)
   {
     this.nameElement.innerText = value;
+    this.sendUpdate();
     this.triggerEvent("update");
   }
 
@@ -119,17 +139,82 @@ class Profile extends EventRaiser
   set color(value)
   {
     this.colorElement.value = value;
+    this.sendUpdate();
     this.triggerEvent("update");
   }
 
-  saveUpdate()
+  get location()
   {
+    return this._location;
+  }
+
+  set location(value)
+  {
+    this._location = value;
+    let fileName = value.slice(value.lastIndexOf("/") + 1);
+    let beforeText = fileName == "" ? "" : " - ";
+
+    this.locationBeforeElement.innerText = beforeText;
+    this.locationElement.innerText = fileName;
+
+    this.sendLocation();
+    this.triggerEvent("update");
+  }
+
+  enableModification()
+  {
+    this.nameElement.contentEditable = true;
+    this.nameElement.style.fontWeight = "bold";
+    this.colorElement.disabled = false;
+
+    this.colorElement.addEventListener("input", () => this.sendUpdate());
+    this.nameElement.addEventListener("input", () => this.sendUpdate());
+    this.nameElement.addEventListener("keydown", (e) => {
+      if(e.keyCode != 13)
+        return;
+
+      e.preventDefault();
+      window.getSelection().removeAllRanges();
+    });
+    this.nameElement.addEventListener("paste", (e) => e.preventDefault());
+  }
+
+  sendUpdate()
+  {
+    if(this.id != session.id)
+      return;
+
     session.send({
       type: "profile",
       action: "update",
       name: this.name,
       color: this.color
     });
+  }
+
+  sendLocation()
+  {
+    if(this.id != session.id)
+      return;
+
+    session.send({
+      type: "location",
+      location: this.location
+    });
+  }
+  
+  follow()
+  {
+    if(this.location == "")
+      return;
+
+    let firstSlash = this.location.indexOf("/");
+    let projectName = this.location.slice(0, firstSlash);
+
+    if(session.project != projectName)
+      session.swapProject(projectName);
+
+    session.openEditor(this.location);
   }
 
   destroy()

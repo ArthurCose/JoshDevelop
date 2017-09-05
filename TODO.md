@@ -1,14 +1,5 @@
 ## Core
 
-* See what file a user is in
-  * Display that in the user list
-    * Ability to request to go to that file at the exact same location
-      through a click
-      * A text editor would bring you to the line
-      * An image editor would simply make their cursor more obvious
-      * A "FollowUser" request seems like a good name
-    * Only show the path, editors will handle details when requested
-  * add to the User class as location
 * File writing tools in ServerFileNode
 * Login
   * admins should be able to give/withdraw privileges - such as terminal
