@@ -1,12 +1,12 @@
 class Editor
 {
-  constructor(tab, fileNode, id)
+  constructor(id, fileNode, tab)
   {
-    this.element = tab.content;
-    this.tab = tab;
-    this.fileNode = fileNode;
     this.id = id;
+    this.fileNode = fileNode;
     this.fileNodeListeners = [];
+    this.tab = tab;
+    this.element = tab.content;
 
     tab.on("active", () => session.profile.location = this.fileNode.clientPath);
     tab.on("close", () => this.closed());

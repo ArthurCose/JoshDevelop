@@ -3,9 +3,9 @@ let modelist;
 
 class TextEditor extends Editor
 {
-  constructor(tab, fileNode, id)
+  constructor(id, fileNode, tab)
   {
-    super(tab, fileNode, id);
+    super(id, fileNode, tab);
     
     // hide until document is ready
     this.element.style.display = "none";

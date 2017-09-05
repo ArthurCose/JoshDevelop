@@ -6,14 +6,14 @@
 
 class Tab extends EventRaiser
 {
-  constructor(container, identifier, tabElement, content)
+  constructor(identifier, content, tabElement, container)
   {
     super();
     
-    this.container = container;
     this.identifier = identifier;
-    this.tabElement = tabElement;
     this.content = content;
+    this.tabElement = tabElement;
+    this.container = container;
     this.locked = false;
 
     this.nameElement = document.createElement("span");
@@ -137,7 +137,7 @@ class TabbedContainer extends EventRaiser
   addTab(identifier, name, content)
   {
     let tabElement = document.createElement("div");
-    let tab = new Tab(this, identifier, tabElement, content);
+    let tab = new Tab(identifier, content, tabElement, this);
 
     tab.name = name;
     content.style.display = "none";

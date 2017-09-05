@@ -8,6 +8,9 @@ session.on("load", () => {
 
   attachDropListeners(session.fileManager.root);
   attachDownloadButton(session.fileManager.root);
+
+  document.body.addEventListener("dragover", (e) => e.preventDefault());
+  document.body.addEventListener("drop", (e) => e.preventDefault());
 });
 
 function attachDownloadButton(node)

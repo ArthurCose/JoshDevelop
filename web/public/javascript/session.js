@@ -100,7 +100,7 @@ class Session extends EventRaiser
     let tab = this.editorTabs.addTab(fileNode.clientPath, fileNode.name, element);
 
     // create the editor
-    this.editors[id] = new EditorClass(tab, fileNode, id);
+    this.editors[id] = new EditorClass(id, fileNode, tab);
 
     // make the newly opened editor the active editor
     tab.makeActive();

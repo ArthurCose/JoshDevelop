@@ -3,12 +3,12 @@ if(typeof EventRaiser == "undefined")
 
 class FileNode extends EventRaiser
 {
-  constructor(filetree, parentFolder, name)
+  constructor(name, parentFolder, filetree)
   {
     super();
-    this.filetree = filetree;
-    this.parentFolder = parentFolder;
     this._name = name;
+    this.parentFolder = parentFolder;
+    this.filetree = filetree;
     this.isFile = true;
     this.deleted = false;
 

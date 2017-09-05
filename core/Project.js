@@ -2,7 +2,7 @@ const FileManager = require("./FileManager")
 
 class Project
 {
-  constructor(core, name)
+  constructor(name, core)
   {
     this.name = name;
     this.core = core;

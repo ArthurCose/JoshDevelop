@@ -52,7 +52,7 @@ class Core
     if(name.includes("/") || name.includes("\\"))
       throw `Project name can not contain / or \\`;
 
-    let project = new Project(this, name);
+    let project = new Project(name, this);
 
     this.projects[name] = project;
     this.projectCount++;
@@ -107,7 +107,7 @@ class Core
   connect(webSocketConnection, username)
   {
     let user = new User(username);
-    let session = new Session(this, webSocketConnection, user, this.topId++);
+    let session = new Session(this.topId++, user, webSocketConnection, this);
 
     // send the project list to the session
     for(let projectName in this.projects) {

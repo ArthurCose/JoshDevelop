@@ -4,7 +4,7 @@ class ClientFileManager extends FileTree
   {
     super();
 
-    this.root = new ClientFolderNode(this, undefined, "");
+    this.root = new ClientFolderNode("", undefined, this);
     this.clipboard = new FileClipboard();
     this.listeners = [];
 
@@ -69,9 +69,9 @@ class ClientFileManager extends FileTree
 
 class ClientFileNode extends FileNode
 {
-  constructor(filetree, parentFolder, name)
+  constructor(name, parentFolder, filetree)
   {
-    super(filetree, parentFolder, name);
+    super(name, parentFolder, filetree);
 
     this.controlElement = document.createElement("li");
     this.nameElement = document.createElement("span");
@@ -207,9 +207,9 @@ class ClientFileNode extends FileNode
 
 class ClientFolderNode extends ClientFileNode
 {
-  constructor(filetree, parentFolder, name)
+  constructor(name, parentFolder, filetree)
   {
-    super(filetree, parentFolder, name);
+    super(name, parentFolder, filetree);
     this.isFile = false;
     this.children = [];
     
@@ -283,7 +283,7 @@ class ClientFolderNode extends ClientFileNode
   
   registerSubFolder(name)
   {
-    let folder = new ClientFolderNode(this.filetree, this, name);
+    let folder = new ClientFolderNode(name, this, this.filetree);
     this.registerNode(folder);
     
     return folder;
@@ -291,7 +291,7 @@ class ClientFolderNode extends ClientFileNode
   
   registerFile(name)
   {
-    let file = new ClientFileNode(this.filetree, this, name);
+    let file = new ClientFileNode(name, this, this.filetree);
     this.registerNode(file);
 
     return file;

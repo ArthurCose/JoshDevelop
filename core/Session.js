@@ -4,13 +4,13 @@ const EventRaiser = require("../web/public/javascript/shared/eventraiser");
 
 class Session extends EventRaiser
 {
-  constructor(core, websocketConnection, user, id)
+  constructor(id, user, websocketConnection, core)
   {
     super();
-    this.core = core;
-    this.websocket = websocketConnection;
-    this.user = user;
     this.id = id;
+    this.user = user;
+    this.websocket = websocketConnection;
+    this.core = core;
 
     this.project = undefined;
     this.editors = [];
