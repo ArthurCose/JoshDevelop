@@ -172,9 +172,10 @@ class FileManager extends FileTree
 
 class ServerFileNode extends FileNode
 {
-  constructor(filetree, parentFolder, name, isFile)
+  constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name, isFile == undefined || isFile);
+    super(filetree, parentFolder, name);
+    this.filetree.triggerEvent("add", this);
   }
 
   get serverPath()
@@ -256,8 +257,11 @@ class ServerFolderNode extends ServerFileNode
 {
   constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name, false);
+    super(filetree, parentFolder, name);
+    this.isFile = false;
     this.children = [];
+
+    this.filetree.triggerEvent("add", this);
   }
   
   async make()

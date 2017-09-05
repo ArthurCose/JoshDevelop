@@ -3,13 +3,13 @@ if(typeof EventRaiser == "undefined")
 
 class FileNode extends EventRaiser
 {
-  constructor(filetree, parentFolder, name, isFile)
+  constructor(filetree, parentFolder, name)
   {
     super();
     this.filetree = filetree;
     this.parentFolder = parentFolder;
-    this.isFile = isFile;
     this._name = name;
+    this.isFile = true;
     this.deleted = false;
 
     this.addEvent("unlist");
@@ -19,7 +19,6 @@ class FileNode extends EventRaiser
     // (node, menu)
     this.addEvent("menu");
 
-    this.filetree.triggerEvent("add", this);
     this.on("unlist", () => this.filetree.triggerEvent("unlist", this));
     this.on("rename", () => this.filetree.triggerEvent("rename", this));
   }

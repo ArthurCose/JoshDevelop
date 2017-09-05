@@ -69,9 +69,9 @@ class ClientFileManager extends FileTree
 
 class ClientFileNode extends FileNode
 {
-  constructor(filetree, parentFolder, name, isFile)
+  constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name, isFile == undefined || isFile);
+    super(filetree, parentFolder, name);
 
     this.controlElement = document.createElement("li");
     this.nameElement = document.createElement("span");
@@ -80,6 +80,8 @@ class ClientFileNode extends FileNode
     
     this.controlElement.appendChild(this.nameElement);
     this.controlElement.addEventListener("contextmenu", (e) => this.onRightClick(e));
+
+    this.filetree.triggerEvent("add", this);
   }
   
   get name()
@@ -207,7 +209,8 @@ class ClientFolderNode extends ClientFileNode
 {
   constructor(filetree, parentFolder, name)
   {
-    super(filetree, parentFolder, name, false);
+    super(filetree, parentFolder, name);
+    this.isFile = false;
     this.children = [];
     
     this.expandButton = document.createElement("span");
@@ -219,6 +222,8 @@ class ClientFolderNode extends ClientFileNode
     
     this.controlElement.insertBefore(this.expandButton, this.controlElement.firstChild);
     this.controlElement.addEventListener("click", () => this.toggleDisplay());
+
+    this.filetree.triggerEvent("add", this);
   }
 
   get expanded()
