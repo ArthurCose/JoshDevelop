@@ -155,7 +155,6 @@ class Session extends EventRaiser
 
         if(editor)
           editor.messageReceived(this, message);
-        
         break;
       case "filemanager":
         this.fileManager.messageReceived(this, message);
@@ -167,6 +166,7 @@ class Session extends EventRaiser
         let settings = this.user.get("settings");
         settings[message.section] = message.data;
         this.user.set("settings", settings);
+        this.user.save();
         break;
       case "profile":
         if(message.action != "update")
@@ -174,6 +174,7 @@ class Session extends EventRaiser
 
         this.user.set("nickname", message.name);
         this.user.set("color", message.color);
+        this.user.save();
 
         this.core.broadcast({
           type: "profile",

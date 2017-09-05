@@ -48,8 +48,6 @@ class User
   set(key, value)
   {
     this._data[key] = value;
-
-    this.save();
   }
 
   async save()
