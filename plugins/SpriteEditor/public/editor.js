@@ -1,8 +1,8 @@
 class SpriteEditor extends Editor
 {
-  constructor(id, tab, fileNode)
+  constructor(id, fileNode, tab)
   {
-    super(id, tab, fileNode);
+    super(id, fileNode, tab);
     this.element.classList.add("sprite-editor");
 
     this.width = 32;
