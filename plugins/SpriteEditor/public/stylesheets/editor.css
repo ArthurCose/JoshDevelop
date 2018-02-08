@@ -1,0 +1,89 @@
+.sprite-editor .sprite-viewer{
+  background: #000;
+  width: 100%;
+  height: 100%;
+}
+
+.sprite-editor .canvas-holder{
+  width: 80%;
+  position: relative;
+}
+
+.sprite-editor .tools,
+.sprite-editor .layers{
+  padding: 5px;
+}
+
+.sprite-editor .color{
+  border:1px solid #000;
+  margin: 2px;
+  outline: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.sprite-editor .selected-colors{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.sprite-editor canvas{
+  image-rendering: pixelated;
+}
+
+.sprite-editor .layer-tab{
+  padding: 5px;
+}
+
+.sprite-editor .layer-tab .name,
+.sprite-editor .layer-tab canvas{
+  vertical-align: middle;
+}
+
+.sprite-editor .layer-tab .name{
+  margin-left: 5px;
+}
+
+.sprite-editor .layer-tab canvas{
+  background: 0;
+  border: 1px solid #000;
+  height: 25px;
+}
+
+.sprite-editor .tool-icon{
+  border: 1px solid white;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  background-size: cover;
+}
+
+.sprite-editor .tool-icon{
+  filter: brightness(.6);
+}
+
+.sprite-editor .tool-icon:hover:not(.selected) {
+  filter: brightness(.4);
+}
+
+.sprite-editor .tool-icon.selected{
+  filter: brightness(0);
+}
+
+.sprite-editor .pencil{
+  background-image: url("../icons/pencil.png");
+}
+
+.sprite-editor .eraser{
+  background-image: url("../icons/eraser.png");
+}
+
+.sprite-editor .move{
+  background-image: url("../icons/move.png");
+}
+
+.sprite-editor .dropper{
+  background-image: url("../icons/dropper.png");
+}

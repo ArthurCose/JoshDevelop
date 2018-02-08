@@ -1,4 +1,4 @@
 @echo off
-SET SHELL=cmd.exe
+REM SET SHELL=cmd.exe
 
-node index.js 8080
+npm start index.mjs 8080

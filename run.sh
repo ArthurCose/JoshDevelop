@@ -1,3 +1,3 @@
 #export SHELL="/bin/bash"
 
-node index.js 8080
+npm start 8080

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JoshDevelop</title>
+    <link rel="shortcut icon" href="bunny.png" type="image/png" />
+
+<% for(let location of stylesheets) { -%>
+    <link rel="stylesheet" href="<%- location %>" />
+<% } -%>
+
+<% for(let location of scripts) { -%>
+    <script src="<%- location %>"></script>
+<% } -%>
+
+    <script type="module" src="javascript/client/Entry.js"></script>
+  </head>
+  <body>
+    <div id=toolbar>
+      <div class=left>
+        <button id=settings-button>Settings</button>
+      </div>
+      <div class=right>
+        <button id=user-list-button>Users</button>
+        <div id=connection></div>
+      </div>
+    </div>
+    <div id=user-list tabindex="0"></div>
+
+    <div id=filetree></div>
+
+    <div id=editor-container class=tabbed-container>
+      <div class=tab-header>
+        <div class=tab-container></div>
+      </div>
+      <div class=tab-content></div>
+    </div>
+
+    <div id=settings style="display:none">
+      <div class=tab-container></div>
+      <div class=tab-content></div>
+    </div>
+
+    <div id=popup-container></div>
+  </body>
+</html>

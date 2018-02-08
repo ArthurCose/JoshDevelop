@@ -1,0 +1,41 @@
+@font-face {
+  font-family: DejaVu;
+  src: url("/plugins/TextEditor/public/fonts/DejaVuSans.ttf");
+}
+
+.ace-editor-container{
+  display:flex;
+  flex: 1;
+  flex-direction: column;
+  font-size: 15px;
+}
+
+.bottom-bar .caret-info{
+  margin-right: 8px;
+  float: right;
+}
+
+.ace_editor{
+  flex: 1;
+}
+
+.ace_selection{
+  border-radius: 0px !important;
+  background: none !important;
+}
+
+.ace_text-input{
+  background: none !important;
+  border: none !important;
+  color: none !important;
+}
+
+.ace_cursor{
+  display: none;
+}
+
+.ace_editor:not(.ace_focus) .ace_gutter-active-line,
+.ace_editor:not(.ace_focus) .ace_active-line
+{
+  background-color: inherit !important;
+}

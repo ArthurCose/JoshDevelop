@@ -1,17 +1,24 @@
-session.on("connect", (session) => {
-  session.settingsMenu.addSection(new ThemeSettings());
-});
+import {SettingsSection} from "/javascript/client/Settings.js";
+
+export default function main(session)
+{
+  session.on("connect", () => {
+    session.settingsMenu.addSection(
+      new ThemeSettings(session)
+    );
+  });
+}
 
 class ThemeSettings extends SettingsSection
 {
-  constructor()
+  constructor(session)
   {
-    super("Theme");
+    super("Theme", session);
 
     this.contentElement.className = "theme-settings";
     this.styleElement = document.createElement("style");
     document.head.appendChild(this.styleElement);
-    
+
     let themes = [
       "default",
       "joshua",
@@ -50,7 +57,7 @@ class ThemeSettings extends SettingsSection
   {
     if(this.theme != "custom -todo") {
       let xhr = new XMLHttpRequest();
-      
+
       xhr.addEventListener("load", (e) => {
         this.styleElement.innerText = e.target.response;
         if(callback)
