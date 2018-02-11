@@ -17,7 +17,7 @@ button:active, button:focus{
   outline: 0;
 }
 
-input[type="color"] {
+input[type="color"]{
 	-webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -25,11 +25,11 @@ input[type="color"] {
   padding: 0;
 }
 
-input[type="color"]::-webkit-color-swatch-wrapper {
+input[type="color"]::-webkit-color-swatch-wrapper{
 	padding: 0;
 }
 
-input[type="color"]::-webkit-color-swatch {
+input[type="color"]::-webkit-color-swatch{
 	border: none;
 }
 

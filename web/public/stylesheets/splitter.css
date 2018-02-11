@@ -8,13 +8,11 @@
   box-sizing: border-box;
 }
 
-.vsplit
-{
+.vsplit{
   flex-direction: row;
 }
 
-.hsplit
-{
+.hsplit{
   flex-direction: column;
 }
 

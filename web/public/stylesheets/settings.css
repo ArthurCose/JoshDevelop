@@ -44,8 +44,7 @@
 
 #settings select,
 #settings button,
-#settings input
-{
+#settings input{
   font-size: 15px;
   background: #eee;
   border: 1px solid #aaa;
@@ -53,20 +52,17 @@
   vertical-align: text-bottom;
 }
 
-#settings input
-{
+#settings input{
   padding: 0 2px;
 }
 
-#settings input[type=color]
-{
+#settings input[type=color]{
   width: 20px;
   height: 20px;
   padding: 0;
   vertical-align: middle;
 }
 
-#settings input[type=number]
-{
+#settings input[type=number]{
   padding-right: 0;
 }

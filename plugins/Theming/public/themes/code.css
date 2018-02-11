@@ -9,7 +9,7 @@
 }
 
 #filetree ::-webkit-scrollbar-thumb,
-.ace_editor ::-webkit-scrollbar-thumb {
+.ace_editor ::-webkit-scrollbar-thumb{
   background: #505050;
 }
 
@@ -242,7 +242,7 @@ input.ace_search_field{
   filter: brightness(.6);
 }
 
-.sprite-editor .tool-icon:hover:not(.selected) {
+.sprite-editor .tool-icon:hover:not(.selected){
   filter: brightness(.8);
 }
 
