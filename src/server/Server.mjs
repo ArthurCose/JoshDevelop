@@ -239,8 +239,27 @@ export default class Server
       maxReceivedMessageSize: 18446744073709551615
     });
 
-    socketServer.on("request", (request) => this.core.request(request));
+    socketServer.on("request", (request) => this.resolveWebsocketRequest(request));
 
     return socketServer;
+  }
+
+  resolveWebsocketRequest(request)
+  {
+    let sid;
+
+    for(let cookie of request.cookies)
+      if(cookie.name == "connect.sid")
+        sid = cookie.value.slice(2).split(".")[0];
+
+    this.sessionStore.get(sid, (err, sessionData) => {
+      if(err || !sessionData.username) {
+        request.reject(403, "Not logged in.");
+        return;
+      }
+
+      let webSocketConnection = request.accept();
+      this.core.connectSession(webSocketConnection, sessionData.username);
+    });
   }
 }

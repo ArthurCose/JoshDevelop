@@ -83,26 +83,8 @@ export default class Core
     });
   }
 
-  // accept all websocket requests
-  request(request)
-  {
-    let sid;
-
-    for(let cookie of request.cookies)
-      if(cookie.name == "connect.sid")
-        sid = cookie.value.slice(2).split(".")[0];
-
-    this.server.sessionStore.get(sid, (err, sessionData) => {
-      if(!sessionData.username)
-        return;
-
-      let webSocketConnection = request.accept();
-      this.connect(webSocketConnection, sessionData.username);
-    });
-  }
-
   // create a session for any new connection
-  connect(webSocketConnection, username)
+  connectSession(webSocketConnection, username)
   {
     let user = new User(username);
     let session = new Session(this.topId++, user, webSocketConnection, this);
