@@ -8,33 +8,36 @@ const LOGIN_PAGE = path.resolve("web/templates/login.html");
 
 export default class Authentication
 {
-  static authenticate(req, res)
+  static async authenticate(ctx, next)
   {
-    if(!req.body.action) {
-      res.sendFile(LOGIN_PAGE);
+    let {action, username, password, verifyPassword} = ctx.request.body;
+
+    if(!action) {
+      ctx.type = "text/html";
+      ctx.body = await fs.readFile(LOGIN_PAGE);
       return;
     }
-
-    let username = req.body.username;
-    let password = req.body.password;
-    let verifyPassword = req.body.verifyPassword;
 
     if(!VALID_USERNAME_REGEX.test(username)) {
-      res.send("Invalid username.");
+      ctx.body = "Invalid username.";
       return;
     }
 
-    let action;
+    let actionPromise;
 
-    if(req.body.action == "login")
-      action = Authentication.login(username, password);
+    if(action == "login")
+      actionPromise = Authentication.login(username, password);
     else
-      action = Authentication.register(username, password, verifyPassword);
+      actionPromise = Authentication.register(username, password, verifyPassword);
 
-    action.then(() => {
-      req.session.username = username;
-      res.end();
-    }).catch((err) => res.send(err));
+    try{
+      await actionPromise;
+
+      ctx.session.username = username;
+      ctx.body = "";
+    } catch(err) {
+      ctx.body = err;
+    }
   }
 
   static async login(username, password)
@@ -88,11 +91,10 @@ export default class Authentication
     await fs.close(fd);
   }
 
-  static logout(req, res)
+  static async logout(ctx, next)
   {
-    req.session.destroy();
-    res.clearCookie("connect.sid");
+    ctx.session = null;
 
-    res.redirect("/auth");
+    ctx.redirect("/auth");
   }
 }

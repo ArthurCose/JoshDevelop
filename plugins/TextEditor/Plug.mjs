@@ -17,8 +17,8 @@ export default class TextEditorPlugin extends Plugin
     this.externalScripts = ["ace/ace.js", "ace/ext-modelist.js", "ace/ext-themelist.js"];
   }
 
-  addStaticRoutes(express, app)
+  addStaticRoutes(server)
   {
-    app.use("/ace", express.static("node_modules/ace-builds/src-min-noconflict"));
+    server.addStaticRoute("/ace", "node_modules/ace-builds/src-min-noconflict");
   }
 }

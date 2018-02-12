@@ -1,5 +1,6 @@
 import Plugin from "../../src/server/Plugin";
 import User from "../../src/server/User";
+import fs from "fs-extra";
 
 export default class ThemingPlugin extends Plugin
 {
@@ -11,17 +12,19 @@ export default class ThemingPlugin extends Plugin
     this.stylesheets = ["stylesheet.css"];
   }
 
-  addDynamicRoutes(express, app)
+  addDynamicRoutes(server)
   {
-    app.use("/plugins/Theming/public/stylesheet.css", (req, res) => {
-      let theme = this.getThemeFromSession(req.session);
+    server.addDynamicRoute("/plugins/Theming/public/stylesheet.css", async (ctx, next) => {
+      let theme = this.getThemeFromSession(ctx.session);
+
+      ctx.type = "text/css";
 
       if(theme === undefined) {
-        res.contentType("text/css").end();
+        ctx.body = "";
         return;
       }
 
-      res.sendFile(`plugins/Theming/public/themes/${theme}.css`, {root: "./"});
+      ctx.body = await fs.readFile(`plugins/Theming/public/themes/${theme}.css`);
     });
   }
 

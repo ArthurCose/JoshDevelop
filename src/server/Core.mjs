@@ -84,10 +84,10 @@ export default class Core
   }
 
   // create a session for any new connection
-  connectSession(webSocketConnection, username)
+  connectSession(websocket, username)
   {
     let user = new User(username);
-    let session = new Session(this.topId++, user, webSocketConnection, this);
+    let session = new Session(this.topId++, user, websocket, this);
 
     // send the project list to the session
     for(let projectName in this.projects) {

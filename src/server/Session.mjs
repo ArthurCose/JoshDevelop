@@ -2,12 +2,12 @@ import EventRaiser from "../shared/EventRaiser";
 
 export default class Session extends EventRaiser
 {
-  constructor(id, user, websocketConnection, core)
+  constructor(id, user, websocket, core)
   {
     super();
     this.id = id;
     this.user = user;
-    this.websocket = websocketConnection;
+    this.websocket = websocket;
     this.core = core;
 
     this.project = undefined;
@@ -119,14 +119,14 @@ export default class Session extends EventRaiser
 
   dequeueMessages()
   {
-    if(this.websocket.state == "closed")
+    if(this.websocket.readyState != 1)
       return;
 
     let message = this.messageQueue.shift();
 
     this.socketReady = false;
 
-    this.websocket.sendUTF(message, () => {
+    this.websocket.send(message, () => {
       this.socketReady = true;
 
       if(this.messageQueue.length > 0)
@@ -147,7 +147,7 @@ export default class Session extends EventRaiser
   messageReceived(message)
   {
     try {
-      message = JSON.parse(message.utf8Data);
+      message = JSON.parse(message);
 
       switch(message.type) {
       case "editor":

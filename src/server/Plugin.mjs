@@ -38,16 +38,14 @@ export default class Plugin
   }
 
   /**
-   * Provides access to Express no parsers
-   * @param express
-   * @param app
+   * Provides access to the server for addStaticRoute()
+   * @param server
    */
-  addStaticRoutes(express, app) {}
+  addStaticRoutes(server) {}
 
   /**
-   * Provides access to Express and parsers
-   * @param express
-   * @param app
+   * Provides access to the server for addDynamicRoute()
+   * @param server
    */
-  addDynamicRoutes(express, app) {}
+  addDynamicRoutes(server) {}
 }

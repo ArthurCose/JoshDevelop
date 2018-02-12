@@ -33,8 +33,8 @@ export default class TerminalPlugin extends Plugin
     }
   }
 
-  addStaticRoutes(express, app)
+  addStaticRoutes(server)
   {
-    app.use("/xterm", express.static("node_modules/xterm/dist"));
+    server.addStaticRoute("/xterm", "node_modules/xterm/dist");
   }
 }

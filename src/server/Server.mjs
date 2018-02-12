@@ -1,28 +1,26 @@
 import Authentication from "./Authentication";
 import Core from "./Core";
 import http from "http";
-import websocket from "websocket";
-import express from "express";
-import expressSession from "express-session";
-import sessionFileStore from "session-file-store";
+import Koa from "koa";
+import koaConditionalGet from "koa-conditional-get";
+import websockify from "koa-websocket";
+import koaMount from "koa-mount";
+import serve from "koa-static";
+import koaSession from "koa-session";
+import koaBody from "koa-body";
+import busboy from "koa-busboy";
+import logger from "koa-morgan";
 import ejs from "ejs";
-import logger from "morgan";
-import busboy from "connect-busboy";
-import bodyParser from "body-parser";
 import walkSync from "walk-sync";
 import fs from "fs-extra";
 import path from "path";
-
-const WebSocketServer = websocket.server;
-const SessionStore = sessionFileStore(expressSession);
 
 export default class Server
 {
   constructor(port)
   {
     this.port = port;
-    this.expressApp = express();
-    this.sessionStore = new SessionStore();
+    this.koaApp = websockify(new Koa());
     this.core = new Core(this);
     this.plugins = [];
 
@@ -65,7 +63,10 @@ export default class Server
 
   start()
   {
-    this.expressApp.use(logger("dev"));
+    this.koaApp.keys = ["test"];
+
+    this.koaApp.use(logger("dev"));
+    this.koaApp.use(koaConditionalGet());
 
     // add static routes first
     // changing the order will result in slowdown
@@ -80,66 +81,70 @@ export default class Server
 
   addStaticRoutes()
   {
-    this.expressApp.use(express.static("web/public"));
-    this.expressApp.use("/javascript/shared", express.static("src/shared"));
+    this.addStaticRoute("/", "web/public");
+    this.addStaticRoute("/javascript/shared", "src/shared");
 
     let entryScript = this.generateEntryScript();
 
-    this.expressApp.use("/javascript/client/Entry.js", (req, res) => {
-      res.contentType("text/javascript")
-         .send(entryScript);
+    this.addDynamicRoute("/javascript/client/Entry.js", (ctx, next) => {
+      ctx.type = "text/javascript";
+      ctx.body = entryScript;
     });
 
-    this.expressApp.use("/javascript/client", express.static("src/client"));
+    this.addStaticRoute("/javascript/client", "src/client");
 
     for(let plugin of this.plugins) {
-      plugin.addStaticRoutes(express, this.expressApp);
+      plugin.addStaticRoutes(this);
 
       if(plugin.publicPath) {
         let publicPath = plugin.internalPath + "/" + plugin.publicPath;
-        this.expressApp.use("/" + encodeURI(publicPath), express.static(publicPath));
+        this.addStaticRoute("/" + encodeURI(publicPath), publicPath);
       }
     }
   }
 
   addParsers()
   {
-    this.expressApp.use(expressSession({
-      secret: "joshua",
-      resave: false,
-      saveUninitialized: false,
-      store: this.sessionStore
-    }));
-    this.expressApp.use(bodyParser.urlencoded({ extended: false }));
-    this.expressApp.use(bodyParser.json());
-    this.expressApp.use(busboy());
+    this.koaApp.use(koaSession(this.koaApp));
+    this.koaApp.use(koaBody());
+    this.koaApp.use(busboy());
   }
 
   addDynamicRoutes()
   {
-    this.expressApp.use("/auth", (req, res) => Authentication.authenticate(req, res));
-    this.expressApp.use("/logout", (req, res) => Authentication.logout(req, res));
+    this.addDynamicRoute("/auth", Authentication.authenticate);
+    this.addDynamicRoute("/logout", Authentication.logout);
 
     // test if the user is logged in before giving access to plugins/index
-    this.expressApp.use((req, res, next) => {
-      if(!req.session.username)
-        res.redirect("/auth");
+    this.koaApp.use(async (ctx, next) => {
+      if(!ctx.session.username)
+        ctx.redirect("/auth");
       else
-        next();
+        await next();
     });
 
     for(let plugin of this.plugins)
-      plugin.addDynamicRoutes(this.express, this.expressApp);
+      plugin.addDynamicRoutes(this);
 
     // index/main page
     let index = this.generateIndex();
 
-    this.expressApp.use((req, res, next) => {
-      if(req.path == "/")
-        res.send(index);
+    this.koaApp.use(async (ctx, next) => {
+      if(ctx.path == "/")
+        ctx.body = index;
       else
-        next();
+        await next();
     });
+  }
+
+  addStaticRoute(publicPath, internalPath)
+  {
+    this.addDynamicRoute(publicPath, serve(internalPath));
+  }
+
+  addDynamicRoute(publicPath, middleware)
+  {
+    this.koaApp.use(koaMount(publicPath, middleware));
   }
 
   generateIndex()
@@ -208,23 +213,19 @@ export default class Server
 
   setupHttpServer()
   {
-    let httpServer = http.createServer(this.expressApp);
+    let httpServer = http.createServer(this.koaApp.callback());
 
     httpServer.on("error", (error) => {
-      if(error.syscall != "listen")
-        throw error;
-
       switch(error.code) {
       case "EACCES":
-        console.error(`Port ${this.port} requires elevated privileges`);
+        error = `Port ${this.port} requires elevated privileges`;
         break;
       case "EADDRINUSE":
-        console.error(`Port ${this.port} is already in use`);
+        error = `Port ${this.port} is already in use`;
         break;
-      default:
-        throw error;
       }
 
+      console.error(error);
       process.exit(1);
     });
 
@@ -233,33 +234,19 @@ export default class Server
 
   setupWebsocketServer(httpServer)
   {
-    let socketServer = new WebSocketServer({
-      httpServer: httpServer,
-      maxReceivedFrameSize: 18446744073709551615,
-      maxReceivedMessageSize: 18446744073709551615
-    });
-
-    socketServer.on("request", (request) => this.resolveWebsocketRequest(request));
-
-    return socketServer;
+    this.koaApp.ws.use((ctx) => this.resolveWebsocketRequest(ctx));
+    this.koaApp.ws.listen({server: httpServer});
   }
 
-  resolveWebsocketRequest(request)
+  resolveWebsocketRequest(ctx)
   {
-    let sid;
+    let username = ctx.session.username;
 
-    for(let cookie of request.cookies)
-      if(cookie.name == "connect.sid")
-        sid = cookie.value.slice(2).split(".")[0];
+    if(!username) {
+      ctx.websocket.close(1002, "Not logged in.");
+      return;
+    }
 
-    this.sessionStore.get(sid, (err, sessionData) => {
-      if(err || !sessionData.username) {
-        request.reject(403, "Not logged in.");
-        return;
-      }
-
-      let webSocketConnection = request.accept();
-      this.core.connectSession(webSocketConnection, sessionData.username);
-    });
+    this.core.connectSession(ctx.websocket, username);
   }
 }
