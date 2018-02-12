@@ -1,3 +1,5 @@
+let Range = ace.require("ace/range").Range;
+
 export default class Caret
 {
   constructor(userid, aceEditor, session)
