@@ -7,11 +7,6 @@ export default class Caret
     this._range = new Range(0,0,0,0);
     this._user = session.userList.getUser(userid);
 
-    if(!this._user) {
-      console.log(userid);
-      console.log(session.id);
-    }
-
     this._user.on("update", () => this.redraw());
     this.aceEditor = aceEditor;
     this.aceSession = aceEditor.session;
