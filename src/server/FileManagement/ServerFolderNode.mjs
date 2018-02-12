@@ -8,8 +8,6 @@ export default class ServerFolderNode extends ServerFileNode
     super(name, parentFolder, filetree);
     this.isFile = false;
     this.children = [];
-
-    this.filetree.triggerEvent("add", this);
   }
 
   async make()
@@ -35,6 +33,8 @@ export default class ServerFolderNode extends ServerFileNode
     let folder = new ServerFolderNode(name, this, this.filetree);
     this.registerNode(folder);
 
+    this.filetree.triggerEvent("add", folder);
+
     return folder;
   }
 
@@ -42,6 +42,8 @@ export default class ServerFolderNode extends ServerFileNode
   {
     let file = new ServerFileNode(name, this, this.filetree);
     this.registerNode(file);
+
+    this.filetree.triggerEvent("add", file);
 
     return file;
   }

@@ -17,8 +17,6 @@ export default class ClientFolderNode extends ClientFileNode
 
     this.controlElement.insertBefore(this.expandButton, this.controlElement.firstChild);
     this.controlElement.addEventListener("click", () => this.toggleDisplay());
-
-    this.filetree.triggerEvent("add", this);
   }
 
   get expanded()
@@ -81,6 +79,8 @@ export default class ClientFolderNode extends ClientFileNode
     let folder = new ClientFolderNode(name, this, this.filetree);
     this.registerNode(folder);
 
+    this.filetree.triggerEvent("add", folder);
+
     return folder;
   }
 
@@ -88,6 +88,8 @@ export default class ClientFolderNode extends ClientFileNode
   {
     let file = new ClientFileNode(name, this, this.filetree);
     this.registerNode(file);
+
+    this.filetree.triggerEvent("add", file);
 
     return file;
   }

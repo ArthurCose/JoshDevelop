@@ -7,7 +7,6 @@ export default class ServerFileNode extends FileNode
   constructor(name, parentFolder, filetree)
   {
     super(name, parentFolder, filetree);
-    this.filetree.triggerEvent("add", this);
   }
 
   /**
