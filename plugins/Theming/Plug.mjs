@@ -32,6 +32,8 @@ export default class ThemingPlugin extends Plugin
   {
     let user = new User(sessionData.username);
 
-    return user.get("settings").Theme.theme;
+    let settings = user.get("settings");
+
+    return settings.Theme ? settings.Theme.theme : undefined;
   }
 }
