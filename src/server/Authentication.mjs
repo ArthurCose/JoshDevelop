@@ -57,24 +57,25 @@ export default class Authentication
   static async register(username, password, verifyPassword)
   {
     if(password != verifyPassword)
-      throw "Passwords do not match!";
+      throw "Passwords do not match.";
 
     if(password.length < 3)
-      throw "Password must be at least 3 characters in length";
+      throw "Password must be at least 3 characters in length.";
 
     if(username.length < 3)
-      throw "Username must be at least 3 characters in length";
+      throw "Username must be at least 3 characters in length.";
 
     try{
       await fs.mkdir(User.USERS_FOLDER);
     } catch(err) {
       if(err.code != "EEXIST")
         console.error(`Error creating USERS_FOLDER for registration: ${err.code}`);
+      throw "Internal server error.";
     }
 
     let filePath = User.getPath(username);
     let fd = await fs.open(filePath, "wx")
-                     .catch(() => {throw "User already exists"});
+                     .catch(() => {throw "User already exists."});
 
     let data = {
       username: username,
