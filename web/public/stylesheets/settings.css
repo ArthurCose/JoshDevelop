@@ -49,7 +49,6 @@
   background: #eee;
   border: 1px solid #aaa;
   outline: 0;
-  vertical-align: text-bottom;
 }
 
 #settings input{
@@ -60,7 +59,6 @@
   width: 20px;
   height: 20px;
   padding: 0;
-  vertical-align: middle;
 }
 
 #settings input[type=number]{
