@@ -35,6 +35,16 @@
   cursor: pointer;
 }
 
+#filetree li{
+  display: flex;
+}
+
 #filetree span{
   padding-left: 3px;
+}
+
+#filetree input{
+  display: inline;
+  flex: 1;
+  min-width: 0;
 }
