@@ -40,7 +40,7 @@ export default class ServerFileNode extends FileNode
    */
   async rename(newName)
   {
-    await move(this.parentFolder, newName);
+    await this.move(this.parentFolder, newName);
   }
 
   /**
@@ -49,7 +49,6 @@ export default class ServerFileNode extends FileNode
    */
   async move(folder, newName)
   {
-    let oldName = this.name;
     let oldPath = this.clientPath;
 
     let error = getFileNameErrors(newName);
@@ -63,12 +62,19 @@ export default class ServerFileNode extends FileNode
 
     await fs.move(this.serverPath, destination);
 
-    // detach from parent
-    this.destroy();
+    // renaming the root node will cause the
+    // folder parameter to be undefined
+    // this code is unnecessary in that case
+    if(folder) {
+      // detach from parent
+      this.destroy();
+
+      // attach to the new parent
+      this.parentFolder = folder;
+      folder.children.push(this);
+    }
 
     this.name = newName;
-    this.parentFolder = folder;
-    folder.children.push(this);
 
     this.filetree.project.broadcast({
       type: "filetree",
@@ -79,7 +85,7 @@ export default class ServerFileNode extends FileNode
       newName: newName
     });
 
-    this.triggerEvent("move", oldName);
+    this.triggerEvent("move", oldPath);
   }
 
   /**
@@ -99,7 +105,7 @@ export default class ServerFileNode extends FileNode
 
     await fs.copy(this.serverPath, destination);
 
-    // our file watcher should create a new node and trigger an add event
+    // the file watcher should create a new node and trigger an add event
   }
 
   async unlink()

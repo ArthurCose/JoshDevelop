@@ -140,6 +140,11 @@ export default class ServerFileManager extends FileTree
       if(node)
         await node[message.action](folder, message.name);
       break;
+    case "rename":
+      node = this.getNode(message.path, message.isFile);
+
+      if(node)
+        await node.rename(message.name);
     case "refresh":
       this.refresh(message.path);
       break;

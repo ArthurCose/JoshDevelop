@@ -50,15 +50,18 @@ export default class ClientFileManager extends FileTree
       node = this.getNode(e.oldPath, e.isFile);
       node.name = e.newName;
 
-      // detach the element for the node,
-      // and orphanize it
-      node.destroy();
+      // folder might be undefined due to renaming the root node
+      if(folder) {
+        // detach the element for the node,
+        // and orphanize it
+        node.destroy();
 
-      node.parentFolder = folder;
-      folder.insertNode(node);
-      node.append();
+        node.parentFolder = folder;
+        folder.insertNode(node);
+        node.append();
+      }
 
-      node.triggerEvent("move");
+      node.triggerEvent("move", e.oldPath);
       break;
     }
   }

@@ -98,9 +98,8 @@ export default class ClientFileNode extends FileNode
     renameElement.addEventListener("blur", () => {
       this.filetree.session.send({
         type: "filemanager",
-        action: "move",
+        action: "rename",
         path: this.clientPath,
-        parentPath: this.parentClientPath,
         isFile: this.isFile,
         name: renameElement.value
       });
