@@ -22,7 +22,7 @@ export default class Shell
     });
 
     // handle input
-    this.terminal.on("data", (input) => input(input));
+    this.terminal.on("data", (input) => this.input(input));
 
     /*this.terminal.on("title", (title) => {
       tab.name = title;
