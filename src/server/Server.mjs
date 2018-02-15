@@ -37,31 +37,38 @@ export default class Server
 
   async loadPlugins()
   {
-    // search for plug.js files in the plugins folder
-    let plugLocations = walkSync("plugins", { globs: ["*/[Pp]lug.mjs"] });
+    // search for package.json files in the plugins folder
+    let packagePaths = walkSync("plugins", { globs: ["*/package.json"] });
 
-    for(let plugLocation of plugLocations) {
-      plugLocation = `plugins/${plugLocation}`;
+    for(let packagePath of packagePaths) {
+      packagePath = `plugins/${packagePath}`;
 
-      let internalPath = path.dirname(plugLocation);
-      let absolutePath = path.resolve(plugLocation);
+      // internal path of the plugin folder
+      let internalPath = path.dirname(packagePath);
 
-      // get the plugin class
-      let {default: Plugin} = await import(absolutePath);
-
-      // initialize the plugin
-      let plugin = new Plugin(this.core, internalPath);
-
-      // append editors to a list
-      if(plugin.editors)
-        this.core.editorPlugins.splice(0, 0, ...plugin.editors);
-
-      // pass hooks to core for core to hook to sessions later
-      if(plugin.sessionHooks)
-        this.core.sessionHooks.push(plugin.sessionHooks);
-
-      this.plugins.push(plugin);
+      await this.loadPlugin(internalPath);
     }
+  }
+
+  async loadPlugin(internalPath)
+  {
+    let absolutePath = path.resolve(internalPath);
+
+    // get the plugin class
+    let {default: Plugin} = await import(absolutePath);
+
+    // initialize the plugin
+    let plugin = new Plugin(this.core, internalPath);
+
+    // append editors to a list
+    if(plugin.editors)
+      this.core.editorPlugins.push(...plugin.editors);
+
+    // pass hooks to core for core to hook to sessions later
+    if(plugin.sessionHooks)
+      this.core.sessionHooks.push(plugin.sessionHooks);
+
+    this.plugins.push(plugin);
   }
 
   start()

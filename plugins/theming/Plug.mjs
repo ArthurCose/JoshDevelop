@@ -14,7 +14,7 @@ export default class ThemingPlugin extends Plugin
 
   addDynamicRoutes(server)
   {
-    server.addDynamicRoute("/plugins/Theming/public/stylesheet.css", async (ctx, next) => {
+    server.addDynamicRoute("/plugins/theming/public/stylesheet.css", async (ctx, next) => {
       let theme = this.getThemeFromSession(ctx.session);
 
       ctx.type = "text/css";
@@ -24,7 +24,7 @@ export default class ThemingPlugin extends Plugin
         return;
       }
 
-      ctx.body = await fs.readFile(`plugins/Theming/public/themes/${theme}.css`);
+      ctx.body = await fs.readFile(`plugins/theming/public/themes/${theme}.css`);
     });
   }
 

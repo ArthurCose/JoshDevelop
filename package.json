@@ -6,6 +6,11 @@
     "start": "node --experimental-modules --harmony-dynamic-import index.mjs"
   },
   "dependencies": {
+    "file-transfer": "file:./plugins/file-transfer",
+    "sprite-editor": "file:./plugins/sprite-editor",
+    "terminal": "file:./plugins/terminal",
+    "text-editor": "file:./plugins/text-editor",
+    "theming": "file:./plugins/theming",
     "koa": "~2.5.0",
     "koa-websocket": "~4.1.0",
     "koa-morgan": "~1.0.1",
@@ -19,13 +24,8 @@
     "bcrypt": "~1.0.3",
     "ejs": "~2.5.7",
     "fs-extra": "~5.0.0",
-    "archiver": "~2.1.1",
     "chokidar": "~2.0.1",
-    "xterm": "~3.0.2",
-    "node-pty": "~0.7.4",
-    "ace-builds": "~1.3.1",
-    "walk-sync": "~0.3.2",
-    "pngjs": "~3.3.1"
+    "walk-sync": "~0.3.2"
   },
   "main": "index.js",
   "devDependencies": {},

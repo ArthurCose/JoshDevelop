@@ -1,0 +1,9 @@
+{
+  "name": "sprite-editor",
+  "version": "0.0.0",
+  "private": true,
+  "main": "Plug.mjs",
+  "dependencies": {
+    "pngjs": "~3.3.1"
+  }
+}

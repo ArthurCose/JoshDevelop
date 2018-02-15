@@ -1,0 +1,6 @@
+{
+  "name": "theming",
+  "version": "0.0.0",
+  "private": true,
+  "main": "Plug.mjs"
+}

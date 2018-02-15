@@ -1,5 +1,7 @@
 import {SettingsSection} from "/javascript/client/Settings.js";
 
+const PUBLIC_PATH = "plugins/theming/public";
+
 export default function main(session)
 {
   session.on("connect", () => {
@@ -34,7 +36,7 @@ class ThemeSettings extends SettingsSection
     this.appendDropdownInput(this.theme, themes, (value) => this.theme = value);
 
     this.updateCSS(() => {
-      document.querySelector("link[href='plugins/Theming/public/stylesheet.css']")
+      document.querySelector(`link[href='${PUBLIC_PATH}/stylesheet.css']`)
               .remove();
     });
   }
@@ -63,7 +65,7 @@ class ThemeSettings extends SettingsSection
         if(callback)
           callback();
       });
-      xhr.open("GET", `/plugins/Theming/public/themes/${this.theme}.css`);
+      xhr.open("GET", `/${PUBLIC_PATH}/themes/${this.theme}.css`);
       xhr.send();
     }
     else if(callback)
