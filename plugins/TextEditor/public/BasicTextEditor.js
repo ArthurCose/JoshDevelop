@@ -13,6 +13,7 @@ export default class BasicTextEditor
 
     this.aceEditor = this.createEditor();
 
+    this.carets = {};
     this.caret = this.addCaret(session.id);
     this.caret.enableBlink();
 
@@ -63,7 +64,11 @@ export default class BasicTextEditor
 
   addCaret(userid)
   {
-    return new Caret(userid, this.aceEditor, this.session)
+    let caret = new Caret(userid, this.aceEditor, this.session);
+
+    this.carets[userid] = caret;
+
+    return caret;
   }
 
   updateCaret()
@@ -88,5 +93,12 @@ export default class BasicTextEditor
   destroy()
   {
     this.aceEditor.destroy();
+
+    for(let userid in this.carets) {
+      let caret = this.carets[userid];
+
+      if(caret)
+        caret.destroy();
+    }
   }
 }

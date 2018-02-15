@@ -16,13 +16,11 @@ export default class TextEditor extends Editor
 
     this.lastRevision = 0;
     this.awaitingOperations = [];
-    this.carets = [];
     this.writingData = false;
 
     this.editor = this.createEditor();
     this.editor.aceEditor.on("change", (operation) => this.changeMade(operation));
     this.editor.updateHighlighter(fileNode.name);
-
 
     this.editor.selection.on("changeCursor", () => this.sendCaretUpdate());
     this.editor.selection.on("changeSelection", () => this.sendCaretUpdate());
@@ -120,17 +118,16 @@ export default class TextEditor extends Editor
       let caret = this.editor.addCaret(message.userid);
 
       caret.updatePosition(message.range);
-
-      this.carets[message.userid] = caret;
       break;
     case "update caret":
-      this.carets[message.userid].updatePosition(message.range);
+      this.editor.carets[message.userid].updatePosition(message.range);
       break;
     case "remove caret":
-      this.carets[message.userid].destroy();
-      this.carets[message.userid] = undefined;
+      this.editor.carets[message.userid].destroy();
+      this.editor.carets[message.userid] = undefined;
       break;
     }
+
     this.writingData = false;
   }
 

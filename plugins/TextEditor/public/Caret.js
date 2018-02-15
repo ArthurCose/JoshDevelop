@@ -15,6 +15,7 @@ export default class Caret
     // in ms, flash time is twice as long
     this.blinkSpeed = 350;
     this.blinkEnabled = false;
+    this.blinkTimer = undefined;
     this.visible = true;
 
     this.aceSession.addDynamicMarker(this, false);
@@ -62,7 +63,7 @@ export default class Caret
     this.visible = false;
     this.blinkEnabled = true;
 
-    setInterval(() => this.redraw(true), this.blinkSpeed);
+    this.blinkTimer = setInterval(() => this.redraw(true), this.blinkSpeed);
 
     this.aceEditor.on("blur", () => {
       this.visible = false;
@@ -142,5 +143,6 @@ export default class Caret
   destroy()
   {
     this.aceSession.removeMarker(this.id);
+    clearInterval(this.blinkTimer);
   }
 }
