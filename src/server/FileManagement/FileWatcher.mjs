@@ -69,7 +69,7 @@ export default class FileWatcher
 
     let node = this.fileManager.getNode(nodePath, isFile);
 
-    if(node)
+    if(node && !node.deleted)
       node.unlist();
   }
 
