@@ -41,9 +41,10 @@ export async function register(username, password, verifyPassword)
   try{
     await fs.mkdir(User.USERS_FOLDER);
   } catch(err) {
-    if(err.code != "EEXIST")
+    if(err.code != "EEXIST") {
       console.error(`Error creating USERS_FOLDER for registration: ${err.code}`);
-    throw "Internal server error.";
+      throw "Internal server error.";
+    }
   }
 
   let filePath = User.getPath(username);
