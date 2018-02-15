@@ -1,5 +1,4 @@
 import Core from "./Core";
-import http from "http";
 import Koa from "koa";
 import koaConditionalGet from "koa-conditional-get";
 import websockify from "koa-websocket";
@@ -10,6 +9,8 @@ import koaBody from "koa-body";
 import busboy from "koa-busboy";
 import logger from "koa-morgan";
 import walkSync from "walk-sync";
+import http from "http";
+import crypto from "crypto";
 import path from "path";
 
 import authenticate from "./Web/Authenticate";
@@ -65,7 +66,7 @@ export default class Server
 
   start()
   {
-    this.koaApp.keys = ["test"];
+    this.koaApp.keys = [crypto.randomBytes(32)];
 
     this.koaApp.use(logger("dev"));
     this.koaApp.use(koaConditionalGet());
