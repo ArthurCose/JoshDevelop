@@ -53,7 +53,7 @@ export async function register(username, password, verifyPassword)
 
   let data = {
     username: username,
-    password: await bcrypt.hash(password, 8),
+    password: await bcrypt.hash(password, 13),
     nickname: username,
     color: User.generateColor(),
     settings: {},
