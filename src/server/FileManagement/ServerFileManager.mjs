@@ -2,7 +2,6 @@ import FileTree from "../../shared/FileTree";
 import FileWatcher from "./FileWatcher";
 import ServerFolderNode from "./ServerFolderNode";
 import getFileNameErrors from "./getFileNameErrors";
-import fs from "fs-extra";
 
 export default class ServerFileManager extends FileTree
 {
