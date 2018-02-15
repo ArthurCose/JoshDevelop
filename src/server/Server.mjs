@@ -1,4 +1,3 @@
-import Authentication from "./Authentication";
 import Core from "./Core";
 import http from "http";
 import Koa from "koa";
@@ -10,10 +9,13 @@ import koaSession from "koa-session";
 import koaBody from "koa-body";
 import busboy from "koa-busboy";
 import logger from "koa-morgan";
-import ejs from "ejs";
 import walkSync from "walk-sync";
-import fs from "fs-extra";
 import path from "path";
+
+import authenticate from "./Web/Authenticate";
+import generateIndexMiddleware from "./Web/Index";
+import generateEntryScriptMiddleware from "./Web/EntryScript";
+import logout from "./Web/Logout";
 
 export default class Server
 {
@@ -84,12 +86,7 @@ export default class Server
     this.addStaticRoute("/", "web/public");
     this.addStaticRoute("/javascript/shared", "src/shared");
 
-    let entryScript = this.generateEntryScript();
-
-    this.addDynamicRoute("/javascript/client/Entry.js", (ctx, next) => {
-      ctx.type = "text/javascript";
-      ctx.body = entryScript;
-    });
+    this.addDynamicRoute("/javascript/client/Entry.js", generateEntryScriptMiddleware(this));
 
     this.addStaticRoute("/javascript/client", "src/client");
 
@@ -112,8 +109,8 @@ export default class Server
 
   addDynamicRoutes()
   {
-    this.addDynamicRoute("/auth", Authentication.authenticate);
-    this.addDynamicRoute("/logout", Authentication.logout);
+    this.addDynamicRoute("/auth", authenticate);
+    this.addDynamicRoute("/logout", logout);
 
     // test if the user is logged in before giving access to plugins/index
     this.koaApp.use(async (ctx, next) => {
@@ -126,15 +123,7 @@ export default class Server
     for(let plugin of this.plugins)
       plugin.addDynamicRoutes(this);
 
-    // index/main page
-    let index = this.generateIndex();
-
-    this.koaApp.use(async (ctx, next) => {
-      if(ctx.path == "/")
-        ctx.body = index;
-      else
-        await next();
-    });
+    this.koaApp.use(generateIndexMiddleware(this));
   }
 
   addStaticRoute(publicPath, internalPath)
@@ -145,70 +134,6 @@ export default class Server
   addDynamicRoute(publicPath, middleware)
   {
     this.koaApp.use(koaMount(publicPath, middleware));
-  }
-
-  generateIndex()
-  {
-    // use sets to keep values unique
-    let data = {
-      scripts: new Set(),
-      stylesheets: new Set()
-    };
-
-    // get main stylesheets
-    let mainCSS = walkSync("web/public/stylesheets", { directories: false });
-    mainCSS.forEach((value, index) => data.stylesheets.add(`stylesheets/${value}`));
-
-    // get scripts and stylesheets required for plugins to work
-    for(let plugin of this.plugins) {
-      if(!plugin.publicPath)
-        continue;
-
-      let publicPath = plugin.internalPath + "/" + plugin.publicPath;
-
-      // add dependency scripts
-      if(plugin.externalScripts)
-        for(let filePath of plugin.externalScripts)
-          data.scripts.add(filePath);
-
-      // add dependency stylesheets
-      if(plugin.externalStylesheets)
-        for(let filePath of plugin.externalStylesheets)
-          data.stylesheets.add(filePath);
-
-      // add stylesheets
-      if(plugin.stylesheets)
-        for(let filePath of plugin.stylesheets)
-          data.stylesheets.add(publicPath + "/" + filePath);
-    }
-
-    // load the index.html template
-    let template = fs.readFileSync("web/templates/index.html", "utf8");
-
-    // return the rendered index
-    return ejs.render(template, data);
-  }
-
-  generateEntryScript()
-  {
-    let data = {
-      entryScripts: []
-    };
-
-    for(let plugin of this.plugins) {
-      if(!plugin.publicPath && !plugin.clientEntry)
-        continue;
-
-      let publicPath = `../../${plugin.internalPath}/${plugin.publicPath}`;
-
-      data.entryScripts.push(`${publicPath}/${plugin.clientEntry}`);
-    }
-
-    // load the Entry.js template
-    let template = fs.readFileSync("web/templates/javascript/Entry.js", "utf8");
-
-    // return the rendered index
-    return ejs.render(template, data);
   }
 
   setupHttpServer()

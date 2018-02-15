@@ -1,101 +1,66 @@
 import User from "./User";
-import fs from "fs-extra";
 import bcrypt from "bcrypt";
-import path from "path";
+import fs from "fs-extra";
 
 const VALID_USERNAME_REGEX = /^[a-z0-9_]+$/i;
-const LOGIN_PAGE = path.resolve("web/templates/login.html");
 
-export default class Authentication
+/**
+ * Throws on failure.
+ */
+export async function login(username, password)
 {
-  static async authenticate(ctx, next)
-  {
-    let {action, username, password, verifyPassword} = ctx.request.body;
+  let filePath = User.getPath(username);
+  let fileData = await fs.readFile(filePath, "utf8")
+    .catch(() => {throw "User does not exist."});
 
-    if(!action) {
-      ctx.type = "text/html";
-      ctx.body = await fs.readFile(LOGIN_PAGE);
-      return;
-    }
+  let hash = JSON.parse(fileData).password;
 
-    if(!VALID_USERNAME_REGEX.test(username)) {
-      ctx.body = "Invalid username.";
-      return;
-    }
+  let matches = await bcrypt.compare(password, hash);
 
-    let actionPromise;
+  if(!matches)
+    throw "Password does not match.";
+}
 
-    if(action == "login")
-      actionPromise = Authentication.login(username, password);
-    else
-      actionPromise = Authentication.register(username, password, verifyPassword);
+/**
+ * Throws on failure.
+ */
+export async function register(username, password, verifyPassword)
+{
+  if(!VALID_USERNAME_REGEX.test(username))
+    throw "Username can only contain alphanumeric characters and underscores.";
 
-    try{
-      await actionPromise;
+  if(username.length < 3)
+    throw "Username must be at least 3 characters in length.";
 
-      ctx.session.username = username;
-      ctx.body = "";
-    } catch(err) {
-      ctx.body = err;
-    }
+  if(password != verifyPassword)
+    throw "Passwords do not match.";
+
+  if(password.length < 3)
+    throw "Password must be at least 3 characters in length.";
+
+  try{
+    await fs.mkdir(User.USERS_FOLDER);
+  } catch(err) {
+    if(err.code != "EEXIST")
+      console.error(`Error creating USERS_FOLDER for registration: ${err.code}`);
+    throw "Internal server error.";
   }
 
-  static async login(username, password)
-  {
-    let filePath = User.getPath(username);
-    let fileData = await fs.readFile(filePath, "utf8")
-      .catch(() => {throw "User does not exist."});
+  let filePath = User.getPath(username);
+  let fd = await fs.open(filePath, "wx")
+                   .catch(() => {throw "User already exists."});
 
-    let hash = JSON.parse(fileData).password;
+  let data = {
+    username: username,
+    password: await bcrypt.hash(password, 8),
+    nickname: username,
+    color: User.generateColor(),
+    settings: {},
+    permissions: []
+  };
 
-    let matches = await bcrypt.compare(password, hash);
+  data = JSON.stringify(data);
 
-    if(!matches)
-      throw "Password does not match.";
-  }
-
-  static async register(username, password, verifyPassword)
-  {
-    if(password != verifyPassword)
-      throw "Passwords do not match.";
-
-    if(password.length < 3)
-      throw "Password must be at least 3 characters in length.";
-
-    if(username.length < 3)
-      throw "Username must be at least 3 characters in length.";
-
-    try{
-      await fs.mkdir(User.USERS_FOLDER);
-    } catch(err) {
-      if(err.code != "EEXIST")
-        console.error(`Error creating USERS_FOLDER for registration: ${err.code}`);
-      throw "Internal server error.";
-    }
-
-    let filePath = User.getPath(username);
-    let fd = await fs.open(filePath, "wx")
-                     .catch(() => {throw "User already exists."});
-
-    let data = {
-      username: username,
-      password: await bcrypt.hash(password, 8),
-      nickname: username,
-      color: User.generateColor(),
-      settings: {},
-      permissions: []
-    };
-
-    data = JSON.stringify(data);
-
-    await fs.write(fd, data);
-    await fs.close(fd);
-  }
-
-  static async logout(ctx, next)
-  {
-    ctx.session = null;
-
-    ctx.redirect("/auth");
-  }
+  await fs.write(fd, data);
+  await fs.close(fd);
 }
