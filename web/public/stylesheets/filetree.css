@@ -37,6 +37,7 @@
 
 #filetree li{
   display: flex;
+  flex-shrink: 0;
 }
 
 #filetree span{
