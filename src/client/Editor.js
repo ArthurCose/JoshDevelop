@@ -9,8 +9,10 @@ export default class Editor
     this.session = session;
     this.element = tab.content;
 
-    tab.on("active", () => this.session.profile.location = this.fileNode.clientPath);
-    tab.on("close", () => this.closed());
+    this.tab.on("active", () => this.session.profile.location = this.fileNode.clientPath);
+    this.tab.on("close", () => this.closed());
+
+    this.tab.hoverText = this.fileNode.clientPath;
 
     this.fileNodeListeners.push(
       fileNode.on("move", () => this.moved()),
@@ -23,8 +25,9 @@ export default class Editor
     if(this.tab.isActive)
       this.session.profile.location = this.fileNode.clientPath;
 
-    this.tab.identifier = this.fileNode.clientPath;
     this.tab.name = this.fileNode.name;
+    this.tab.identifier = this.fileNode.clientPath;
+    this.tab.hoverText = this.fileNode.clientPath;
   }
 
   closed()

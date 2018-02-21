@@ -43,6 +43,16 @@ export class Tab extends EventRaiser
     return this.container.activeTab == this;
   }
 
+  get hoverText()
+  {
+    return this.tabElement.title;
+  }
+
+  set hoverText(value)
+  {
+    this.tabElement.title = value;
+  }
+
   lock()
   {
     this.closeElement.style.display = "none";
