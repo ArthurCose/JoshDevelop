@@ -1,16 +1,29 @@
-.ace_scroller{
-  position: absolute;
-  right: 0 !important;
-}
-
-.ace_editor ::-webkit-scrollbar{
-  border-left: 1px solid #414141;
-  opacity: .8;
-}
-
-#filetree ::-webkit-scrollbar-thumb,
-.ace_editor ::-webkit-scrollbar-thumb{
+#filetree::-webkit-scrollbar-thumb,
+.ace_scrollbar::-webkit-scrollbar-thumb{
   background: #505050;
+}
+
+#filetree::-webkit-scrollbar{
+  background: #303030;
+  width: 10px;
+}
+
+.ace_scrollbar-v::-webkit-scrollbar{
+  border-left: 1px solid #414141;
+  border-bottom: 1px solid #414141;
+}
+
+.ace_scrollbar-h::-webkit-scrollbar{
+  border-top: 1px solid #414141;
+  border-right: 1px solid #414141;
+}
+
+.ace_scrollbar-v{
+  bottom: 14px !important;
+}
+
+.ace_scrollbar-h{
+  right: 14px !important;
 }
 
 body{
