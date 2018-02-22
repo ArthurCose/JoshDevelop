@@ -1,7 +1,3 @@
-#user-settings{
-  border-left: 1px solid grey !important;
-}
-
 #user-list{
   display: none;
   position: absolute;
@@ -19,40 +15,40 @@
 }
 
 #user-list:focus,
-.user-name:focus,
-.user-color:focus{
+#user-list .user-name:focus,
+#user-list .user-color:focus{
   outline: 0;
 }
 
-.user{
+#user-list .user{
   border-bottom: 1px solid #DDD;
   padding: 2px;
   white-space: nowrap;
 }
 
-.user-name{
+#user-list .user-name{
   display: inline-block;
   min-width: 10px;
   margin-left: 7px;
 }
 
-.user-color{
+#user-list .user-color{
   display: inline-block;
   margin: auto 0;
   vertical-align: text-bottom;
 }
 
-.user-location{
+#user-list .user-location{
   text-decoration: underline;
   margin-right: 5px;
   cursor: pointer;
 }
 
-.user-location:hover{
+#user-list .user-location:hover{
   color: #999;
 }
 
-.user-location,
-.user-location-before{
+#user-list .user-location,
+#user-list .user-location-before{
     color: #888;
 }
