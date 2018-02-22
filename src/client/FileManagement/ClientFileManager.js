@@ -29,25 +29,25 @@ export default class ClientFileManager extends FileTree
       this.root.children[0].destroy();
   }
 
-  messageReceived(e)
+  messageReceived(message)
   {
     let folder, node;
 
-    switch(e.action) {
+    switch(message.action) {
     case "add":
-      node = this.registerNode(e.path, e.isFile);
+      node = this.registerNode(message.path, message.isFile);
 
       node.controlElement.addEventListener("click", () => this.triggerEvent("click", node));
       break;
     case "remove":
-      node = this.getNode(e.path, e.isFile);
+      node = this.getNode(message.path, message.isFile);
 
       if(node)
         node.markDeleted();
       break;
     case "move":
-      folder = this.getFolder(e.parentPath);
-      node = this.getNode(e.oldPath, e.isFile);
+      folder = this.getFolder(message.parentPath);
+      node = this.getNode(message.oldPath, message.isFile);
       node.name = e.newName;
 
       // folder might be undefined due to renaming the root node
@@ -61,7 +61,7 @@ export default class ClientFileManager extends FileTree
         node.append();
       }
 
-      node.triggerEvent("move", e.oldPath);
+      node.triggerEvent("move", message.oldPath);
       break;
     }
   }
