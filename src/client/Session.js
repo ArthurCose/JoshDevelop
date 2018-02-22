@@ -127,7 +127,11 @@ export default class Session extends EventRaiser
 
   connect()
   {
-    this.websocket = new WebSocket(`ws://${window.location.host}`);
+    let usingHttps = window.location.protocol == "https:";
+    let protocol = usingHttps ? "wss://" : "ws://";
+    let url = protocol + window.location.host;
+
+    this.websocket = new WebSocket(url);
 
     this.websocket.onopen = (e) => {
       document.getElementById("connection").style.backgroundColor = "lime";

@@ -10,6 +10,7 @@ import busboy from "koa-busboy";
 import logger from "koa-morgan";
 import walkSync from "walk-sync";
 import http from "http";
+import https from "https";
 import crypto from "crypto";
 import path from "path";
 
@@ -20,9 +21,9 @@ import logout from "./Web/Logout";
 
 export default class Server
 {
-  constructor(port)
+  constructor(options)
   {
-    this.port = port;
+    this.options = options;
     this.koaApp = websockify(new Koa());
     this.core = new Core(this);
     this.plugins = [];
@@ -146,15 +147,23 @@ export default class Server
 
   setupHttpServer()
   {
-    let httpServer = http.createServer(this.koaApp.callback());
+    let hasCertificate = this.options.key != undefined &&
+                         this.options.cert != undefined;
+
+    let createServerFunction =
+      hasCertificate ?
+        (requestListener) => https.createServer(this.options, requestListener) :
+        (requestListener) => http.createServer(requestListener);
+
+    let httpServer = createServerFunction(this.koaApp.callback());
 
     httpServer.on("error", (error) => {
       switch(error.code) {
       case "EACCES":
-        error = `Port ${this.port} requires elevated privileges`;
+        error = `Port ${this.options.port} requires elevated privileges`;
         break;
       case "EADDRINUSE":
-        error = `Port ${this.port} is already in use`;
+        error = `Port ${this.options.port} is already in use`;
         break;
       }
 
@@ -162,7 +171,7 @@ export default class Server
       process.exit(1);
     });
 
-    return httpServer.listen(this.port);
+    return httpServer.listen(this.options.port);
   }
 
   setupWebsocketServer(httpServer)
