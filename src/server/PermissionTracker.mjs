@@ -1,6 +1,5 @@
 import User from "./User";
 import chokidar from "chokidar";
-import walkSync from "walk-sync";
 import fs from "fs";
 
 export default class PermissionTracker

@@ -7,11 +7,12 @@ JoshDevelop is a web-based collaborative editor.
 
 Make sure dependencies are installed using `npm install`, then run `npm start`.
 
-You can then access the editor through a web browser using the address of the host machine
+If there are no users in the `users` folder, you will be prompted to create a new admin account. You can then access the editor through a web browser using the address of the host machine
 (http://localhost:8080 to access from the host machine by default).
 
 Options: `npm start [port [passphrase]]`
 
+JoshDevelop uses node v9.6.0+
 
 ## Security
 
