@@ -16,10 +16,15 @@ let terminalTabs;
  */
 export default function main(session)
 {
-  createTerminalDock(session);
+  session.on("connect", () => {
+    if(!session.permissions.includes("terminal"))
+      return;
 
-  // start off with one terminal
-  session.on("connect", () => createTerminal(session));
+    createTerminalDock(session);
+
+    // start off with one terminal
+    createTerminal(session);
+  });
 
   session.on("message", (session, message) => {
     if(message.type == "shell")

@@ -49,6 +49,6 @@ export default class Editor
 
   messageReceived(message)
   {
-    console.log(message);
+    console.error(message);
   }
 }

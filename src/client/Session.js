@@ -1,4 +1,5 @@
 import ClientFileManager from "./FileManagement/ClientFileManager.js"
+import PermissionManager from "./PermissionManager.js";
 import ProjectListMenu from "./ProjectListMenu.js";
 import {SettingsMenu} from "./Settings.js";
 import {TabbedContainer} from "./Tabs.js";
@@ -24,6 +25,7 @@ export default class Session extends EventRaiser
     this.settingsMenu = new SettingsMenu();
     this.fileManager = this.initializeFileManager();
     this.projectList = new ProjectListMenu(this);
+    this.permissionManager = undefined;
 
     this.editorTabs = new TabbedContainer("#editor-container");
     this.initializeSplitters();
@@ -138,9 +140,8 @@ export default class Session extends EventRaiser
     };
 
     this.websocket.onclose = (e) => {
-      this.displayPopup("Disconnected from the server");
+      this.displayPopup(`Disconnected from the server:\n${e.reason}`);
       document.getElementById("connection").style.backgroundColor = "red";
-      console.error(e);
     };
 
     this.websocket.onmessage = (e) => this.messageReceived(e.data);
@@ -172,6 +173,15 @@ export default class Session extends EventRaiser
     this.project = projectName;
   }
 
+  enableAdminTools()
+  {
+    this.permissionManager = new PermissionManager(this);
+
+    this.settingsMenu.addSection(
+      this.permissionManager
+    );
+  }
+
   messageReceived(message)
   {
     message = JSON.parse(message);
@@ -180,7 +190,11 @@ export default class Session extends EventRaiser
     case "init":
       this.id = message.id;
       this.settings = message.settings;
+      this.permissions = message.permissions;
       this.triggerEvent("connect");
+
+      if(this.permissions.includes("admin"))
+        this.enableAdminTools();
       break;
     case "popup":
       this.displayPopup(message.message);
@@ -204,6 +218,9 @@ export default class Session extends EventRaiser
 
       if(editor)
         editor.messageReceived(message);
+      break;
+    case "permissions":
+      this.permissionManager.messageReceived(message);
       break;
     }
 

@@ -19,8 +19,6 @@ To enable encryption, create a `certificate` folder and put your `cert.pem` and 
 
 JoshDevelop will use HTTPS with TLS if a certificate is found, otherwise it will default to plain HTTP.
 
-I do not suggest running JoshDevelop on a forwarded port until permissions are finished (this notice will be removed when it is), as any user can create an account and join without verification. If you do use this on a forwarded port I suggest disabling the terminal plugin (see Plugins below).
-
 
 ## Plugins
 

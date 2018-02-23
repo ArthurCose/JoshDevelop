@@ -1,5 +1,5 @@
 import Session from "./Session";
-import User from "./User";
+import PermissionTracker from "./PermissionTracker";
 import Project from "./Project";
 import fs from "fs";
 
@@ -10,6 +10,7 @@ export default class Core
   constructor(server)
   {
     this.server = server;
+    this.permissionTracker = new PermissionTracker(this);
     this.sessionHooks = [];
     this.editorPlugins = [];
     this.sessions = [];
@@ -84,9 +85,8 @@ export default class Core
   }
 
   // create a session for any new connection
-  connectSession(websocket, username)
+  connectSession(websocket, user)
   {
-    let user = new User(username);
     let session = new Session(this.topId++, user, websocket, this);
 
     // send the project list to the session

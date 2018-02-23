@@ -1,4 +1,5 @@
 import Core from "./Core";
+import User from "./User";
 import Koa from "koa";
 import koaConditionalGet from "koa-conditional-get";
 import websockify from "koa-websocket";
@@ -68,6 +69,11 @@ export default class Server
     // pass hooks to core for core to hook to sessions later
     if(plugin.sessionHooks)
       this.core.sessionHooks.push(plugin.sessionHooks);
+
+    if(plugin.availablePermissions)
+      this.core.permissionTracker.availablePermissions.push(
+        ...plugin.availablePermissions
+      );
 
     this.plugins.push(plugin);
   }
@@ -176,19 +182,34 @@ export default class Server
 
   setupWebsocketServer(httpServer)
   {
-    this.koaApp.ws.use((ctx) => this.resolveWebsocketRequest(ctx));
+    this.koaApp.ws.use((ctx) => {
+      let error = this.resolveWebsocketRequest(ctx);
+
+      if(error)
+        ctx.websocket.close(1002, error);
+    });
+
     this.koaApp.ws.listen({server: httpServer});
   }
 
+  // returns an error on failure, returns undefined on success
   resolveWebsocketRequest(ctx)
   {
     let username = ctx.session.username;
+    let user;
 
-    if(!username) {
-      ctx.websocket.close(1002, "Not logged in.");
-      return;
+    if(username === undefined)
+      return "Not logged in.";
+
+    try{
+      user = new User(username);
+    } catch(err) {
+      return `No user with username "${username}" found.`;
     }
 
-    this.core.connectSession(ctx.websocket, username);
+    if(!user.hasPermission("user"))
+      return "You do not have the 'user' permission.";
+
+    this.core.connectSession(ctx.websocket, user);
   }
 }

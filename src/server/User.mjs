@@ -4,9 +4,10 @@ export default class User
 {
   constructor(username)
   {
-    let json = fs.readFileSync(User.getPath(username));
+    let path = User.getPath(username);
+    let json = fs.readFileSync(path);
+
     this._data = JSON.parse(json);
-    this.permissions = this.get("permissions");
     this.saving = false;
     this.saveQueued = false;
   }
@@ -72,21 +73,23 @@ export default class User
 
   hasPermission(name)
   {
-    return this.permissions.includes(name);
+    return this.get("permissions").includes(name);
   }
 
   addPermission(name)
   {
-    if(!this.hasPermission)
-      this.permissions.push(name);
+    if(!this.hasPermission(name))
+      this.get("permissions").push(name);
   }
 
   removePermission(name)
   {
-    if(!this.hasPermission)
+    if(!this.hasPermission(name))
       return;
 
-    let index = this.permissions.indexOf(name);
-    this.permissions.splice(index, 1);
+    let permissions = this.get("permissions");
+
+    let index = permissions.indexOf(name);
+    permissions.splice(index, 1);
   }
 }

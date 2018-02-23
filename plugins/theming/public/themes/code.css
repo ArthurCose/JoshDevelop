@@ -132,7 +132,7 @@ body,
   color: #fff;
 }
 
-.user{
+#user-list .user{
   border-top: 2px solid #2D2D30;
   border-bottom: 0;
 }

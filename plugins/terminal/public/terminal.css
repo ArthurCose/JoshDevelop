@@ -32,7 +32,7 @@
   display: flex;
 }
 
-.terminal{
+#terminal-container .terminal{
   flex: 1;
   width: 100%;
   background: #000;

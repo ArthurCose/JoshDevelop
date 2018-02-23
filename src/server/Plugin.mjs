@@ -17,13 +17,13 @@ export default class Plugin
     this.clientEntry;
     /**
      * An array of paths relative to the publicPath to serve
-     * css from
+     * css from.
      * @type {string[]} stylesheets
      */
     this.stylesheets;
     /**
      * An array of paths relative to website's root to serve css from
-     * javascript from
+     * javascript from.
      * @type {string[]} externalStylesheets
      */
     this.externalStylesheets;
@@ -35,6 +35,12 @@ export default class Plugin
      * @type {Object.<string, function>} sessionHooks
      */
     this.sessionHooks;
+    /**
+     * List of permissions that can be enabled/disabled.
+     * Used for permission management.
+     * @type {string[]} availablePermissions
+     */
+    this.availablePermissions;
   }
 
   /**

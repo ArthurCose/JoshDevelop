@@ -64,3 +64,11 @@
 #settings input[type=number]{
   padding-right: 0;
 }
+
+#settings .username{
+  font-weight: bold;
+}
+
+#settings .permissions-table{
+  margin-left: 10px;
+}

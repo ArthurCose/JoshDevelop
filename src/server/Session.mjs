@@ -32,7 +32,8 @@ export default class Session extends EventRaiser
     this.send({
       type: "init",
       id: this.id,
-      settings: this.user.get("settings")
+      settings: this.user.get("settings"),
+      permissions: this.user.get("permissions")
     });
 
     // broadcast the addition of this
@@ -169,6 +170,9 @@ export default class Session extends EventRaiser
         settings[message.section] = message.data;
         this.user.set("settings", settings);
         this.user.save();
+        break;
+      case "permissions":
+        this.core.permissionTracker.messageReceived(this, message);
         break;
       case "profile":
         if(message.action != "update")

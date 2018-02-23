@@ -72,7 +72,7 @@ export default class Shell
 
     // send continuous output
     term.on("data", (data) => this.print(data));
-    term.on("error", (error) => console.log(error));
+    term.on("error", (error) => console.error(error));
 
     return term;
   }

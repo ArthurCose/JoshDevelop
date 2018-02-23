@@ -14,12 +14,16 @@ export default class TerminalPlugin extends Plugin
     this.externalStylesheets = ["xterm/xterm.css"];
     this.externalScripts = ["xterm/xterm.js", "xterm/addons/fit/fit.js"];
 
+    this.availablePermissions = ["terminal"];
+
     this.sessionHooks = {
       connect: (session) => {
         session.shells = [];
       },
       message: (session, message) => {
         if(message.type != "shell")
+          return;
+        if(!session.user.hasPermission("terminal"))
           return;
 
         if(message.action == "create") {

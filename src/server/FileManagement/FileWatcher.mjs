@@ -17,7 +17,6 @@ export default class FileWatcher
     this.watcher = chokidar.watch(
       this.fileManager.root.serverPath,
       {
-        persistent: true,
         usePolling: true,
         awaitWriteFinish: true
       }
@@ -27,7 +26,7 @@ export default class FileWatcher
     this.watcher.on("unlink", (filePath) => this.remove(filePath, true));
     this.watcher.on("addDir", (folderPath) => this.add(folderPath, false));
     this.watcher.on("unlinkDir", (folderPath) => this.remove(folderPath, false));
-    this.watcher.on("error", (err) => console.log(err));
+    this.watcher.on("error", (err) => console.error(err));
   }
 
   stop()

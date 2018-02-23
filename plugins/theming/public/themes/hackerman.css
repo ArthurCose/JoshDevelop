@@ -183,7 +183,7 @@ hr{
   border-color: #2c2;
 }
 
-.user{
+#user-list .user{
   border-top: 1px solid #2c2;
   border-bottom: 0;
 }

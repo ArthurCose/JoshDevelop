@@ -1,9 +1,6 @@
 ## Core
 
 * File writing tools in ServerFileNode
-* Login
-  * admins should be able to give/withdraw privileges - such as terminal
-    * privilege api for plugins
 
 ## Plugin Additions
 
@@ -20,9 +17,3 @@
 * Terminal
   * Close when the project is swapped, and if nothing was typed.
     * Probably best to write this through client side code.
-
-
-## Plugin API
-
-* convert to ES6 modules
-* documentation
