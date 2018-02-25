@@ -27,8 +27,7 @@
   flex-direction: column;
 }
 
-#terminal-container .tab-content
-{
+#terminal-container .tab-content{
   display: flex;
 }
 
@@ -41,7 +40,6 @@
 .xterm-viewport{
   width: 100%;
   min-height: 100%;
-  height: inherit !important;
 }
 
 #terminal-container .tab-container{
