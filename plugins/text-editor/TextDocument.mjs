@@ -1,4 +1,5 @@
 import fs from "fs-extra";
+import os from "os";
 
 export default class TextDocument
 {
@@ -6,6 +7,7 @@ export default class TextDocument
   {
     this.fileNode = fileNode;
     this.lines = [""];
+    this.lineEnding = os.EOL;
     this.revisions = [];
     this.saving = false;
     this.saveQueued = false;
@@ -34,7 +36,7 @@ export default class TextDocument
     
     await this.fileNode.parentFolder.make();
 
-    await fs.writeFile(this.fileNode.serverPath, this.lines.join("\r\n"));
+    await fs.writeFile(this.fileNode.serverPath, this.lines.join(this.lineEnding));
 
     this.saving = false;
 
