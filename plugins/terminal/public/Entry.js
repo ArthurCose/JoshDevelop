@@ -49,7 +49,7 @@ function createTerminalDock(session)
 
   document.getElementById("add-terminal").addEventListener(
     "click",
-    () => createTerminal()
+    () => createTerminal(session)
   );
 
   document.getElementById("clear-terminal").addEventListener(
