@@ -48,7 +48,7 @@ export default class ClientFileManager extends FileTree
     case "move":
       folder = this.getFolder(message.parentPath);
       node = this.getNode(message.oldPath, message.isFile);
-      node.name = e.newName;
+      node.name = message.newName;
 
       // folder might be undefined due to renaming the root node
       if(folder) {
