@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --experimental-modules --harmony-dynamic-import index.mjs"
+    "start": "node --experimental-modules index.mjs",
+    "debug": "node --inspect --experimental-modules index.mjs"
   },
   "dependencies": {
     "file-transfer": "file:./plugins/file-transfer",
@@ -20,11 +21,11 @@
     "koa-session": "~5.8.1",
     "koa-body": "~2.5.0",
     "koa-busboy": "~1.1.1",
-    "mime-db": "^1.32.0",
+    "mime-db": "^1.33.0",
     "bcrypt": "~1.0.3",
     "ejs": "~2.5.7",
     "fs-extra": "~5.0.0",
-    "chokidar": "~2.0.1",
+    "chokidar": "~2.0.2",
     "walk-sync": "~0.3.2"
   },
   "main": "index.js",
