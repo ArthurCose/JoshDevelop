@@ -135,7 +135,7 @@ export default class AceSettings extends SettingsSection
     this.saveSettings();
   }
 
-  applySettings(aceEditor)
+  subscribeEditor(aceEditor)
   {
     aceEditor.setTheme(`ace/theme/${this.theme}`);
     aceEditor.session.setUseSoftTabs(this.useSoftTabs);
@@ -144,5 +144,11 @@ export default class AceSettings extends SettingsSection
     aceEditor.setDisplayIndentGuides(this.showIndentGuides);
 
     this.editors.push(aceEditor);
+  }
+
+  unsubscribeEditor(aceEditor)
+  {
+    let index = this.editors.indexOf(aceEditor);
+    this.editors.splice(index, 1);
   }
 }

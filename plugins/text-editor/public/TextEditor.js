@@ -19,16 +19,19 @@ export default class TextEditor extends Editor
     this.writingData = false;
 
     this.editor = this.createEditor();
-    this.editor.aceEditor.on("change", (operation) => this.changeMade(operation));
     this.editor.updateHighlighter(fileNode.name);
 
+    this.editor.aceEditor.on("change", (operation) => this.changeMade(operation));
     this.editor.selection.on("changeCursor", () => this.sendCaretUpdate());
     this.editor.selection.on("changeSelection", () => this.sendCaretUpdate());
 
-    tab.on("active", () => {
-      this.editor.aceEditor.focus();
-      this.editor.caret.redraw();
-    });
+    this.tab.on("active", () => this.onFocus());
+  }
+
+  onFocus()
+  {
+    this.editor.aceEditor.focus();
+    this.editor.caret.redraw();
   }
 
   createEditor()

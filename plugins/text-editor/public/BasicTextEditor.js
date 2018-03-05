@@ -35,7 +35,9 @@ export default class BasicTextEditor
     let aceEditor = ace.edit(editorElement);
     aceEditor.$blockScrolling = Infinity;
     aceEditor.session.selection.clearSelection();
-    this.session.settingsMenu.sections["Text Editor"].applySettings(aceEditor);
+
+    let settings = this.session.settingsMenu.sections["Text Editor"];
+    settings.subscribeEditor(aceEditor);
 
     this.element.appendChild(editorElement);
 
@@ -97,13 +99,16 @@ export default class BasicTextEditor
 
   destroy()
   {
-    this.aceEditor.destroy();
-
     for(let userid in this.carets) {
       let caret = this.carets[userid];
 
       if(caret)
         caret.destroy();
     }
+
+    let settings = this.session.settingsMenu.sections["Text Editor"];
+    settings.unsubscribeEditor(this.aceEditor);
+
+    this.aceEditor.destroy();
   }
 }

@@ -7,7 +7,6 @@ export default class Caret
     this._range = new Range(0,0,0,0);
     this._user = session.userList.getUser(userid);
 
-    this._user.on("update", () => this.redraw());
     this.aceEditor = aceEditor;
     this.aceSession = aceEditor.session;
 
@@ -19,6 +18,10 @@ export default class Caret
     this.visible = true;
 
     this.aceSession.addDynamicMarker(this, false);
+
+    this.listeners = [
+      this._user.on("update", () => this.redraw())
+    ];
   }
 
   get blink()
@@ -144,5 +147,8 @@ export default class Caret
   {
     this.aceSession.removeMarker(this.id);
     clearInterval(this.blinkTimer);
+
+    for(let listener of this.listeners)
+      listener.destroy();
   }
 }
