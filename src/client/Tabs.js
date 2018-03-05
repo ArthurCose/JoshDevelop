@@ -128,6 +128,7 @@ export class Tab extends EventRaiser
 
     this.container.triggerEvent("swap", this);
     this.triggerEvent("active");
+    this.resized();
   }
 
   resized()
