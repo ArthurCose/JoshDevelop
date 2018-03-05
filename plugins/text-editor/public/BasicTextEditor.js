@@ -90,6 +90,11 @@ export default class BasicTextEditor
     this.caretInfo.innerText = `Ln ${pos.row + 1}, Col ${pos.column + 1}`;
   }
 
+  clearHistory()
+  {
+    this.aceEditor.session.setUndoManager(new ace.UndoManager());
+  }
+
   destroy()
   {
     this.aceEditor.destroy();

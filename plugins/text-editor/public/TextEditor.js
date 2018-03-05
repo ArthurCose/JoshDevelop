@@ -98,6 +98,7 @@ export default class TextEditor extends Editor
     switch(message.action) {
     case "join":
       this.editor.aceEditor.setValue(message.value, -1);
+      this.editor.clearHistory();
 
       this.element.style.display = "";
       this.lastRevision = message.lastRevision;
