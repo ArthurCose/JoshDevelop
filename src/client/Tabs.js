@@ -140,10 +140,16 @@ export class Tab extends EventRaiser
   {
     let index = this.container.tabs.indexOf(this);
 
-    if(this.isActive && this.container.tabs.length > 1) {
-      let activeIndex = index == 0 ? 1 : index - 1;
+    if(this.isActive) {
+      if(this.container.tabs.length > 1) {
+        // find another tab to make active
+        let activeIndex = index == 0 ? 1 : index - 1;
 
-      this.container.tabs[activeIndex].makeActive();
+        this.container.tabs[activeIndex].makeActive();
+      } else {
+        // no other tabs
+        this.container.activeTab = undefined;
+      }
     }
 
     this.tabElement.remove();
