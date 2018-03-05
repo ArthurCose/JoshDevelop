@@ -9,7 +9,7 @@ export default class ClientFileNode extends FileNode
 
     // specific to client file/folder nodes
     // (node, menu)
-    this.addEvent("menu");
+    this.addEvent("contextmenu");
 
     this.controlElement = document.createElement("li");
     this.nameElement = document.createElement("span");
@@ -71,7 +71,7 @@ export default class ClientFileNode extends FileNode
       });
     }
 
-    this.triggerEvent("menu", menu);
+    this.triggerEvent("contextmenu", menu);
 
     menu.appendToElement(document.body);
 

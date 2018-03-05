@@ -16,7 +16,7 @@ export default function main(session)
 
 function attachDownloadButton(node, session)
 {
-  node.on("menu", (node, menu) => {
+  node.on("contextmenu", (node, menu) => {
     menu.addButtonBefore("Delete", "Download", () => {
       let filePath = encodeURIComponent(node.clientPath);
       let projectName = encodeURIComponent(session.project);
