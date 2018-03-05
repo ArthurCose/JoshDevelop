@@ -93,8 +93,16 @@ function createTerminal(session)
   // create shell
   let shell = new Shell(tab, element, session, id);
 
+  shell.on("destroy", () => removeShell(shell));
+
   // add to shell array
   shells.push(shell);
 
   return shell;
+}
+
+function removeShell(shell)
+{
+  let index = shells.indexOf(shell);
+  shells[index] = undefined;
 }

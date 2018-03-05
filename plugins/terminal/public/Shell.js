@@ -1,9 +1,13 @@
+import EventRaiser from "/javascript/shared/EventRaiser.mjs";
+
 Terminal.applyAddon(fit);
 
-export default class Shell
+export default class Shell extends EventRaiser
 {
   constructor(tab, element, session, id)
   {
+    super();
+
     this.id = id;
     this.element = element;
     this.session = session;
@@ -27,6 +31,8 @@ export default class Shell
     /*this.terminal.on("title", (title) => {
       tab.name = title;
     });*/
+
+    this.addEvent("destroy");
   }
 
   input(input)
@@ -76,5 +82,8 @@ export default class Shell
       action: "destroy",
       id: this.id
     });
+
+    this.terminal.destroy();
+    this.triggerEvent("destroy");
   }
 }
