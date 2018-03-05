@@ -17,9 +17,9 @@ export default class Shell
       action: "getsize"
     });
 
-    this.session.on("disconnect", () => {
-      this.destroy();
-    });
+    this.listeners = [
+      this.session.on("disconnect", () => this.destroy())
+    ]
   }
 
   messageReceived(message)
@@ -81,6 +81,9 @@ export default class Shell
   {
     if(this.term)
       this.term.kill();
+
+    for(let listener of this.listeners)
+      listener.destroy();
 
     this.session.shells[this.id] = undefined;
   }
