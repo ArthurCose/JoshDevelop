@@ -1,3 +1,4 @@
+import ContextMenu from "./ContextMenu.js";
 import EventRaiser from "../shared/EventRaiser.mjs";
 
 /*   <div id=tabbedcontainer>
@@ -22,8 +23,9 @@ export class Tab extends EventRaiser
     this.closeElement = document.createElement("span");
 
     this.tabElement.className = "tab";
-    this.tabElement.addEventListener("mouseup", (e) => this.mouseup(e), false);
-
+    this.tabElement.addEventListener("contextmenu", (e) => this.onContextMenu(e));
+    this.tabElement.addEventListener("mouseup", (e) => this.onMouseUp(e));
+    
     this.nameElement.className = "name";
 
     this.closeElement.className = "close";
@@ -35,6 +37,7 @@ export class Tab extends EventRaiser
 
     this.addEvent("active");
     this.addEvent("resize");
+    this.addEvent("contextmenu");
     this.addEvent("close");
   }
 
@@ -69,7 +72,37 @@ export class Tab extends EventRaiser
     this.nameElement.innerText = value;
   }
 
-  mouseup(e)
+  onContextMenu(e)
+  {
+    let menu = new ContextMenu(e.clientX, e.clientY);
+
+    menu.addButton("Close", () => this.destroy());
+    menu.addButton("Close Others", () => this.closeOthers());
+    menu.addButton("Close All", () => this.closeAll());
+
+    menu.appendToElement(document.body);
+
+    e.preventDefault();
+  }
+
+  closeOthers()
+  {
+    let tabs = [...this.container.tabs];
+
+    for(let tab of tabs)
+      if(tab != this)
+        tab.destroy();
+  }
+
+  closeAll()
+  {
+    let tabs = [...this.container.tabs];
+
+    for(let tab of tabs)
+      tab.destroy();
+  }
+
+  onMouseUp(e)
   {
     switch(e.which) {
     case 1:
