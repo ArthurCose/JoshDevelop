@@ -54,7 +54,10 @@ function dropFiles(folderNode, session, e)
   session.displayPopup(`Uploading ${files.length} file(s).`);
 
   xhr.addEventListener("loadend", () => {
-    session.displayPopup(xhr.responseText);
+    let message =
+      xhr.status == 200 ? xhr.responseText : "Failed to send file(s)";
+    
+    session.displayPopup(message);
   });
 
   xhr.open(
