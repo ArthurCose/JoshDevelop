@@ -181,15 +181,14 @@ body,
 .tab{
   padding: 0 12px;
   min-width: 100px;
+  display: flex;
 }
 
-.tab .name,
-#add-terminal{
-  padding-top: 7px;
+.tab .name{
+  flex: 1;
 }
 
 .tab .close{
-  float: right;
   padding-top: 6px;
 }
 
@@ -201,6 +200,11 @@ body,
 .tab,
 .tab:hover{
   opacity: 1 !important;
+}
+
+.tab .name,
+#add-terminal{
+  padding-top: 7px;
 }
 
 .popup{
