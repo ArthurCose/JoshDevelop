@@ -1,21 +1,41 @@
+*{
+  --accent: #007ACC;
+  --black: #000000;
+  --dark: #1E1E1E;
+  --middle: #252525;
+  --pale: #2D2D2D;
+  --fair: #333333;
+  --light: #414141;
+  --bright: #505050;
+  --washed: #888888;
+  --grey: #CCCCCC;
+  --off-white: #EBEBEB;
+  --white: #FFFFFF;
+}
+
 #filetree::-webkit-scrollbar-thumb,
 .ace_scrollbar::-webkit-scrollbar-thumb{
-  background: #505050;
+  background: var(--bright);
 }
 
 #filetree::-webkit-scrollbar{
-  background: #303030;
+  background: var(--light);
   width: 10px;
 }
 
+.ace_scrollbar-v::-webkit-scrollbar,
+.ace_scrollbar-h::-webkit-scrollbar{
+  border: 0 solid var(--light);
+}
+
 .ace_scrollbar-v::-webkit-scrollbar{
-  border-left: 1px solid #414141;
-  border-bottom: 1px solid #414141;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
 }
 
 .ace_scrollbar-h::-webkit-scrollbar{
-  border-top: 1px solid #414141;
-  border-right: 1px solid #414141;
+  border-top-width: 1px;
+  border-right-width: 1px;
 }
 
 .ace_scrollbar-v{
@@ -28,12 +48,11 @@
 
 body{
   margin-bottom: 20px;
-  color: #CCCCCC;
 }
 
 body,
 .bottom-bar{
-  background-color: #007ACC;
+  background-color: var(--accent);
 }
 
 .contextmenu{
@@ -41,7 +60,7 @@ body,
 }
 
 .bottom-bar{
-  color: #FFFFFF;
+  color: var(--white);
   height: 20px;
   position: fixed;
   bottom: 0;
@@ -51,7 +70,7 @@ body,
 .vsplitter,
 .hsplitter{
   z-index: 6;
-  background-color: #414141;
+  background-color: var(--light);
 }
 
 .vsplitter{
@@ -88,23 +107,24 @@ body,
 body,
 #filetree,
 #add-terminal{
-  color: #CCCCCC;
+  color: var(--grey);
 }
 
 #filetree,
 #editor-container > .tab-header,
 #terminal-container .tab-header{
-  background-color: #252526;
+  background-color: var(--middle);
 }
 
 #filetree .root{
-  background-color: #373737 !important;
-  box-shadow: 0 1px 3px black;
+  background-color: var(--pale) !important;
+  box-shadow: 0 1px 3px var(--black);
+  z-index: 1;
 }
 
 #filetree li.selected,
 #filetree li:hover{
-  background-color: #3F3F46;
+  background-color: var(--light);
 }
 
 #toolbar{
@@ -112,11 +132,11 @@ body,
 }
 
 #toolbar, #toolbar button{
-  background-color: #F7F7F7;
+  background-color: var(--white);
 }
 
 #toolbar button:hover{
-  background-color: #EBEBEB;
+  background-color: var(--off-white);
 }
 
 #toolbar button{
@@ -131,19 +151,19 @@ body,
 
 #user-list{
   top: 25px;
-  border-color: #2D2D2D;
-  background-color: #3B3B3B;
-  box-shadow: -1px 3px 3px #000;
-  color: #fff;
+  border-color: var(--middle);
+  background-color: var(--fair);
+  box-shadow: -1px 3px 3px var(--black);
+  color: var(--white);
 }
 
 #user-list .user{
-  border-top: 2px solid #2D2D2D;
+  border-top: 2px solid var(--pale);
   border-bottom: 0;
 }
 
 #editor-container > .tab-header{
-  box-shadow: 0 1px 5px #000000;
+  box-shadow: 0 1px 5px var(--black);
   z-index: 5;
 }
 
@@ -155,7 +175,7 @@ body,
 #settings .tab,
 #settings .tab:hover,
 #settings .tab-container{
-  background: #1E1E1E;
+  background: var(--dark);
 }
 
 #editor-container > .tab-header  > .tab-container .tab.active,
@@ -168,20 +188,20 @@ body,
 #terminal-container .tab:hover .close,
 #settings .tab.active,
 #settings .tab.active:hover{
-  color: #FFFFFF;
+  color: var(--white);
 }
 
 #editor-container > .tab-header  > .tab-container .tab,
 #editor-container > .tab-header  > .tab-container .tab:hover,
 #terminal-container .tab,
 #terminal-container .tab:hover{
-  color: #8D8D8D;
-  background: #2D2D2D;
+  color: var(--washed);
+  background: var(--pale);
 }
 
 #editor-container > .tab-header  > .tab-container .tab .close,
 #terminal-container .tab .close{
-  color: #2D2D2D;
+  color: var(--pale);
 }
 
 #clear-terminal{
@@ -218,24 +238,24 @@ body,
 }
 
 #settings{
-  background: #2D2D2D;
+  background: var(--middle);
 }
 
 #settings .tab,
 #settings .tab:hover{
-  color: #8D8D8D;
+  color: var(--washed);
 }
 
 #settings .tab.active,
 #settings .tab.active:hover{
-  background: #2D2D2D;
+  background: var(--pale);
 }
 
 .popup{
   border-radius: 0;
-  box-shadow: 0 0 3px #333333;
-  background-color: #007ACC;
-  color: #FFFFFF;
+  box-shadow: 0 0 3px var(--fair);
+  background-color: var(--accent);
+  color: var(--white);
 }
 
 #popup-container{
@@ -249,30 +269,34 @@ body,
 }
 
 .ace_search.right{
-  background-color: #2D2D2D;
-  box-shadow: 0 2px 2px #000000;
+  background-color: var(--pale);
+  box-shadow: 0 2px 2px var(--black);
 }
 
 input.ace_search_field{
-  background-color: #3C3C3C;
-  color: #C5C5C5 !important;
+  background-color: var(--light);
+  color: var(--grey) !important;
   border: 0 !important;
   border-radius: 0 0 0 0 !important;
 }
 
 .ace_button,
 .ace_searchbtn{
-  color: #C5C5C5 !important;
+  color: var(--grey) !important;
   border: 0 !important;
   background: none !important;
 }
 
+.ace_search .checked{
+  color: var(--white) !important;
+}
+
 .sprite-editor .color{
-  border: 1px solid #C5C5C5;
+  border: 1px solid var(--grey);
 }
 
 .sprite-editor .layer-tab canvas{
-  border-color: #FFFFFF !important;
+  border-color: var(--white) !important;
 }
 
 .sprite-editor .tool-icon{
