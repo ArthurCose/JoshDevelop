@@ -20,14 +20,14 @@ export default class Session extends EventRaiser
     // <name, class>
     this.editorDictionary = {};
     this.editors = [];
+    this.editorTabs = new TabbedContainer("#editor-container");
     this.toolbar = new Toolbar();
     this.userList = new UserList(this);
-    this.settingsMenu = new SettingsMenu();
+    this.settingsMenu = new SettingsMenu(this);
     this.fileManager = this.initializeFileManager();
     this.projectList = new ProjectListMenu(this);
     this.permissionManager = undefined;
 
-    this.editorTabs = new TabbedContainer("#editor-container");
     this.initializeSplitters();
 
     this.addEvent("connect");

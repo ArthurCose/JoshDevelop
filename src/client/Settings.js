@@ -2,28 +2,29 @@ import {Tab, TabbedContainer} from "./Tabs.js";
 
 export class SettingsMenu
 {
-  constructor()
+  constructor(session)
   {
-    this.menuElement = document.getElementById("settings");
+    this.session = session;
     this.settingsButtonElement = document.getElementById("settings-button");
-
+    this.menuElement = document.createElement("div");
     this.tabs = new TabbedContainer(this.menuElement);
     this.sections = {};
     this.unloadedSections = [];
 
-    this.menuElement.tabIndex = 0;
+    this.menuElement.id = "settings";
 
-    this.settingsButtonElement.addEventListener("click", () => {
-      this.menuElement.style.display = "flex";
-      this.menuElement.focus();
-    });
+    this.settingsButtonElement.addEventListener("click", () => this.attach());
+  }
 
-    document.body.addEventListener("click", (e) => {
-      let focusElementIsDescendant = this.menuElement.contains(e.target);
+  attach() {
+    let tabbedContainer = this.session.editorTabs;
+    
+    let tab = tabbedContainer.getTab(":settings");
 
-      if(!focusElementIsDescendant && e.target != this.settingsButtonElement)
-        this.menuElement.style.display = "none";
-    });
+    if(!tab)
+      tab = tabbedContainer.addTab(":settings", "Settings", this.menuElement);
+
+    tab.makeActive();
   }
 
   addSection(section)

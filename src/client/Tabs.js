@@ -174,11 +174,24 @@ export class TabbedContainer extends EventRaiser
     this.activeTab = undefined;
     this.tabs = [];
 
-    this.tabcontainer = element.querySelector(".tab-container");
-    this.tabcontent = element.querySelector(".tab-content");
+    this.tabcontainer = this.ensureElement("tab-container");
+    this.tabcontent = this.ensureElement("tab-content");
 
     this.addEvent("swap");
     this.addEvent("resize");
+  }
+
+  ensureElement(className)
+  {
+    let element = this.element.querySelector(`.${className}`);
+
+    if(!element) {
+      element = document.createElement("div");
+      element.className = className;
+      this.element.appendChild(element);
+    }
+
+    return element;
   }
 
   get length()
