@@ -38,3 +38,7 @@
   color: black;
   border-color: #3399ff;
 }
+
+#search .loading{
+  text-align: center;
+}

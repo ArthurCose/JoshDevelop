@@ -98,7 +98,18 @@ export default class SearchPanel
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(json));
 
+    this.displayLoadingMessage();
+  }
+
+  displayLoadingMessage()
+  {
     this.clearOldResults();
+
+    let loadingElement = document.createElement("div");
+    loadingElement.className = "loading";
+    loadingElement.innerText = "Loading...";
+
+    this.resultsElement.appendChild(loadingElement);
   }
 
   displayResults(results)
