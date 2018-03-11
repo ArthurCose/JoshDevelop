@@ -1,5 +1,6 @@
 import Plugin from "../../src/server/Plugin";
 import escapeStringRegexp from "escape-string-regexp";
+import ignore from "ignore";
 import fs from "fs-extra";
 
 export default class SearchPlugin extends Plugin
@@ -70,6 +71,7 @@ export default class SearchPlugin extends Plugin
   {
     let results = [];
     let folders = [filetree.root];
+    let gitIgnore = await this.getGitIgnore(filetree);
 
     while(folders.length > 0) {
       let folder = folders.pop();
@@ -83,6 +85,9 @@ export default class SearchPlugin extends Plugin
         if(this.skippableExtensions.includes(fileNode.extension))
           continue;
 
+        if(gitIgnore.ignores(fileNode.clientPath))
+          continue;
+
         let fileResults = await this.searchFile(fileNode, query);
 
         if(fileResults)
@@ -91,6 +96,23 @@ export default class SearchPlugin extends Plugin
     }
 
     return results;
+  }
+
+  async getGitIgnore(filetree)
+  {
+    let gitIgnore = ignore();
+
+    try{
+      let gitIgnorePath = `${filetree.root.serverPath}/.gitignore`;
+      let contents = await fs.readFile(gitIgnorePath, "utf8");
+      let lines = contents.split("\n");
+
+      gitIgnore.add(lines);
+    } catch(err) {
+      
+    }
+
+    return gitIgnore;
   }
 
   async searchFile(fileNode, regex)

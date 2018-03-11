@@ -89,6 +89,8 @@ export default class SearchPanel
     xhr.open("POST", "/search", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(json));
+
+    this.clearOldResults();
   }
 
   displayResults(results)
