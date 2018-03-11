@@ -12,6 +12,11 @@
   user-select: none;
 }
 
+.tab-header{
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
 .tab-container{
   flex: 0;
   display: inline-flex;

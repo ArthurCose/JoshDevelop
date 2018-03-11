@@ -1,16 +1,13 @@
 #add-terminal{
-  display: inline-block;
   padding: 0 5px;
   padding-top: 4px;
-  margin-left: -3px;
   height: 100%;
   font-weight: bold;
   cursor: pointer;
 }
 
 #clear-terminal{
-  display: block;
-  float: right;
+  margin-left: auto;
   padding: 0 5px;
   padding-top: 4px;
   height: 100%;
@@ -22,7 +19,6 @@
 
 #terminal-container{
   background-color: #000;
-  min-height: 25px;
   display: flex;
   flex-direction: column;
 }
@@ -42,17 +38,16 @@
   min-height: 100%;
 }
 
-#terminal-container .tab-container{
-  display: inline-flex;
-}
-
 #terminal-container .tab-container,
-#terminal-container .tab-header,
-#terminal-container .tab{
-  height: 25px;
+#terminal-container .tab,
+#add-terminal,
+#clear-terminal{
+  box-sizing: border-box;
+  height: 30px;
 }
 
 #terminal-container .tab-header{
+  display: flex;
   background-color: #333;
   color: #FFF;
 }
