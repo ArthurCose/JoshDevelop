@@ -85,11 +85,16 @@ body,
   height: 5px;
 }
 
+body,
+#filetree,
+#add-terminal{
+  color: #CCCCCC;
+}
+
 #filetree,
 #editor-container > .tab-header,
 #terminal-container .tab-header{
   background-color: #252526;
-  color: #CCCCCC;
 }
 
 #filetree .root{
@@ -126,14 +131,14 @@ body,
 
 #user-list{
   top: 25px;
-  border-color: #2D2D30;
+  border-color: #2D2D2D;
   background-color: #3B3B3B;
   box-shadow: -1px 3px 3px #000;
   color: #fff;
 }
 
 #user-list .user{
-  border-top: 2px solid #2D2D30;
+  border-top: 2px solid #2D2D2D;
   border-bottom: 0;
 }
 
@@ -146,7 +151,10 @@ body,
 #editor-container > .tab-header  > .tab-container .tab.active,
 #editor-container > .tab-header > .tab-container .tab.active:hover,
 #terminal-container .tab.active,
-#terminal-container .tab.active:hover{
+#terminal-container .tab.active:hover,
+#settings .tab,
+#settings .tab:hover,
+#settings .tab-container{
   background: #1E1E1E;
 }
 
@@ -157,7 +165,9 @@ body,
 #terminal-container .tab.active,
 #terminal-container .tab.active:hover,
 #terminal-container .tab.active .close,
-#terminal-container .tab:hover .close{
+#terminal-container .tab:hover .close,
+#settings .tab.active,
+#settings .tab.active:hover{
   color: #FFFFFF;
 }
 
@@ -207,6 +217,20 @@ body,
   padding-top: 7px;
 }
 
+#settings{
+  background: #2D2D2D;
+}
+
+#settings .tab,
+#settings .tab:hover{
+  color: #8D8D8D;
+}
+
+#settings .tab.active,
+#settings .tab.active:hover{
+  background: #2D2D2D;
+}
+
 .popup{
   border-radius: 0;
   box-shadow: 0 0 3px #333333;
@@ -225,7 +249,7 @@ body,
 }
 
 .ace_search.right{
-  background-color: #2D2D30;
+  background-color: #2D2D2D;
   box-shadow: 0 2px 2px #000000;
 }
 
@@ -241,10 +265,6 @@ input.ace_search_field{
   color: #C5C5C5 !important;
   border: 0 !important;
   background: none !important;
-}
-
-#settings{
-  color: initial;
 }
 
 .sprite-editor .color{
