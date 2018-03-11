@@ -282,14 +282,22 @@ select{
 }
 
 .ace_button,
-.ace_searchbtn{
+.ace_searchbtn,
+#search .toggle-button{
   color: var(--grey) !important;
-  border: 0 !important;
+  border-color: transparent !important;
   background: none !important;
 }
 
-.ace_search .checked{
+.ace_button:hover,
+#search .toggle-button:hover{
+  color: var(--off-white) !important;
+}
+
+.ace_search .checked,
+#search .toggle-button.selected{
   color: var(--white) !important;
+  border-color: #3399ff !important;
 }
 
 .sprite-editor .color{
