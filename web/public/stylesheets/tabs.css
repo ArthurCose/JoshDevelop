@@ -13,9 +13,8 @@
 }
 
 .tab-container{
-  width: 100%;
   flex: 0;
-  display: flex;
+  display: inline-flex;
   position: relative;
 }
 

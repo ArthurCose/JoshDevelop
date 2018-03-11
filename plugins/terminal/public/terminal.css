@@ -43,7 +43,7 @@
 }
 
 #terminal-container .tab-container{
-  display: inline;
+  display: inline-flex;
 }
 
 #terminal-container .tab-container,
