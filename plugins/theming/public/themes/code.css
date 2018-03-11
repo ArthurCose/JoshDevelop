@@ -281,6 +281,12 @@ select{
   border-radius: 0 0 0 0 !important;
 }
 
+.contextmenu input{
+  background-color: initial !important;
+  color: initial !important;
+  border: 1px gray solid !important;
+}
+
 .ace_button,
 .ace_searchbtn,
 #search .toggle-button{
