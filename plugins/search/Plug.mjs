@@ -74,6 +74,8 @@ export default class SearchPlugin extends Plugin
     let folders = [filetree.root];
     let gitIgnore = useGitIgnore ? await this.getGitIgnore(filetree) : ignore();
 
+    gitIgnore.add("/.git");
+
     while(folders.length > 0) {
       let folder = folders.pop();
 
