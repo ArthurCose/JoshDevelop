@@ -273,8 +273,9 @@ body,
   box-shadow: 0 2px 2px var(--black);
 }
 
-input.ace_search_field{
-  background-color: var(--light);
+input,
+select{
+  background-color: var(--light) !important;
   color: var(--grey) !important;
   border: 0 !important;
   border-radius: 0 0 0 0 !important;
