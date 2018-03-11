@@ -28,6 +28,15 @@ export default class FileNode extends EventRaiser
     this._name = value;
   }
 
+  get extension()
+  {
+    let splitName = this.name.split('.');
+
+    let extension = splitName[splitName.length - 1];
+
+    return extension;
+  }
+
   get clientPath()
   {
     let clientPath = this.name;
