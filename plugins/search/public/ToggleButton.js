@@ -1,11 +1,14 @@
 export default class ToggleButton
 {
-  constructor(label, tooltip)
+  constructor(label, tooltip, selected)
   {
     this.element = document.createElement("span");
     this.element.className = "toggle-button";
     this.element.innerText = label;
     this.element.title = tooltip;
+
+    if(selected)
+      this.toggle();
 
     this.element.addEventListener("click", () => this.toggle());
   }

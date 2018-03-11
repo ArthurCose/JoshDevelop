@@ -19,10 +19,12 @@ export default class SearchPanel
     this.regexButton = new ToggleButton(".*", "Use RegExp");
     this.caseSensitiveButton = new ToggleButton("Aa", "CaseSensitive Search");
     this.wholeWordButton = new ToggleButton("\\b", "Whole Word Search");
+    this.gitIgnoreButton = new ToggleButton(".git", "Ignore Files Using .gitignore", true);
 
     this.switchesElement.appendChild(this.regexButton.element);
     this.switchesElement.appendChild(this.caseSensitiveButton.element);
     this.switchesElement.appendChild(this.wholeWordButton.element);
+    this.switchesElement.appendChild(this.gitIgnoreButton.element);
 
     this.resultsElement = document.createElement("div");
     this.resultsElement.className = "results";
@@ -66,6 +68,11 @@ export default class SearchPanel
     return this.wholeWordButton.selected;
   }
 
+  get useGitIgnore()
+  {
+    return this.gitIgnoreButton.selected;
+  }
+
   search(query)
   {
     let xhr = new XMLHttpRequest();
@@ -75,6 +82,7 @@ export default class SearchPanel
       useRegex: this.useRegex,
       caseSensitive: this.caseSensitive,
       matchWholeWord: this.matchWholeWord,
+      useGitIgnore: this.useGitIgnore,
       query
     };
 

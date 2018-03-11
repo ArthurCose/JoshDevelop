@@ -33,7 +33,8 @@ export default class SearchPlugin extends Plugin
       query,
       useRegex,
       caseSensitive,
-      matchWholeWord
+      matchWholeWord,
+      useGitIgnore
     } = ctx.request.body;
 
     let project = this.core.projects[projectName];
@@ -46,7 +47,7 @@ export default class SearchPlugin extends Plugin
 
     let regex = this.createRegex(query, useRegex, caseSensitive, matchWholeWord);
 
-    let results = await this.searchTree(project.fileManager, regex);
+    let results = await this.searchTree(project.fileManager, regex, useGitIgnore);
 
     ctx.body = JSON.stringify({results});
   }
@@ -67,11 +68,11 @@ export default class SearchPlugin extends Plugin
     return new RegExp(queryString, flags);
   }
 
-  async searchTree(filetree, query)
+  async searchTree(filetree, query, useGitIgnore)
   {
     let results = [];
     let folders = [filetree.root];
-    let gitIgnore = await this.getGitIgnore(filetree);
+    let gitIgnore = useGitIgnore ? await this.getGitIgnore(filetree) : ignore();
 
     while(folders.length > 0) {
       let folder = folders.pop();
