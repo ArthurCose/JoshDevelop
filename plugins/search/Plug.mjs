@@ -75,8 +75,11 @@ export default class SearchPlugin extends Plugin
       let folder = folders.pop();
 
       for(let fileNode of folder.children) {
-        if(!fileNode.isFile)
+        if(!fileNode.isFile) {
+          folders.push(fileNode);
           continue;
+        }
+
         if(this.skippableExtensions.includes(fileNode.extension))
           continue;
 
