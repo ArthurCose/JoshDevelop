@@ -1,6 +1,7 @@
 import Core from "./Core";
 import User from "./User";
 import Koa from "koa";
+import koaCompress from "koa-compress";
 import koaConditionalGet from "koa-conditional-get";
 import websockify from "koa-websocket";
 import koaMount from "koa-mount";
@@ -84,6 +85,7 @@ export default class Server
 
     this.koaApp.use(logger("dev"));
     this.koaApp.use(koaConditionalGet());
+    this.koaApp.use(koaCompress());
 
     // add static routes first
     // changing the order will result in slowdown
