@@ -2,7 +2,7 @@ import Animation from "./Animation";
 import Layer from "./Layer";
 import path from "path";
 import fs from "fs-extra";
-import pngjs from "pngjs"
+import pngjs from "pngjs-nozlib";
 
 const PNG = pngjs.PNG;
 

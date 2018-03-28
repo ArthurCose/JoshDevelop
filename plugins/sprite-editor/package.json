@@ -4,6 +4,6 @@
   "private": true,
   "main": "Plug.mjs",
   "dependencies": {
-    "pngjs": "~3.3.1"
+    "pngjs-nozlib": "~1.0.0"
   }
 }
