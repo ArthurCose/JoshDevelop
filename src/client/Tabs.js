@@ -9,22 +9,23 @@ import EventRaiser from "../shared/EventRaiser.mjs";
 
 export class Tab extends EventRaiser
 {
-  constructor(identifier, content, tabElement, container)
+  constructor(identifier, content, element, container)
   {
     super();
 
     this.identifier = identifier;
     this.content = content;
-    this.tabElement = tabElement;
+    this.element = element;
     this.container = container;
     this.locked = false;
 
     this.nameElement = document.createElement("span");
     this.closeElement = document.createElement("span");
 
-    this.tabElement.className = "tab";
-    this.tabElement.addEventListener("contextmenu", (e) => this.onContextMenu(e));
-    this.tabElement.addEventListener("mouseup", (e) => this.onMouseUp(e));
+    this.element.className = "tab";
+    this.element.addEventListener("contextmenu", (e) => this.onContextMenu(e));
+    this.element.addEventListener("mousedown", (e) => this.onMouseDown(e));
+    this.element.addEventListener("mouseup", (e) => this.onMouseUp(e));
     
     this.nameElement.className = "name";
 
@@ -32,8 +33,8 @@ export class Tab extends EventRaiser
     this.closeElement.innerHTML = "x";
     this.closeElement.addEventListener("click", () => this.destroy());
 
-    this.tabElement.appendChild(this.nameElement);
-    this.tabElement.appendChild(this.closeElement);
+    this.element.appendChild(this.nameElement);
+    this.element.appendChild(this.closeElement);
 
     this.addEvent("active");
     this.addEvent("resize");
@@ -48,18 +49,12 @@ export class Tab extends EventRaiser
 
   get hoverText()
   {
-    return this.tabElement.title;
+    return this.element.title;
   }
 
   set hoverText(value)
   {
-    this.tabElement.title = value;
-  }
-
-  lock()
-  {
-    this.closeElement.style.display = "none";
-    this.locked = true;
+    this.element.title = value;
   }
 
   get name()
@@ -72,17 +67,10 @@ export class Tab extends EventRaiser
     this.nameElement.innerText = value;
   }
 
-  onContextMenu(e)
+  lock()
   {
-    let menu = new ContextMenu(e.clientX, e.clientY);
-
-    menu.addButton("Close", () => this.destroy());
-    menu.addButton("Close Others", () => this.closeOthers());
-    menu.addButton("Close All", () => this.closeAll());
-
-    menu.appendToElement(document.body);
-
-    e.preventDefault();
+    this.closeElement.style.display = "none";
+    this.locked = true;
   }
 
   closeOthers()
@@ -102,29 +90,16 @@ export class Tab extends EventRaiser
       tab.destroy();
   }
 
-  onMouseUp(e)
-  {
-    switch(e.which) {
-    case 1:
-      this.makeActive();
-      break;
-    case 2:
-      if(!this.locked)
-        this.destroy();
-      break;
-    }
-  }
-
   makeActive()
   {
     if(this.container.activeTab != undefined) {
       this.container.activeTab.content.style.display = "none";
-      this.container.activeTab.tabElement.className = "tab";
+      this.container.activeTab.element.className = "tab";
     }
 
     this.container.activeTab = this;
     this.content.style.display = "";
-    this.tabElement.className = "tab active";
+    this.element.className = "tab active";
 
     this.container.triggerEvent("swap", this);
     this.triggerEvent("active");
@@ -152,11 +127,80 @@ export class Tab extends EventRaiser
       }
     }
 
-    this.tabElement.remove();
+    this.element.remove();
     this.content.remove();
     this.container.tabs.splice(index, 1);
 
     this.triggerEvent("close");
+  }
+
+  onContextMenu(e)
+  {
+    let menu = new ContextMenu(e.clientX, e.clientY);
+
+    menu.addButton("Close", () => this.destroy());
+    menu.addButton("Close Others", () => this.closeOthers());
+    menu.addButton("Close All", () => this.closeAll());
+
+    menu.appendToElement(document.body);
+
+    e.preventDefault();
+  }
+
+  onMouseDown(e)
+  {
+    let leftMouse = e.which == 1;
+
+    if(leftMouse && !this.locked) {
+      this.makeActive();
+
+      let dragListener = (e) => this.onDrag(e);
+      let releaseListener = (e) => {
+        document.body.removeEventListener("mousemove", dragListener);
+        document.body.removeEventListener("mouseup", releaseListener);
+      };
+
+      document.body.addEventListener("mousemove", dragListener);
+      document.body.addEventListener("mouseup", releaseListener);
+    }
+  }
+
+  onDrag(e)
+  {
+    let tabUnderMouse = this.container.getTabUnderMouse(e);
+
+    if(tabUnderMouse == this)
+      return;
+
+    let placeBefore =
+      tabUnderMouse.element.offsetLeft < this.element.offsetLeft;
+
+    // remove this tab from the tabs array
+    let currentIndex = this.container.tabs.indexOf(this);
+    this.container.tabs.splice(currentIndex, 1);
+
+    // place this tab back relative to the tab under the mouse
+    let tabIndex = this.container.tabs.indexOf(tabUnderMouse);
+    this.container.tabs.splice(
+      placeBefore ? tabIndex : tabIndex + 1,
+      0,
+      this
+    );
+
+    // update ui to match previous action
+    this.element.remove();
+    this.container.tabcontainer.insertBefore(
+      this.element,
+      placeBefore ? tabUnderMouse.element : tabUnderMouse.element.nextSibling
+    );
+  }
+
+  onMouseUp(e)
+  {
+    let middleMouse = e.which == 2;
+
+    if(middleMouse && !this.locked)
+      this.destroy();
   }
 }
 
@@ -201,13 +245,13 @@ export class TabbedContainer extends EventRaiser
 
   addTab(identifier, name, content)
   {
-    let tabElement = document.createElement("div");
-    let tab = new Tab(identifier, content, tabElement, this);
+    let element = document.createElement("div");
+    let tab = new Tab(identifier, content, element, this);
 
     tab.name = name;
     content.style.display = "none";
 
-    this.tabcontainer.appendChild(tabElement);
+    this.tabcontainer.appendChild(element);
     this.tabcontent.appendChild(content);
 
     this.tabs.push(tab);
@@ -218,7 +262,7 @@ export class TabbedContainer extends EventRaiser
   removeTab(identifier)
   {
     let tab = this.getTab(identifier);
-    tab.destroy()
+    tab.destroy();
   }
 
   getTab(identifier)
@@ -236,5 +280,19 @@ export class TabbedContainer extends EventRaiser
       this.activeTab.resized();
 
     this.triggerEvent("resize");
+  }
+
+  getTabUnderMouse(e) {
+    let x = e.pageX - this.tabcontainer.offsetLeft;
+
+    if(x < 0)
+      return this.tabs[0];
+
+    for(let tab of this.tabs) {
+      let right = tab.element.offsetLeft + tab.element.offsetWidth;
+
+      if(x < right)
+        return tab;
+    }
   }
 }
