@@ -1,4 +1,3 @@
-
 import {register} from "./src/server/Authentication";
 import User from "./src/server/User";
 import {prompt, sensitivePrompt} from "./src/server/Prompt";
