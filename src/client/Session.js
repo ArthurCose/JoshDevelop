@@ -68,7 +68,9 @@ export default class Session extends EventRaiser
       return;
     }
 
-    // tab did not exist, we need to join/create the editor session
+    // check if we're already waiting for this editor
+    if(this.editors.includes(filePath))
+      return;
 
     // request to join an editor session
     this.send({
