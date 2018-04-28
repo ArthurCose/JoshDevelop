@@ -162,9 +162,10 @@ export class Tab extends EventRaiser
   {
     let leftMouse = e.which == 1;
 
-    if(leftMouse && !this.locked) {
+    if(leftMouse)
       this.makeActive();
 
+    if(leftMouse && !this.locked) {
       let dragListener = (e) => this.onDrag(e);
       let releaseListener = (e) => {
         document.body.removeEventListener("mousemove", dragListener);
