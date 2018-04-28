@@ -82,6 +82,16 @@ export class Tab extends EventRaiser
         tab.destroy();
   }
 
+  closeToTheRight()
+  {
+    let index = this.container.tabs.indexOf(this);
+    let tabs = this.container.tabs.slice(index + 1);
+
+    for(let tab of tabs)
+      if(tab != this)
+        tab.destroy();
+  }
+
   closeAll()
   {
     let tabs = [...this.container.tabs];
@@ -140,6 +150,7 @@ export class Tab extends EventRaiser
 
     menu.addButton("Close", () => this.destroy());
     menu.addButton("Close Others", () => this.closeOthers());
+    menu.addButton("Close To The Right", () => this.closeToTheRight());
     menu.addButton("Close All", () => this.closeAll());
 
     menu.appendToElement(document.body);
