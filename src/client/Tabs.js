@@ -38,6 +38,7 @@ export class Tab extends EventRaiser
 
     this.addEvent("active");
     this.addEvent("resize");
+    this.addEvent("slide");
     this.addEvent("contextmenu");
     this.addEvent("close");
   }
@@ -205,6 +206,9 @@ export class Tab extends EventRaiser
       this.element,
       placeBefore ? tabUnderMouse.element : tabUnderMouse.element.nextSibling
     );
+
+    this.triggerEvent("slide");
+    this.container.triggerEvent("slide", this);
   }
 
   onMouseUp(e)
@@ -232,8 +236,10 @@ export class TabbedContainer extends EventRaiser
 
     this.tabcontainer = this.ensureElement("tab-container");
     this.tabcontent = this.ensureElement("tab-content");
-
+    
+    this.addEvent("add");
     this.addEvent("swap");
+    this.addEvent("slide");
     this.addEvent("resize");
   }
 
@@ -267,6 +273,8 @@ export class TabbedContainer extends EventRaiser
     this.tabcontent.appendChild(content);
 
     this.tabs.push(tab);
+
+    this.triggerEvent("add", tab);
 
     return tab;
   }
