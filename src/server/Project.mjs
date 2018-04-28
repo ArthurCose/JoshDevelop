@@ -57,8 +57,8 @@ export default class Project
 
   rename(name)
   {
-    delete this.core.projects[this.name];
-    this.core.projects[name] = this;
+    this.core.projects.delete(name);
+    this.core.projects.set(name, this);
 
     this.core.broadcast({
       type: "project",
@@ -74,10 +74,9 @@ export default class Project
   {
     this.core.removeProject(this.name);
 
-    let projectList = Object.values(this.core.projects);
-    let firstProject = projectList[0];
+    let defaultProject = this.core.getDefaultProject();
 
     for(let session of this.sessions)
-      session.setProject(firstProject);
+      session.setProject(defaultProject);
   }
 }

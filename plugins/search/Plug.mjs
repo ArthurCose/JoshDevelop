@@ -37,7 +37,7 @@ export default class SearchPlugin extends Plugin
       useGitIgnore
     } = ctx.request.body;
 
-    let project = this.core.projects[projectName];
+    let project = this.core.projects.get(projectName);
 
     if(!project) {
       ctx.status = 400;

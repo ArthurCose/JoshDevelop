@@ -14,8 +14,7 @@ export default class Core
     this.sessionHooks = [];
     this.editorPlugins = [];
     this.sessions = [];
-    this.projects = {};
-    this.projectCount = 0
+    this.projects = new Map();
     this.topId = 0;
 
     this.loadProjects();
@@ -23,7 +22,7 @@ export default class Core
 
   loadProjects()
   {
-    if(this.projectCount > 0)
+    if(this.projects.size > 0)
       throw new Error("Core.loadProjects() can not be called more than once");
 
     // search for projects in the projects folder
@@ -42,18 +41,23 @@ export default class Core
       this.addProject(DEFAULT_PROJECT_NAME);
   }
 
+  getDefaultProject()
+  {
+    return this.projects.values().next().value;
+  }
+
   addProject(name)
   {
     if(name == "")
       throw new Error("Project name can not be blank");
-    if(name in this.projects)
+    if(this.projects.has(name))
       throw new Error(`Project "${name}" already exists`);
     if(name.includes("/") || name.includes("\\"))
       throw new Error("Project name can not contain / or \\");
 
     let project = new Project(name, this);
 
-    this.projects[name] = project;
+    this.projects.set(name, project);
     this.projectCount++;
 
     this.broadcast({
@@ -67,10 +71,10 @@ export default class Core
 
   removeProject(name)
   {
-    delete this.projects[name];
+    this.projects.delete(name);
 
     // no projects, create the default project
-    if(--this.projectCount == 0) {
+    if(this.projects.size == 0) {
       let newProject = this.addProject(DEFAULT_PROJECT_NAME);
 
       for(let session of this.sessions)
@@ -90,18 +94,11 @@ export default class Core
     let session = new Session(this.topId++, user, websocket, this);
 
     // send the project list to the session
-    for(let projectName in this.projects) {
-      // shove the session into a project if it didn't already happen
-      if(session.project == undefined) {
-        let project = this.projects[projectName];
-
-        session.setProject(project);
-      }
-
+    for(let [name, project] of this.projects) {
       session.send({
         type: "project",
         action: "add",
-        name: projectName
+        name: name
       });
     }
 
@@ -160,7 +157,7 @@ export default class Core
 
     switch(message.action) {
     case "swap":
-      let project = this.projects[message.name];
+      let project = this.projects.get(message.name);
 
       session.setProject(project);
       break;

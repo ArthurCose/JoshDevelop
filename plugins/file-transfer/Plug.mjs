@@ -55,7 +55,7 @@ export default class FileTransferPlugin extends Plugin
   async upload(ctx, next)
   {
     let {project: projectName, parentPath} = ctx.request.query;
-    let project = this.core.projects[projectName];
+    let project = this.core.projects.get(projectName);
 
     if(!project) {
       ctx.status = 400;

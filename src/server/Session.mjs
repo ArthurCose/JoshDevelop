@@ -28,6 +28,10 @@ export default class Session extends EventRaiser
 
   init()
   {
+    // send the user to a project
+    let project = this.core.getDefaultProject();
+    this.setProject(project);
+
     // give the client their ID
     this.send({
       type: "init",
