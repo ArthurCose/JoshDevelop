@@ -42,7 +42,7 @@ export default class SearchPanel
   attach()
   {
     // attach to the tabbed container for editors for now
-    let tabbedContainer = this.session.editorTabs;
+    let tabbedContainer = this.session.mainContainer;
     let tab = tabbedContainer.getTab(":search");
 
     if(!tab) {

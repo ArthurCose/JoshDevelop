@@ -1,12 +1,12 @@
 .popup,
 #filetree,
-#editor-container > .tab-header,
+#main-container > .tab-header,
 #terminal-container .tab-header{
   color: #fff;
 }
 
 .popup,
-#editor-container > .tab-header,
+#main-container > .tab-header,
 #filetree{
   background: #8AC5D7;
 }
@@ -20,18 +20,18 @@
   background-color: #7EBCD6;
 }
 
-#editor-container > .tab-header > .tab-container .tab{
+#main-container > .tab-header > .tab-container .tab{
   background-color: #D2DFE9;
   color: #000;
   opacity: 1 !important;
   transition: background-color .25s;
 }
 
-#editor-container > .tab-header > .tab-container .tab:hover{
+#main-container > .tab-header > .tab-container .tab:hover{
   background-color: #E0EAF1;
 }
 
-#editor-container > .tab-header > .tab-container .tab.active{
+#main-container > .tab-header > .tab-container .tab.active{
   background-color: #fff;
 }
 

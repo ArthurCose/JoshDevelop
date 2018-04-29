@@ -63,18 +63,18 @@ function createTerminalDock(session)
   terminalTabs = new TabbedContainer(terminalContainer);
 
   let hsplit = new HSplit(
-    session.editorTabs.element,
+    session.mainContainer.element,
     terminalTabs.element
   );
 
-  session.editorTabs.element.style.flex = "none";
+  session.mainContainer.element.style.flex = "none";
   hsplit.splitElement.style.flex = 1;
 
   hsplit.on("resize", () => {
-    session.editorTabs.resized();
+    session.mainContainer.resized();
   });
 
-  session.editorTabs.on("resize", () => terminalTabs.resized());
+  session.mainContainer.on("resize", () => terminalTabs.resized());
 
   window.addEventListener("resize", () => terminalTabs.resized());
 }

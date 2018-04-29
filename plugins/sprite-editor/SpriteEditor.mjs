@@ -31,7 +31,7 @@ export default class SpriteEditor extends Editor
     session.send({
       type: "editor",
       action: "join",
-      editorId: session.editors.indexOf(this),
+      editorId: session.editorToId.get(this),
       width: this.sprite.width,
       height: this.sprite.height,
       layers: this.sprite.layers,

@@ -6,11 +6,11 @@
   flex: 1;
 }
 
-#editor-container .tab-header{
+#main-container .tab-header{
   background-color: #e6e6e6;
 }
 
-#editor-container .tab{
+#main-container .tab{
   background-color: #fff;
   color: #000;
 }

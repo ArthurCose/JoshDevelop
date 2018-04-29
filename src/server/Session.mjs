@@ -11,7 +11,9 @@ export default class Session extends EventRaiser
     this.core = core;
 
     this.project = undefined;
-    this.editors = [];
+    this.idToEditor = new Map();
+    this.editorToId = new Map();
+    this.editorIdCount = 0;
     this.location = "";
 
     this.socketReady = true;
@@ -31,9 +33,12 @@ export default class Session extends EventRaiser
     // send the user to a project
     let projectName = this.user.get("project");
     let project = this.core.projects.get(projectName);
+    let layout = this.user.get("layout");
 
-    if(!project)
+    if(!project) {
       project = this.core.getDefaultProject();
+      layout = undefined;
+    }
 
     this.setProject(project);
 
@@ -42,7 +47,8 @@ export default class Session extends EventRaiser
       type: "init",
       id: this.id,
       settings: this.user.get("settings"),
-      permissions: this.user.get("permissions")
+      permissions: this.user.get("permissions"),
+      layout
     });
 
     // broadcast the addition of this
@@ -99,7 +105,7 @@ export default class Session extends EventRaiser
     return this.project.fileManager;
   }
 
-  openEditor(path)
+  openEditor(path, focus = true)
   {
     let editor = this.project.getEditor(path);
 
@@ -108,14 +114,19 @@ export default class Session extends EventRaiser
       return;
     }
 
+    let id = this.editorIdCount++;
+
     this.send({
       type: "editor",
       action: "initialize",
       name: editor.name,
-      id: this.editors.length
+      path,
+      focus,
+      id
     });
 
-    this.editors.push(editor);
+    this.idToEditor.set(id, editor);
+    this.editorToId.set(editor, id);
 
     return editor;
   }
@@ -164,8 +175,8 @@ export default class Session extends EventRaiser
 
       switch(message.type) {
       case "editor":
-        let editor = this.editors[message.editorId] ||
-                     this.openEditor(message.path);
+        let editor = this.idToEditor.get(message.editorId) ||
+                     this.openEditor(message.path, message.focus);
 
         if(editor)
           editor.messageReceived(this, message);
@@ -212,6 +223,10 @@ export default class Session extends EventRaiser
           sessionID: this.id
         });
         break;
+      case "layout":
+        this.user.set("layout", message.layout);
+        this.user.save();
+        break;
       }
 
       this.triggerEvent("message", message);
@@ -229,9 +244,8 @@ export default class Session extends EventRaiser
 
   closeOpenedEditors()
   {
-    for(let editor of this.editors)
-      if(editor)
-        editor.removeSession(this);
+    for(let [id, editor] of this.idToEditor)
+      editor.removeSession(this);
   }
 
   disconnected()

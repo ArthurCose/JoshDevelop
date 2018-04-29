@@ -1,6 +1,6 @@
 .popup,
 #filetree,
-#editor-container .tab-header{
+#main-container .tab-header{
   background-color: #4C9;
 }
 
@@ -15,7 +15,7 @@
 
 .popup,
 #filetree,
-#editor-container .tab-header,
+#main-container .tab-header,
 #terminal-container .tab-header{
   color: #fff;
 }

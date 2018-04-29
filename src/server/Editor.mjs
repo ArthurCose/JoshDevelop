@@ -51,8 +51,9 @@ export default class Editor
     let index = this.connectedSessions.indexOf(session);
     this.connectedSessions.splice(index, 1);
 
-    index = session.editors.indexOf(this);
-    session.editors[index] = undefined;
+    let id = session.editorToId.get(this);
+    session.idToEditor.delete(id);
+    session.editorToId.delete(this);
 
     if(this.connectedSessions.length == 0)
       this.destroy();
@@ -74,7 +75,7 @@ export default class Editor
   {
     for(let session of this.connectedSessions)
       if(session.id != sessionIgnore.id) {
-        message.editorId = session.editors.indexOf(this);
+        message.editorId = session.editorToId.get(this);
         session.send(message);
       }
   }

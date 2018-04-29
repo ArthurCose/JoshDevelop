@@ -56,14 +56,14 @@ body{
 #toolbar button,
 #toolbar button:hover,
 #settings,
-#editor-container,
+#main-container,
 #terminal-container,
 #settings .tab-header,
 #settings .tab-container,
-#editor-container .tab-header,
+#main-container .tab-header,
 #terminal-container .tab-header,
 #settings .tab,
-#editor-container .tab,
+#main-container .tab,
 #terminal-container .tab,
 .tab-container,
 .tab,
@@ -92,10 +92,10 @@ body,
 #filetree ::-webkit-scrollbar-thumb,
 .ace_editor ::-webkit-scrollbar-thumb,
 #settings .tab:hover,
-#editor-container .tab.hover,
+#main-container .tab.hover,
 #terminal-container .tab.hover,
 #settings .tab.active,
-#editor-container .tab.active,
+#main-container .tab.active,
 #terminal-container .tab.active,
 .contextmenu .menuitem:hover,
 .user-location:hover,
@@ -112,7 +112,7 @@ body,
 }
 
 #toolbar,
-#editor-container .tab-header,
+#main-container .tab-header,
 #terminal-container .tab-header,
 #settings .tab,
 .ace_search.right{
@@ -124,7 +124,7 @@ body,
 }
 
 #settings .tab-container,
-#editor-container .tab,
+#main-container .tab,
 #terminal-container .tab{
   border-right: 1px solid #2c2 !important;
 }

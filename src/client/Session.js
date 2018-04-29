@@ -1,8 +1,9 @@
+import MainContainer from "./MainContainer.js";
 import ClientFileManager from "./FileManagement/ClientFileManager.js"
 import PermissionManager from "./PermissionManager.js";
 import ProjectListMenu from "./ProjectListMenu.js";
-import {SettingsMenu} from "./Settings.js";
-import {TabbedContainer} from "./Tabs.js";
+import { SettingsMenu } from "./Settings.js";
+import { TabbedContainer } from "./Tabs.js";
 import Toolbar from "./Toolbar.js";
 import UserList from "./UserList.js";
 import {VSplit} from "./Splitter.js";
@@ -18,9 +19,10 @@ export default class Session extends EventRaiser
     this.profile = undefined;
     this.project = undefined;
     // <name, class>
-    this.editorDictionary = {};
-    this.editors = [];
-    this.editorTabs = new TabbedContainer("#editor-container");
+    this.editorDictionary = new Map();
+    this.editors = new Map();
+    this.editorWaitingList = new Map();
+    this.mainContainer = new MainContainer("#main-container", this);
     this.toolbar = new Toolbar();
     this.userList = new UserList(this);
     this.settingsMenu = new SettingsMenu(this);
@@ -50,62 +52,57 @@ export default class Session extends EventRaiser
   {
     let vsplit = new VSplit(
       this.fileManager.element,
-      this.editorTabs.element
+      this.mainContainer.element
     );
 
-    vsplit.on("resize", () => this.editorTabs.resized());
-    window.addEventListener("resize", () => this.editorTabs.resized());
+    vsplit.on("resize", () => this.mainContainer.resized());
+    window.addEventListener("resize", () => this.mainContainer.resized());
   }
 
-  openEditor(filePath)
+  openEditor(path, focus = true)
   {
     // get the tab for the editor
-    let tab = this.editorTabs.getTab(filePath);
+    let tab = this.mainContainer.getTab(path);
 
     // if the tab already exists, then make it active
     if(tab) {
-      tab.makeActive();
+      if(focus)
+        tab.makeActive();
       return;
     }
 
-    // check if we're already waiting for this editor
-    if(this.editors.includes(filePath))
+    if(this.editorWaitingList.get(path))
       return;
 
     // request to join an editor session
     this.send({
       type: "editor",
       action: "join",
-      path: filePath,
-      editorId: this.editors.length
+      path,
+      focus
     });
 
-    // allocate a space for the editor
-    // save the path of the file there so we don't
-    // have to send it back and forth
-    this.editors.push(filePath);
+    this.editorWaitingList.set(path, true);
   }
 
-  initializeEditor(editorName, id)
+  initializeEditor(editorName, path, id, focus)
   {
     // get the class/constructor from the editor dictionary
-    let EditorClass = this.editorDictionary[editorName];
-    // retrieve the editor place holder (its path)
-    let filePath = this.editors[id];
+    let EditorClass = this.editorDictionary.get(editorName);
     // get the file node for the editor
-    let fileNode = this.fileManager.getFile(filePath);
+    let fileNode = this.fileManager.getFile(path);
     // create an element for the editor to use
     let element = document.createElement("div");
     element.className = "editor";
 
     // create tab
-    let tab = this.editorTabs.addTab(fileNode.clientPath, fileNode.name, element);
+    let tab = this.mainContainer.addTab(fileNode.clientPath, fileNode.name, element);
 
-    // create the editor
-    this.editors[id] = new EditorClass(id, fileNode, tab, this);
+    this.editors.set(id, new EditorClass(id, fileNode, tab, this));
+    this.editorWaitingList.delete(path);
 
-    // make the newly opened editor the active editor
-    tab.makeActive();
+    if(focus)
+      tab.makeActive();
   }
 
   displayPopup(message)
@@ -154,9 +151,8 @@ export default class Session extends EventRaiser
   swapProject(projectName)
   {
     // close all editors
-    for(let editor of this.editors)
-      if(editor)
-        editor.tab.destroy();
+    for(let [id, editor] of this.editors)
+      editor.tab.destroy();
 
     // reset the file tree
     this.fileManager.reset();
@@ -193,10 +189,12 @@ export default class Session extends EventRaiser
       this.id = message.id;
       this.settings = message.settings;
       this.permissions = message.permissions;
-      this.triggerEvent("connect");
+      this.mainContainer.loadLayout(message.layout);
 
       if(this.permissions.includes("admin"))
         this.enableAdminTools();
+
+      this.triggerEvent("connect");
       break;
     case "popup":
       this.displayPopup(message.message);
@@ -212,11 +210,16 @@ export default class Session extends EventRaiser
       break;
     case "editor":
       if(message.action == "initialize") {
-        this.initializeEditor(message.name, message.id);
+        this.initializeEditor(
+          message.name,
+          message.path,
+          message.id,
+          message.focus
+        );
         break;
       }
 
-      let editor = this.editors[message.editorId];
+      let editor = this.editors.get(message.editorId);
 
       if(editor)
         editor.messageReceived(message);

@@ -32,12 +32,12 @@ export default class Editor
 
   closed()
   {
-    this.session.editors[this.id] = undefined;
+    this.session.editors.delete(this.id);
 
     for(let listener of this.fileNodeListeners)
       listener.destroy();
 
-    if(this.session.editorTabs.tabs.length == 0)
+    if(this.session.mainContainer.tabs.length == 0)
       this.session.profile.location = "";
 
     this.session.send({

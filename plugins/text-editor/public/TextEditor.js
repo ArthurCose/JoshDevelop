@@ -12,7 +12,7 @@ export default class TextEditor extends Editor
     super(id, fileNode, tab, session);
 
     // hide until document is ready
-    this.element.style.display = "none";
+    this.element.style.visibility = "hidden";
 
     this.lastRevision = 0;
     this.awaitingOperations = [];
@@ -103,7 +103,7 @@ export default class TextEditor extends Editor
       this.editor.aceEditor.setValue(message.value, -1);
       this.editor.clearHistory();
 
-      this.element.style.display = "";
+      this.element.style.visibility = "";
       this.lastRevision = message.lastRevision;
       break;
     case "operation":

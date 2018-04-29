@@ -17,7 +17,7 @@ export class SettingsMenu
   }
 
   attach() {
-    let tabbedContainer = this.session.editorTabs;
+    let tabbedContainer = this.session.mainContainer;
     
     let tab = tabbedContainer.getTab(":settings");
 

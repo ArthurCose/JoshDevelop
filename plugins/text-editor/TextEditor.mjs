@@ -21,7 +21,7 @@ export default class TextEditor extends Editor
   {
     super.addSession(session);
 
-    let editorId = session.editors.indexOf(this);
+    let editorId = session.editorToId.get(this);
 
     session.send({
       type: "editor",

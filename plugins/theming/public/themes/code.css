@@ -111,7 +111,7 @@ body,
 }
 
 #filetree,
-#editor-container > .tab-header,
+#main-container > .tab-header,
 #terminal-container .tab-header{
   background-color: var(--middle);
 }
@@ -162,14 +162,14 @@ body,
   border-bottom: 0;
 }
 
-#editor-container > .tab-header{
+#main-container > .tab-header{
   box-shadow: 0 1px 5px var(--black);
   z-index: 5;
 }
 
-#editor-container,
-#editor-container > .tab-header  > .tab-container .tab.active,
-#editor-container > .tab-header > .tab-container .tab.active:hover,
+#main-container,
+#main-container > .tab-header  > .tab-container .tab.active,
+#main-container > .tab-header > .tab-container .tab.active:hover,
 #terminal-container .tab.active,
 #terminal-container .tab.active:hover,
 #settings .tab,
@@ -178,10 +178,10 @@ body,
   background: var(--dark);
 }
 
-#editor-container > .tab-header  > .tab-container .tab.active,
-#editor-container > .tab-header  > .tab-container .tab.active:hover,
-#editor-container > .tab-header  > .tab-container .tab.active .close,
-#editor-container > .tab-header  > .tab-container .tab:hover .close,
+#main-container > .tab-header  > .tab-container .tab.active,
+#main-container > .tab-header  > .tab-container .tab.active:hover,
+#main-container > .tab-header  > .tab-container .tab.active .close,
+#main-container > .tab-header  > .tab-container .tab:hover .close,
 #terminal-container .tab.active,
 #terminal-container .tab.active:hover,
 #terminal-container .tab.active .close,
@@ -191,15 +191,15 @@ body,
   color: var(--white);
 }
 
-#editor-container > .tab-header  > .tab-container .tab,
-#editor-container > .tab-header  > .tab-container .tab:hover,
+#main-container > .tab-header  > .tab-container .tab,
+#main-container > .tab-header  > .tab-container .tab:hover,
 #terminal-container .tab,
 #terminal-container .tab:hover{
   color: var(--washed);
   background: var(--pale);
 }
 
-#editor-container > .tab-header  > .tab-container .tab .close,
+#main-container > .tab-header  > .tab-container .tab .close,
 #terminal-container .tab .close{
   color: var(--pale);
 }
