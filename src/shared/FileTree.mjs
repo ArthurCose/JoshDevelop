@@ -1,21 +1,5 @@
 import EventRaiser from "./EventRaiser.mjs";
-
-function getFileName(filePath)
-{
-  let lastSlash = filePath.lastIndexOf("/") + 1;
-
-  return filePath.slice(lastSlash, filePath.length);
-}
-
-function getParentPath(folderPath)
-{
-  let lastSlash = folderPath.lastIndexOf("/");
-
-  if(lastSlash == -1)
-    return "";
-
-  return folderPath.slice(0, lastSlash);
-}
+import { getFileName, getParentPath } from "./PathUtil.mjs";
 
 export default class FileTree extends EventRaiser
 {
