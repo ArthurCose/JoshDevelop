@@ -7,7 +7,6 @@ export default class ClientFileManager extends FileTree
   constructor(session)
   {
     super();
-    this.addEvent("click");
     this.session = session;
 
     this.root = new ClientFolderNode("", undefined, this);
@@ -21,6 +20,8 @@ export default class ClientFileManager extends FileTree
 
     this.element.appendChild(this.root.controlElement);
     this.element.appendChild(this.root.listElement);
+    
+    this.addEvent("click");
   }
 
   reset()
@@ -37,7 +38,7 @@ export default class ClientFileManager extends FileTree
     case "add":
       node = this.registerNode(message.path, message.isFile);
 
-      node.controlElement.addEventListener("click", () => this.triggerEvent("click", node));
+      node.on("click", (_, button) => this.triggerEvent("click", node, button));
       break;
     case "remove":
       node = this.getNode(message.path, message.isFile);

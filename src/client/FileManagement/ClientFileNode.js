@@ -10,6 +10,8 @@ export default class ClientFileNode extends FileNode
     // specific to client file/folder nodes
     // (node, menu)
     this.addEvent("contextmenu");
+    // (node, button)
+    this.addEvent("click");
 
     this.controlElement = document.createElement("li");
     this.nameElement = document.createElement("span");
@@ -18,6 +20,7 @@ export default class ClientFileNode extends FileNode
 
     this.controlElement.appendChild(this.nameElement);
     this.controlElement.addEventListener("contextmenu", (e) => this.onRightClick(e));
+    this.controlElement.addEventListener("click", (e) => this.triggerEvent("click", e.button));
   }
 
   get name()
