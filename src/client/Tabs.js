@@ -13,7 +13,7 @@ export class Tab extends EventRaiser
   {
     super();
 
-    this.identifier = identifier;
+    this._identifier = identifier;
     this.content = content;
     this.element = element;
     this.container = container;
@@ -37,6 +37,8 @@ export class Tab extends EventRaiser
     this.element.appendChild(this.closeElement);
 
     this.addEvent("active");
+    this.addEvent("rename");
+    this.addEvent("reidentify");
     this.addEvent("resize");
     this.addEvent("slide");
     this.addEvent("contextmenu");
@@ -65,7 +67,23 @@ export class Tab extends EventRaiser
 
   set name(value)
   {
+    let oldName = this.nameElement.innerText;
+
     this.nameElement.innerText = value;
+
+    this.triggerEvent("rename", oldName);
+  }
+
+  get identifier() {
+    return this._identifier;
+  }
+
+  set identifier(value) {
+    let oldIdentifier = this._identifier;
+
+    this._identifier = value;
+
+    this.triggerEvent("reidentify", oldIdentifier);
   }
 
   lock()
@@ -142,6 +160,7 @@ export class Tab extends EventRaiser
     this.content.remove();
     this.container.tabs.splice(index, 1);
 
+    this.container.triggerEvent("remove", this);
     this.triggerEvent("close");
   }
 
@@ -238,6 +257,7 @@ export class TabbedContainer extends EventRaiser
     this.tabcontent = this.ensureElement("tab-content");
     
     this.addEvent("add");
+    this.addEvent("remove");
     this.addEvent("swap");
     this.addEvent("slide");
     this.addEvent("resize");
