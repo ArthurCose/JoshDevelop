@@ -7,7 +7,7 @@ export default class MainContainer extends TabbedContainer {
 
     let saveLayout = () => this.saveLayout();
 
-    this.on("add", (container, tab) => {
+    this.on("add", (tab) => {
       tab.on("reidentify", saveLayout);
       saveLayout();
     });

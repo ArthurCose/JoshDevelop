@@ -17,7 +17,7 @@ export default class Shell extends EventRaiser
 
     // close when the tab is closed
     tab.on("close", () => this.destroy());
-    tab.on("resize", (eventName) => this.resized());
+    tab.on("resize", () => this.resized());
 
     // notify server of creation
     session.send({

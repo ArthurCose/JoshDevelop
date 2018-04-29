@@ -40,7 +40,7 @@ export default class Session extends EventRaiser
   {
     let clientFileManager = new ClientFileManager(this);
 
-    clientFileManager.on("click", (fileManager, node) => {
+    clientFileManager.on("click", (node) => {
       if(node.isFile)
         this.openEditor(node.clientPath);
     });

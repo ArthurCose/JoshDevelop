@@ -1,6 +1,6 @@
 export default function main(session)
 {
-  session.fileManager.on("add", (filetree, node) => {
+  session.fileManager.on("add", (node) => {
     if(!node.isFile)
       attachDropListeners(node, session);
 
@@ -16,7 +16,7 @@ export default function main(session)
 
 function attachDownloadButton(node, session)
 {
-  node.on("contextmenu", (node, menu) => {
+  node.on("contextmenu", (menu) => {
     menu.addButtonBefore("Delete", "Download", () => {
       let filePath = encodeURIComponent(node.clientPath);
       let projectName = encodeURIComponent(session.project);

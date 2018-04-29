@@ -104,12 +104,23 @@ export default class Core
 
     // attach hooks
     for(let hookList of this.sessionHooks) {
-      if(hookList.connect)
+      if(hookList.connect) {
         hookList.connect(session);
-      if(hookList.message)
-        session.on("message", hookList.message);
-      if(hookList.disconnect)
-        session.on("disconnect", hookList.disconnect);
+      }
+
+      if(hookList.message) {
+        session.on(
+          "message",
+          (...args) => hookList.message(session, ...args)
+        );
+      }
+
+      if(hookList.disconnect) {
+        session.on(
+          "disconnect",
+          (...args) => hookList.disconnect(session, ...args)
+        );
+      }
     }
 
     this.sessions.push(session);

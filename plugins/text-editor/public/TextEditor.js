@@ -41,7 +41,7 @@ export default class TextEditor extends Editor
     // create text editor
     let editor = new BasicTextEditor(editorElement, this.session);
 
-    this.tab.on("resize", (eventName) => editor.aceEditor.resize(true));
+    this.tab.on("resize", () => editor.aceEditor.resize(true));
     this.element.appendChild(editorElement);
 
     return editor;

@@ -31,7 +31,7 @@ export default class EventRaiser
     let eventHandlers = this.eventHandlers[name];
 
     for(let eventHandler of eventHandlers)
-      eventHandler(this, ...parameters);
+      eventHandler(...parameters);
   }
 
   /**

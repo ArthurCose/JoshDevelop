@@ -26,7 +26,7 @@ export default function main(session)
     createTerminal(session);
   });
 
-  session.on("message", (session, message) => {
+  session.on("message", (message) => {
     if(message.type == "shell")
       shells[message.id].messageReceived(message);
   });
