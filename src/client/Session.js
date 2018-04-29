@@ -34,17 +34,6 @@ export default class Session extends EventRaiser
     this.addEvent("message");
   }
 
-  initializeSplitters()
-  {
-    let vsplit = new VSplit(
-      this.fileManager.element,
-      this.editorTabs.element
-    );
-
-    vsplit.on("resize", () => this.editorTabs.resized());
-    window.addEventListener("resize", () => this.editorTabs.resized());
-  }
-
   initializeFileManager()
   {
     let clientFileManager = new ClientFileManager(this);
@@ -55,6 +44,17 @@ export default class Session extends EventRaiser
     });
 
     return clientFileManager;
+  }
+
+  initializeSplitters()
+  {
+    let vsplit = new VSplit(
+      this.fileManager.element,
+      this.editorTabs.element
+    );
+
+    vsplit.on("resize", () => this.editorTabs.resized());
+    window.addEventListener("resize", () => this.editorTabs.resized());
   }
 
   openEditor(filePath)
