@@ -1,11 +1,9 @@
-let Range = ace.require("ace/range").Range;
-
-export default class Caret
+export default class Selection
 {
-  constructor(userid, aceEditor, session)
+  constructor(userId, range, aceEditor, session)
   {
-    this._range = new Range(0,0,0,0);
-    this._user = session.userList.getUser(userid);
+    this._range = range;
+    this._user = session.userList.getUser(userId);
 
     this.aceEditor = aceEditor;
     this.aceSession = aceEditor.session;
@@ -20,15 +18,13 @@ export default class Caret
     this.aceSession.addDynamicMarker(this, false);
 
     this.listeners = [
-      this._user.on("update", () => this.redraw())
+      this._user.on("update", () => this.draw())
     ];
   }
 
   get blink()
   {
-    if(!this.blinkEnabled ||
-       this.start.row != this.end.row ||
-       this.start.column != this.end.column)
+    if(!this.blinkEnabled)
       return false;
 
     var difference = Date.now() - this.lastUpdate;
@@ -46,44 +42,25 @@ export default class Caret
     return this._range.start;
   }
 
-  set start(value)
-  {
-    this._range.start = value;
-  }
-
   get end()
   {
     return this._range.end;
   }
 
-  set end(value)
-  {
-    this._range.end = value;
-  }
-
   enableBlink()
   {
-    this.visible = false;
     this.blinkEnabled = true;
 
-    this.blinkTimer = setInterval(() => this.redraw(true), this.blinkSpeed);
+    this.blinkTimer = setInterval(() => this.draw(true), this.blinkSpeed);
 
     this.aceEditor.on("blur", () => {
       this.visible = false;
-      this.redraw();
+      this.draw();
     });
 
     this.aceEditor.on("focus", () => {
       this.visible = true;
     });
-  }
-
-  updatePosition(range)
-  {
-    this.start = range.start;
-    this.end = range.end;
-
-    this.redraw();
   }
 
   update(html, markerLayer, session, config)
@@ -135,7 +112,7 @@ export default class Caret
     );
   }
 
-  redraw(silent)
+  draw(silent)
   {
     this.aceSession._signal("changeBackMarker");
 

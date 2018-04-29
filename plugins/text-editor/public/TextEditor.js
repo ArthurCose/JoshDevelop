@@ -1,5 +1,5 @@
 import BasicTextEditor from "./BasicTextEditor.js"
-import {transformOperations} from "./OperationalTransform.mjs";
+import { transformOperations } from "./OperationalTransform.mjs";
 import Editor from "/javascript/client/Editor.js"
 
 let Range = ace.require("ace/range").Range;
@@ -22,8 +22,7 @@ export default class TextEditor extends Editor
     this.editor.updateHighlighter(fileNode.name);
 
     this.editor.aceEditor.on("change", (operation) => this.changeMade(operation));
-    this.editor.selection.on("changeCursor", () => this.sendCaretUpdate());
-    this.editor.selection.on("changeSelection", () => this.sendCaretUpdate());
+    this.editor.selection.on("changeCursor", () => this.sendSelectionsUpdate());
 
     this.tab.on("active", () => this.onFocus());
   }
@@ -31,7 +30,6 @@ export default class TextEditor extends Editor
   onFocus()
   {
     this.editor.aceEditor.focus();
-    this.editor.caret.redraw();
   }
 
   createEditor()
@@ -61,15 +59,15 @@ export default class TextEditor extends Editor
     super.closed();
   }
 
-  sendCaretUpdate()
+  sendSelectionsUpdate()
   {
-    let range = this.editor.selection.getRange();
+    let ranges = this.editor.selection.getAllRanges();
 
     this.session.send({
-      type:"editor",
-      action: "update caret",
+      type: "editor",
+      action: "update selections",
       editorId: this.id,
-      range: range
+      ranges
     });
   }
 
@@ -118,17 +116,11 @@ export default class TextEditor extends Editor
 
       this.lastRevision = message.lastRevision;
       break;
-    case "add caret":
-      let caret = this.editor.addCaret(message.userid);
-
-      caret.updatePosition(message.range);
+    case "update selections":
+      this.editor.setSelections(message.userId, message.ranges);
       break;
-    case "update caret":
-      this.editor.carets[message.userid].updatePosition(message.range);
-      break;
-    case "remove caret":
-      this.editor.carets[message.userid].destroy();
-      this.editor.carets[message.userid] = undefined;
+    case "remove selections":
+      this.editor.removeSelections(message.userId);
       break;
     }
 

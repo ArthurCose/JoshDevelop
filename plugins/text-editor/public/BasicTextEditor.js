@@ -1,4 +1,4 @@
-import Caret from "./Caret.js";
+import Selection from "./Selection.js";
 
 let modelist = ace.require("ace/ext/modelist");
 
@@ -13,18 +13,15 @@ export default class BasicTextEditor
 
     this.aceEditor = this.createEditor();
 
-    this.carets = {};
-    this.caret = this.addCaret(session.id);
-    this.caret.enableBlink();
+    this.selections = new Map();
 
     this.infoBar = this.createInfoBar();
-    this.caretInfo = this.createCaretInfo();
-    this.updateCaretInfo();
+    this.selectionInfo = this.createSelectionInfo();
+    this.updateSelectionInfo();
 
     this.selection = this.aceEditor.getSelection();
-    this.selection.on("changeCursor", () => this.updateCaretInfo());
-    this.selection.on("changeCursor", () => this.updateCaret());
-    this.selection.on("changeSelection", () => this.updateCaret());
+    this.selection.on("changeCursor", () => this.updateSelectionInfo());
+    this.selection.on("changeCursor", () => this.updateSelections());
   }
 
   createEditor()
@@ -54,30 +51,52 @@ export default class BasicTextEditor
     return bar;
   }
 
-  createCaretInfo()
+  createSelectionInfo()
   {
-    let caretInfoElement = document.createElement("span");
-    caretInfoElement.className = "caret-info";
+    let selectionInfoElement = document.createElement("span");
+    selectionInfoElement.className = "selection-info";
 
-    this.infoBar.appendChild(caretInfoElement);
+    this.infoBar.appendChild(selectionInfoElement);
 
-    return caretInfoElement;
+    return selectionInfoElement;
   }
 
-  addCaret(userid)
+  setSelections(userId, ranges)
   {
-    let caret = new Caret(userid, this.aceEditor, this.session);
+    this.removeSelections(userId);
 
-    this.carets[userid] = caret;
+    let selections = [];
 
-    return caret;
+    for(let range of ranges) {
+      let selection = new Selection(userId, range, this.aceEditor, this.session);
+
+      if(userId == this.session.id && range.isEmpty())
+        selection.enableBlink();
+
+      selections.push(selection);
+    }
+
+    this.selections.set(userId, selections);
   }
 
-  updateCaret()
-  {
-    let range = this.selection.getRange();
+  removeSelections(userId) {
+    let selections = this.selections.get(userId);
 
-    this.caret.updatePosition(range);
+    if(!selections)
+      return;
+
+    for(let selection of selections) {
+      selection.destroy();
+    }
+
+    this.selections.delete(userId);
+  }
+
+  updateSelections()
+  {
+    let ranges = this.selection.getAllRanges();
+
+    this.setSelections(this.session.id, ranges);
   }
 
   updateHighlighter(path)
@@ -86,10 +105,10 @@ export default class BasicTextEditor
     this.aceEditor.session.setMode(mode);
   }
 
-  updateCaretInfo()
+  updateSelectionInfo()
   {
     let pos = this.aceEditor.getCursorPosition();
-    this.caretInfo.innerText = `Ln ${pos.row + 1}, Col ${pos.column + 1}`;
+    this.selectionInfo.innerText = `Ln ${pos.row + 1}, Col ${pos.column + 1}`;
   }
 
   clearHistory()
@@ -99,11 +118,8 @@ export default class BasicTextEditor
 
   destroy()
   {
-    for(let userid in this.carets) {
-      let caret = this.carets[userid];
-
-      if(caret)
-        caret.destroy();
+    for(let [userId] in this.selections) {
+      this.removeSelections(userId);
     }
 
     let settings = this.session.settingsMenu.sections["Text Editor"];

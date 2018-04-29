@@ -8,7 +8,7 @@ export default class TextEditor extends Editor
   {
     super("TextEditor", project, fileNode);
     this.document = new TextDocument(fileNode);
-    this.carets = [];
+    this.selections = new Map();
   }
 
   static getSupportLevelFor(fileName)
@@ -29,49 +29,30 @@ export default class TextEditor extends Editor
       lastRevision: this.document.revisions.length,
       value: this.document.lines.join("\n"),
       path: this.fileNode.clientPath,
-      editorId: editorId
+      editorId
     });
 
-    for(let key in this.carets) {
-      let caretRange = this.carets[key];
-
-      if(caretRange == undefined)
-        continue;
-
+    for(let [userId, ranges] of this.selections) {
       session.send({
         type: "editor",
-        action: "add caret",
-        range: caretRange,
-        userid: key,
-        editorId: editorId
+        action: "update selections",
+        userId,
+        ranges,
+        editorId
       });
     }
-
-    let range = {
-      start: { row: 0, column: 0 },
-      end: { row: 0, column: 0 }
-    };
-
-    this.carets[session.id] = range;
-
-    this.broadcast(session, {
-      type: "editor",
-      action: "add caret",
-      range: range,
-      userid: session.id
-    });
   }
 
   removeSession(session)
   {
     super.removeSession(session);
 
-    this.carets[session.id] = undefined;
+    this.selections.delete(session.id);
 
     this.broadcast(session, {
       type: "editor",
-      action: "remove caret",
-      userid: session.id
+      action: "remove selections",
+      userId: session.id
     });
   }
 
@@ -85,16 +66,15 @@ export default class TextEditor extends Editor
       message.operation.owners = [session.id];
 
       this.applyOperations(session, [message.operation], message.lastRevision);
-
       break;
-    case "update caret":
-      this.carets[session.id] = message.range;
+    case "update selections":
+      this.selections.set(session.id, message.ranges);
 
       this.broadcast(session, {
         type: "editor",
-        action: "update caret",
-        range: message.range,
-        userid: session.id
+        action: "update selections",
+        userId: session.id,
+        ranges: message.ranges
       });
       break;
     }
