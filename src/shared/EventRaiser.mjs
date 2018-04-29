@@ -1,70 +1,86 @@
-/**
- * @callback eventHandler
- * @param {EventRaiser} eventRaiser
- * @param {...*} parameters
- */
-
 export default class EventRaiser
 {
   constructor()
   {
-    this.eventHandlers = {};
+    this.events = new Map();
   }
 
   /**
-   * Create a new event for listeners to listen to
-   * @param {*} name
+   * 
+   * @param {string} name 
    */
   addEvent(name)
   {
-    this.eventHandlers[name] = [];
+    this.events.set(name, []);
   }
 
   /**
-   * Trigger an event by name
-   *
-   * @param {*} name event name
-   * @param {*} parameters extra parameters to pass to listeners
+   * 
+   * @param {string} name 
+   * @param parameters 
    */
   triggerEvent(name, ...parameters)
   {
-    let eventHandlers = this.eventHandlers[name];
+    let listeners = this.events.get(name);
 
-    for(let eventHandler of eventHandlers)
-      eventHandler(...parameters);
+    // make a copy as events can be destroyed in the loop
+    listeners = [...listeners];
+
+    for(let listener of listeners) {
+      listener.callback(...parameters);
+
+      if(listener.singleUse)
+        listener.destroy();
+    }
   }
 
   /**
-   * Create an event listener.
-   *
-   * Make sure to keep a list of listeners on any objects that
-   *  become destroyed to prevent calls on destroyed objects
-   *
-   * @param {string} event
-   * @param {listenerCallback} listener
-   * @returns {EventListener}
+   * 
+   * @param event 
+   * @param callback 
    */
-  on(event, listener){
-    this.eventHandlers[event].push(listener);
+  on(event, callback){
+    let listener = new EventListener(this, event, callback);
 
-    return new EventListener(this, event, listener);
+    this.events.get(event).push(listener);
+
+    return listener;
+  }
+
+  /**
+   * 
+   * @param {string} event 
+   * @param callback 
+   */
+  once(event, callback) {
+    let promise = new Promise((resolve, reject) => {
+      let listener = this.on(event, (...args) => {
+        if(callback)
+          callback(...args);
+        resolve(...args);
+      });
+
+      listener.singleUse = true;
+    });
+
+    return promise;
   }
 }
 
 class EventListener
 {
-  constructor(eventRaiser, event, lambda)
+  constructor(eventRaiser, event, callback)
   {
     this.eventRaiser = eventRaiser;
     this.event = event;
-    this.lambda = lambda;
+    this.callback = callback;
+    this.singleUse = false
   }
 
   destroy()
   {
-    let eventHandlers = this.eventRaiser.eventHandlers[this.event];
-    let id = eventHandlers.indexOf(this.lambda);
-
-    eventHandlers.splice(id, 1);
+    let listeners = this.eventRaiser.events.get(this.event);
+    let index = listeners.indexOf(this);
+    listeners.splice(index, 1);
   }
 }
