@@ -125,7 +125,7 @@ export default class TextEditor extends Editor
       lastRevision: this.document.revisions.length,
       operations: operations,
       path: this.fileNode.clientPath,
-      editorId: owner.editors.indexOf(this)
+      editorId: owner.editorToId.get(this)
     };
 
     owner.send(message);
