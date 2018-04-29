@@ -36,9 +36,7 @@ export default class ClientFileManager extends FileTree
 
     switch(message.action) {
     case "add":
-      node = this.registerNode(message.path, message.isFile);
-
-      node.on("click", (button) => this.triggerEvent("click", node, button));
+      this.registerNode(message.path, message.isFile);
       break;
     case "remove":
       node = this.getNode(message.path, message.isFile);

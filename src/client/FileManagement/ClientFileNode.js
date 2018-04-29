@@ -21,6 +21,8 @@ export default class ClientFileNode extends FileNode
     this.controlElement.appendChild(this.nameElement);
     this.controlElement.addEventListener("contextmenu", (e) => this.onRightClick(e));
     this.controlElement.addEventListener("click", (e) => this.triggerEvent("click", e.button));
+
+    this.on("click", (button) => filetree.triggerEvent("click", this, button));
   }
 
   get name()
