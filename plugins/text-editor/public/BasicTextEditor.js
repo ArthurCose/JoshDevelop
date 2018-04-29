@@ -119,7 +119,7 @@ export default class BasicTextEditor
 
   destroy()
   {
-    for(let [userId] in this.selections) {
+    for(let [userId] of this.selections) {
       this.removeSelections(userId);
     }
 
