@@ -23,6 +23,7 @@ export default class TextEditor extends Editor
 
     this.editor.aceEditor.on("change", (operation) => this.changeMade(operation));
     this.editor.selection.on("changeCursor", () => this.sendSelectionsUpdate());
+    this.editor.selection.on("changeSelection", () => this.sendSelectionsUpdate());
 
     this.tab.on("active", () => this.onFocus());
   }

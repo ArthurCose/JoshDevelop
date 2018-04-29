@@ -22,6 +22,7 @@ export default class BasicTextEditor
     this.selection = this.aceEditor.getSelection();
     this.selection.on("changeCursor", () => this.updateSelectionInfo());
     this.selection.on("changeCursor", () => this.updateSelections());
+    this.selection.on("changeSelection", () => this.updateSelections());
   }
 
   createEditor()
