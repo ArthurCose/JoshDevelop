@@ -1,4 +1,7 @@
 import Session from "./Session.js";
+<% for(let i = 0; i < entryScripts.length; i++) { -%>
+import { default as plugin<%- i %> } from "<%- entryScripts[i] %>";
+<% } -%>
 
 let session = new Session();
 
@@ -7,19 +10,7 @@ loadPlugins()
 
 async function loadPlugins()
 {
-  let pluginEntryScripts = <%- JSON.stringify(entryScripts) %>;
-  let importPromises = [];
-
-  for(let entryScript of pluginEntryScripts) {
-    let importPromise = import(entryScript).then(loadPlugin);
-
-    importPromises.push(importPromise);
-  }
-
-  await Promise.all(importPromises);
-}
-
-function loadPlugin(module)
-{
-  module.default(session);
+<% for(let i = 0; i < entryScripts.length; i++) { -%>
+  plugin<%- i %>(session);
+<% } -%>
 }
