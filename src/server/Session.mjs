@@ -29,7 +29,12 @@ export default class Session extends EventRaiser
   init()
   {
     // send the user to a project
-    let project = this.core.getDefaultProject();
+    let projectName = this.user.get("project");
+    let project = this.core.projects.get(projectName);
+
+    if(!project)
+      project = this.core.getDefaultProject();
+
     this.setProject(project);
 
     // give the client their ID
@@ -70,6 +75,9 @@ export default class Session extends EventRaiser
     let lastProject = this.project;
 
     this.project = project;
+
+    this.user.set("project", project.name);
+    this.user.save();
 
     this.send({
       type: "project",
