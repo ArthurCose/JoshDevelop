@@ -7,4 +7,3 @@ export default function main(session)
 
   session.toolbar.addButton("Search", () => searchPanel.attach());
 }
-

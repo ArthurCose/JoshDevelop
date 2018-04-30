@@ -58,7 +58,6 @@ export default class Core
     let project = new Project(name, this);
 
     this.projects.set(name, project);
-    this.projectCount++;
 
     this.broadcast({
       type: "project",
