@@ -15,7 +15,7 @@ export default class FileNode extends EventRaiser
     this.addEvent("move");
 
     this.on("unlist", () => this.fileTree.triggerEvent("unlist", this));
-    this.on("move", (node) => this.fileTree.triggerEvent("move", this));
+    this.on("move", () => this.fileTree.triggerEvent("move", this));
   }
 
   get name()
