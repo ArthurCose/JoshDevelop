@@ -1,4 +1,5 @@
 import EventRaiser from "../shared/EventRaiser.mjs";
+import { getFileName } from "../shared/PathUtil.mjs";
 
 export default class UserList
 {
@@ -156,11 +157,12 @@ class Profile extends EventRaiser
   set location(value)
   {
     this._location = value;
-    let fileName = value.slice(value.lastIndexOf("/") + 1);
+    let fileName = getFileName(value);
     let beforeText = fileName == "" ? "" : " - ";
 
     this.locationBeforeElement.innerText = beforeText;
     this.locationElement.innerText = fileName;
+    this.locationElement.title = value;
 
     this.sendLocation();
     this.triggerEvent("update");
