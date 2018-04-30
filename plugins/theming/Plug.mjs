@@ -18,22 +18,23 @@ export default class ThemingPlugin extends Plugin
       let theme = this.getThemeFromSession(ctx.session);
 
       ctx.type = "text/css";
-
-      if(theme === undefined) {
-        ctx.body = "";
-        return;
-      }
-
-      ctx.body = await fs.readFile(`plugins/theming/public/themes/${theme}.css`);
+      ctx.body = await this.getThemeFromSession(ctx.session);
     });
   }
 
-  getThemeFromSession(sessionData)
+  async getThemeFromSession(sessionData)
   {
     let user = new User(sessionData.username);
 
     let settings = user.get("settings");
+    let theme = settings.Theme ? settings.Theme.theme : undefined;
 
-    return settings.Theme ? settings.Theme.theme : undefined;
+    if(theme == undefined)
+      return "";
+
+    if(theme == "custom")
+      return settings.Theme.customCSS;
+
+    return await fs.readFile(`plugins/theming/public/themes/${theme}.css`);
   }
 }

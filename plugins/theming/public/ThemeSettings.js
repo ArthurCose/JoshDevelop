@@ -29,13 +29,13 @@ class ThemeSettings extends SettingsSection
       "strawberry",
       "code",
       "hackerman",
-      "custom -todo"
+      "custom"
     ];
 
     this.appendText("Current Theme: ");
     this.appendDropdownInput(this.theme, themes, (value) => this.theme = value);
 
-    this.updateCSS(() => {
+    this.updateCSS().then(() => {
       document.querySelector(`link[href='${PUBLIC_PATH}/stylesheet.css']`)
               .remove();
     });
@@ -45,7 +45,7 @@ class ThemeSettings extends SettingsSection
   {
     let theme = this.settings.theme;
 
-    return theme === undefined ? "default" : theme;
+    return theme || "default";
   }
 
   set theme(value)
@@ -55,20 +55,34 @@ class ThemeSettings extends SettingsSection
     this.updateCSS();
   }
 
-  updateCSS(callback)
+  get customCSS()
   {
-    if(this.theme != "custom -todo") {
-      let xhr = new XMLHttpRequest();
+    let css = this.settings.customCSS;
 
-      xhr.addEventListener("load", (e) => {
-        this.styleElement.innerText = e.target.response;
-        if(callback)
-          callback();
-      });
-      xhr.open("GET", `/${PUBLIC_PATH}/themes/${this.theme}.css`);
-      xhr.send();
-    }
-    else if(callback)
-      callback();
+    return css || "";
+  }
+
+  set customCSS(value)
+  {
+    this.settings.customCSS = value;
+    this.saveSettings();
+    this.updateCSS();
+  }
+
+  async updateCSS(callback)
+  {
+    let css =
+      this.theme == "custom"
+        ? this.customCSS
+        : await this.downloadCSS();
+
+    this.styleElement.innerText = css;
+  }
+
+  async downloadCSS()
+  {
+    let response = await fetch(`/${PUBLIC_PATH}/themes/${this.theme}.css`);
+
+    return response.text();
   }
 }
