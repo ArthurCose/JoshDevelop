@@ -4,6 +4,6 @@
   "private": true,
   "main": "Plug.mjs",
   "dependencies": {
-    "ace-builds": "~1.3.1"
+    "ace-builds": "~1.3.3"
   }
 }

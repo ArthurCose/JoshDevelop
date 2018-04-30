@@ -19,6 +19,9 @@ export default class TextEditorPlugin extends Plugin
 
   addStaticRoutes(server)
   {
-    server.addStaticRoute("/ace", "node_modules/ace-builds/src-min-noconflict");
+    server.addStaticRoute(
+      "/ace",
+      "plugins/text-editor/node_modules/ace-builds/src-min-noconflict"
+    );
   }
 }

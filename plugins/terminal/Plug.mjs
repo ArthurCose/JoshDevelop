@@ -39,6 +39,9 @@ export default class TerminalPlugin extends Plugin
 
   addStaticRoutes(server)
   {
-    server.addStaticRoute("/xterm", "node_modules/xterm/dist");
+    server.addStaticRoute(
+      "/xterm",
+      "plugins/terminal/node_modules/xterm/dist"
+    );
   }
 }
