@@ -23,6 +23,7 @@ export default class BasicTextEditor
     this.selection.on("changeCursor", () => this.updateSelectionInfo());
     this.selection.on("changeCursor", () => this.updateSelections());
     this.selection.on("changeSelection", () => this.updateSelections());
+    this.updateSelections();
   }
 
   createEditor()
