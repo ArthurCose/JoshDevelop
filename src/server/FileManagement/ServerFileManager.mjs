@@ -19,25 +19,22 @@ export default class ServerFileManager extends FileTree
 
   sendFolder(session, folder)
   {
-    let folders = [folder];
-
-    while(folders.length > 0) {
-      folder = folders.shift();
-
-      for(let childNode of folder.children) {
-        // send the node
-        session.send({
-          type: "filetree",
-          action: "add",
-          isFile: childNode.isFile,
-          path: childNode.clientPath
-        });
-
-        // push folders into the send list
-        if(!childNode.isFile)
-          folders.push(childNode);
-      }
+    for(let childNode of folder.children) {
+      // send the node
+      session.send({
+        type: "filetree",
+        action: "add",
+        isFile: childNode.isFile,
+        path: childNode.clientPath
+      });
     }
+
+    // signal end
+    session.send({
+      type: "filetree",
+      action: "done populating",
+      path: folder.clientPath
+    });
   }
 
   async createNode(parentPath, name, isFile)
@@ -147,6 +144,14 @@ export default class ServerFileManager extends FileTree
         await node.rename(message.name);
     case "refresh":
       this.refresh(message.path);
+      break;
+    case "request":
+      folder = this.getFolder(message.path);
+
+      if(folder == undefined)
+        break;
+
+      this.sendFolder(session, folder);
       break;
     }
   }

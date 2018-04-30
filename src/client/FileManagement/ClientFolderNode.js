@@ -7,6 +7,8 @@ export default class ClientFolderNode extends ClientFileNode
     super(name, parentFolder, filetree);
     this.isFile = false;
     this.children = [];
+    this.requestedData = false;
+    this.populated = false;
 
     this.expandButton = document.createElement("span");
     this.listElement = document.createElement("ul");
@@ -17,6 +19,8 @@ export default class ClientFolderNode extends ClientFileNode
 
     this.controlElement.insertBefore(this.expandButton, this.controlElement.firstChild);
     this.controlElement.addEventListener("click", () => this.toggleDisplay());
+
+    this.addEvent("populate");
   }
 
   get expanded()
@@ -28,6 +32,21 @@ export default class ClientFolderNode extends ClientFileNode
   {
     this.listElement.style.display = this.expanded ? "none" : "block";
     this.expandButton.innerHTML = this.expanded ? "&#x1f4c2;" : "&#x1f4c1;";
+
+    if(this.expanded && !this.requestedData) {
+      this.requestData();
+    }
+  }
+
+  requestData()
+  {
+    this.requestedData = true;
+
+    this.filetree.session.send({
+      type: "filemanager",
+      action: "request",
+      path: this.clientPath
+    });
   }
 
   createNewNode(isFile)

@@ -6,7 +6,7 @@ import { SettingsMenu } from "./Settings.js";
 import { TabbedContainer } from "./Tabs.js";
 import Toolbar from "./Toolbar.js";
 import UserList from "./UserList.js";
-import {VSplit} from "./Splitter.js";
+import { VSplit } from "./Splitter.js";
 import EventRaiser from "../shared/EventRaiser.mjs";
 
 export default class Session extends EventRaiser
@@ -22,6 +22,7 @@ export default class Session extends EventRaiser
     this.editorDictionary = new Map();
     this.editors = new Map();
     this.editorWaitingList = new Map();
+    this.editorMessageQueue = new Map();
     this.mainContainer = new MainContainer("#main-container", this);
     this.toolbar = new Toolbar();
     this.userList = new UserList(this);
@@ -82,15 +83,19 @@ export default class Session extends EventRaiser
       focus
     });
 
-    this.editorWaitingList.set(path, true);
+    this.editorWaitingList.set(path, true)
   }
 
-  initializeEditor(editorName, path, id, focus)
+  async initializeEditor(editorName, path, id, focus)
   {
+    // create a queue to hold messages while the editor is loading
+    let messageQueue = [];
+    this.editorMessageQueue.set(id, messageQueue);
+
     // get the class/constructor from the editor dictionary
     let EditorClass = this.editorDictionary.get(editorName);
     // get the file node for the editor
-    let fileNode = this.fileManager.getFile(path);
+    let fileNode = await this.fileManager.requestFile(path);
     // create an element for the editor to use
     let element = document.createElement("div");
     element.className = "editor";
@@ -99,6 +104,9 @@ export default class Session extends EventRaiser
     let tab = this.mainContainer.addTab(fileNode.clientPath, fileNode.name, element);
 
     this.editors.set(id, new EditorClass(id, fileNode, tab, this));
+
+    messageQueue.forEach((message) => this._forwardEditorMessage(message));
+    this.editorMessageQueue.delete(id);
     this.editorWaitingList.delete(path);
 
     if(focus)
@@ -180,6 +188,12 @@ export default class Session extends EventRaiser
     );
   }
 
+  send(message)
+  {
+    message = JSON.stringify(message);
+    this.websocket.send(message);
+  }
+
   messageReceived(message)
   {
     message = JSON.parse(message);
@@ -219,10 +233,7 @@ export default class Session extends EventRaiser
         break;
       }
 
-      let editor = this.editors.get(message.editorId);
-
-      if(editor)
-        editor.messageReceived(message);
+      this._forwardEditorMessage(message);
       break;
     case "permissions":
       this.permissionManager.messageReceived(message);
@@ -232,9 +243,16 @@ export default class Session extends EventRaiser
     this.triggerEvent("message", message);
   }
 
-  send(message)
+  _forwardEditorMessage(message)
   {
-    message = JSON.stringify(message);
-    this.websocket.send(message);
+    let editor = this.editors.get(message.editorId);
+
+    if(editor) {
+      editor.messageReceived(message);
+      return;
+    }
+
+    let queue = this.editorMessageQueue.get(message.editorId);
+    queue.push(message);
   }
 }
