@@ -7,7 +7,7 @@ export default class BasicTextEditor
   constructor(element, session)
   {
     this.element = element;
-    this.element.className = "ace-editor-container"
+    this.element.className = "ace-editor-container";
 
     this.session = session;
 
