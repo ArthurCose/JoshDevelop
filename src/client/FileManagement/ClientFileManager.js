@@ -1,9 +1,10 @@
 import ClientFolderNode from "./ClientFolderNode.js";
 import FileClipboard from "./FileClipboard.js";
 import FileTree from "../../shared/FileTree.mjs";
+import EventRaiser from "../../shared/EventRaiser.mjs";
 import { getParentPath } from "../../shared/PathUtil.mjs";
 
-export default class ClientFileManager extends FileTree
+export default class ClientFileManager extends EventRaiser
 {
   constructor(session)
   {
@@ -11,23 +12,26 @@ export default class ClientFileManager extends FileTree
     this.session = session;
     this.clipboard = new FileClipboard(this);
 
-    this.root = new ClientFolderNode("", undefined, this);
-    this.root.controlElement.className += " root";
-    this.root.requestedData = true;
-    this.root.populated = true;
-    this.root.toggleDisplay();
+    this.fileTree = new FileTree(this);
+    this.fileTree.root = new ClientFolderNode("", undefined, this.fileTree);
+
+    let root = this.fileTree.root;
+    root.controlElement.className += " root";
+    root.requestedData = true;
+    root.populated = true;
+    root.toggleDisplay();
 
     this.element = document.getElementById("filetree");
-    this.element.appendChild(this.root.controlElement);
-    this.element.appendChild(this.root.listElement);
-    
+    this.element.appendChild(root.controlElement);
+    this.element.appendChild(root.listElement);
+
     this.addEvent("click");
   }
 
   reset()
   {
-    while(this.root.children.length > 0)
-      this.root.children[0].destroy();
+    while(this.fileTree.root.children.length > 0)
+      this.fileTree.root.children[0].destroy();
   }
 
   // async
@@ -45,13 +49,13 @@ export default class ClientFileManager extends FileTree
     if(path == "")
       return undefined;
 
-    let node = this.getNode(path, isFile);
+    let node = this.fileTree.getNode(path, isFile);
 
     if(node)
       return node;
 
     let parentPath = getParentPath(path);
-    let parentFolder = this.getFolder(parentPath);
+    let parentFolder = this.fileTree.getFolder(parentPath);
 
     if(!parentFolder)
       parentFolder = await this.requestFolder(parentPath);
@@ -64,7 +68,7 @@ export default class ClientFileManager extends FileTree
 
     await parentFolder.once("populate");
 
-    return this.getNode(path, isFile);
+    return this.fileTree.getNode(path, isFile);
   }
 
   messageReceived(message)
@@ -87,12 +91,12 @@ export default class ClientFileManager extends FileTree
 
   _add(message)
   {
-    this.registerNode(message.path, message.isFile);
+    this.fileTree.registerNode(message.path, message.isFile);
   }
 
   _remove(message)
   {
-    let node = this.getNode(message.path, message.isFile);
+    let node = this.fileTree.getNode(message.path, message.isFile);
 
     if(node)
       node.markDeleted();
@@ -100,7 +104,7 @@ export default class ClientFileManager extends FileTree
 
   async _move(message)
   {
-    let node = this.getNode(message.oldPath, message.isFile);
+    let node = this.fileTree.getNode(message.oldPath, message.isFile);
 
     // node may not have been downloaded
     // we can ignore this one
@@ -123,11 +127,15 @@ export default class ClientFileManager extends FileTree
     }
 
     node.triggerEvent("move", message.oldPath);
+    this.fileTree.triggerEvent("move", node, message.oldPath);
   }
 
   _donePopulating(message)
   {
-    let folder = this.getFolder(message.path);
+    let folder = this.fileTree.getFolder(message.path);
+
+    if(!folder)
+      return;
 
     folder.populated = true;
     folder.triggerEvent("populate");

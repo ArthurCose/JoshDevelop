@@ -15,7 +15,7 @@ export default class FileWatcher
       return;
 
     this.watcher = chokidar.watch(
-      this.fileManager.root.serverPath,
+      this.fileManager.fileTree.root.serverPath,
       {
         usePolling: true,
         awaitWriteFinish: true

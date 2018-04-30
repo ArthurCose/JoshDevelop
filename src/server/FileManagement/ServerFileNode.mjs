@@ -4,9 +4,9 @@ import fs from "fs-extra";
 
 export default class ServerFileNode extends FileNode
 {
-  constructor(name, parentFolder, filetree)
+  constructor(name, parentFolder, fileTree)
   {
-    super(name, parentFolder, filetree);
+    super(name, parentFolder, fileTree);
   }
 
   /**
@@ -14,7 +14,7 @@ export default class ServerFileNode extends FileNode
    */
   get serverPath()
   {
-    return this.filetree.parentPath + this.clientPath;
+    return this.fileTree.manager.parentPath + this.clientPath;
   }
 
   async make()
@@ -56,9 +56,10 @@ export default class ServerFileNode extends FileNode
     if(error)
       throw new Error(error);
 
-    let destination = folder == undefined ?
-                      this.filetree.parentPath + "/" + newName :
-                      folder.serverPath + "/" + newName;
+    let destination =
+      folder == undefined
+        ? this.fileTree.manager.parentPath + "/" + newName
+        : folder.serverPath + "/" + newName;
 
     await fs.move(this.serverPath, destination);
 
@@ -76,8 +77,8 @@ export default class ServerFileNode extends FileNode
 
     this.name = newName;
 
-    this.filetree.project.broadcast({
-      type: "filetree",
+    this.fileTree.manager.project.broadcast({
+      type: "filemanager",
       action: "move",
       oldPath: oldPath,
       parentPath: this.parentClientPath,
@@ -86,6 +87,7 @@ export default class ServerFileNode extends FileNode
     });
 
     this.triggerEvent("move", oldPath);
+    this.fileTree.triggerEvent("move", this, oldPath);
   }
 
   /**
@@ -99,9 +101,10 @@ export default class ServerFileNode extends FileNode
     if(error)
       throw new Error(error);
 
-    let destination = folder == undefined ?
-                      this.filetree.parentPath + "/" + newName :
-                      folder.serverPath + "/" + newName;
+    let destination =
+      folder == undefined
+        ? this.fileTree.manager.parentPath + "/" + newName
+        : folder.serverPath + "/" + newName;
 
     await fs.copy(this.serverPath, destination);
 
@@ -124,8 +127,8 @@ export default class ServerFileNode extends FileNode
   unlist()
   {
     if(this.parentFolder != undefined)
-      this.filetree.project.broadcast({
-        type: "filetree",
+      this.fileTree.manager.project.broadcast({
+        type: "filemanager",
         action: "remove",
         isFile: this.isFile,
         path: this.clientPath

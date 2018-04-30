@@ -1,8 +1,8 @@
 export default class FileClipboard
 {
-  constructor(filetree)
+  constructor(fileManager)
   {
-    this.filetree = filetree;
+    this.fileManager = fileManager;
     this._node = undefined;
     this._copy = false;
   }
@@ -29,7 +29,7 @@ export default class FileClipboard
     if(!this.contentExists)
       return;
 
-    this.filetree.session.send({
+    this.fileManager.session.send({
       type: "filemanager",
       action: this._copy ? "copy" : "move",
       parentPath: folderPath,

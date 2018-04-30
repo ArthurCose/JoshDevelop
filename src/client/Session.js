@@ -174,7 +174,7 @@ export default class Session extends EventRaiser
 
   setProject(projectName)
   {
-    this.fileManager.root.name = projectName;
+    this.fileManager.fileTree.root.name = projectName;
     this.fileManager.clipboard.empty();
     this.project = projectName;
   }
@@ -213,7 +213,7 @@ export default class Session extends EventRaiser
     case "popup":
       this.displayPopup(message.message);
       break;
-    case "filetree":
+    case "filemanager":
       this.fileManager.messageReceived(message);
       break;
     case "project":

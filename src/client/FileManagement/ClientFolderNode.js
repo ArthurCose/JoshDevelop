@@ -2,9 +2,9 @@ import ClientFileNode from "./ClientFileNode.js";
 
 export default class ClientFolderNode extends ClientFileNode
 {
-  constructor(name, parentFolder, filetree)
+  constructor(name, parentFolder, fileTree)
   {
-    super(name, parentFolder, filetree);
+    super(name, parentFolder, fileTree);
     this.isFile = false;
     this.children = [];
     this.requestedData = false;
@@ -21,6 +21,10 @@ export default class ClientFolderNode extends ClientFileNode
     this.controlElement.addEventListener("click", () => this.toggleDisplay());
 
     this.addEvent("populate");
+
+    this.on("contextmenu", (menu) =>
+      this.addFolderSpecificMenuItems(menu)
+    );
   }
 
   get expanded()
@@ -42,10 +46,43 @@ export default class ClientFolderNode extends ClientFileNode
   {
     this.requestedData = true;
 
-    this.filetree.session.send({
+    this.fileTree.manager.session.send({
       type: "filemanager",
       action: "request",
       path: this.clientPath
+    });
+  }
+
+  addFolderSpecificMenuItems(menu)
+  {
+    let session = this.fileTree.manager.session;
+
+    let addMenu = menu.addSubmenuBefore("Cut", "Add New");
+    addMenu.addButton("File", () => this.createNewNode(true));
+    addMenu.addButton("Folder",  () => this.createNewNode(false));
+
+    let clipboard = this.fileTree.manager.clipboard;
+
+    if(clipboard.contentExists) {
+      menu.addButtonAfter("Copy", "Paste", () =>
+        clipboard.paste(this.clientPath)
+      );
+    }
+
+    menu.addButton("Empty", () => {
+      session.send({
+        type: "filemanager",
+        action: "empty",
+        path: this.clientPath,
+      });
+    });
+
+    menu.addButton("Refresh", () => {
+      session.send({
+        type: "filemanager",
+        action: "refresh",
+        path: this.clientPath,
+      });
     });
   }
 
@@ -64,7 +101,7 @@ export default class ClientFolderNode extends ClientFileNode
       if(removed)
         return;
 
-      this.filetree.session.send({
+      this.fileTree.manager.session.send({
         type: "filemanager",
         action: "add",
         parentPath: this.clientPath,
@@ -95,20 +132,20 @@ export default class ClientFolderNode extends ClientFileNode
 
   registerSubFolder(name)
   {
-    let folder = new ClientFolderNode(name, this, this.filetree);
+    let folder = new ClientFolderNode(name, this, this.fileTree);
     this.registerNode(folder);
 
-    this.filetree.triggerEvent("add", folder);
+    this.fileTree.triggerEvent("add", folder);
 
     return folder;
   }
 
   registerFile(name)
   {
-    let file = new ClientFileNode(name, this, this.filetree);
+    let file = new ClientFileNode(name, this, this.fileTree);
     this.registerNode(file);
 
-    this.filetree.triggerEvent("add", file);
+    this.fileTree.triggerEvent("add", file);
 
     return file;
   }

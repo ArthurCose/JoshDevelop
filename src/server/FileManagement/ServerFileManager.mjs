@@ -3,38 +3,34 @@ import FileWatcher from "./FileWatcher";
 import ServerFolderNode from "./ServerFolderNode";
 import getFileNameErrors from "./getFileNameErrors";
 
-export default class ServerFileManager extends FileTree
+export default class ServerFileManager
 {
   constructor(project)
   {
-    super();
-    this.root = new ServerFolderNode(project.name, undefined, this);
     this.project = project;
     this.parentPath = "projects/";
 
-    this.root.make();
+    this.fileTree = new FileTree(this);
+    this.fileTree.root =
+      new ServerFolderNode(project.name, undefined, this.fileTree);
+    this.fileTree.root.make();
 
     this.fileWatcher = new FileWatcher(this);
   }
 
-  sendFolder(session, folder)
+  getFile(path)
   {
-    for(let childNode of folder.children) {
-      // send the node
-      session.send({
-        type: "filetree",
-        action: "add",
-        isFile: childNode.isFile,
-        path: childNode.clientPath
-      });
-    }
+    return this.fileTree.getFile(path);
+  }
 
-    // signal end
-    session.send({
-      type: "filetree",
-      action: "done populating",
-      path: folder.clientPath
-    });
+  getFolder(path)
+  {
+    return this.fileTree.getFolder(path);
+  }
+
+  getNode(path, isFile)
+  {
+    return this.fileTree.getNode(path, isFile);
   }
 
   async createNode(parentPath, name, isFile)
@@ -66,21 +62,13 @@ export default class ServerFileManager extends FileTree
     }
 
     this.project.broadcast({
-      type: "filetree",
+      type: "filemanager",
       action: "add",
       isFile: node.isFile,
       path: node.clientPath
     });
 
     return node;
-  }
-
-  async emptyFolder(path)
-  {
-    let folder = this.getFolder(path);
-
-    if(folder)
-      await folder.empty();
   }
 
   refresh(path)
@@ -102,6 +90,34 @@ export default class ServerFileManager extends FileTree
 
     // restart the filewatcher to repopulate the tree
     this.fileWatcher.restart();
+  }
+
+  sendFolder(session, folder)
+  {
+    for(let childNode of folder.children) {
+      // send the node
+      session.send({
+        type: "filemanager",
+        action: "add",
+        isFile: childNode.isFile,
+        path: childNode.clientPath
+      });
+    }
+
+    // signal end
+    session.send({
+      type: "filemanager",
+      action: "done populating",
+      path: folder.clientPath
+    });
+  }
+
+  async emptyFolder(path)
+  {
+    let folder = this.getFolder(path);
+
+    if(folder)
+      await folder.empty();
   }
 
   async messageReceived(session, message)

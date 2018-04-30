@@ -3,9 +3,11 @@ import { getFileName, getParentPath } from "./PathUtil.mjs";
 
 export default class FileTree extends EventRaiser
 {
-  constructor()
+  constructor(manager)
   {
     super();
+    this.manager = manager;
+
     this.addEvent("add");
     this.addEvent("unlist");
     this.addEvent("move");
@@ -73,12 +75,23 @@ export default class FileTree extends EventRaiser
 
   registerNode(filePath, isFile)
   {
+    let node = this.getNode(filePath, isFile);
+
+    if(node)
+      return node;
+
     let name = getFileName(filePath);
     let parentPath = getParentPath(filePath);
     let parentFolder = this.getFolder(parentPath);
 
-    if(parentFolder == undefined)
-      parentFolder = this.registerSubFolder(parentPath);
+    if(parentPath == "")
+      return undefined;
+
+    if(!parentFolder)
+      parentFolder = this.registerNode(parentPath, false);
+
+    if(!parentFolder)
+      return undefined;
 
     return isFile ? parentFolder.registerFile(name) :
                     parentFolder.registerSubFolder(name);

@@ -47,7 +47,8 @@ export default class SearchPlugin extends Plugin
 
     let regex = this.createRegex(query, useRegex, caseSensitive, matchWholeWord);
 
-    let results = await this.searchTree(project.fileManager, regex, useGitIgnore);
+    let results =
+      await this.searchTree(project.fileManager.fileTree, regex, useGitIgnore);
 
     ctx.body = JSON.stringify({results});
   }
@@ -68,11 +69,11 @@ export default class SearchPlugin extends Plugin
     return new RegExp(queryString, flags);
   }
 
-  async searchTree(filetree, query, useGitIgnore)
+  async searchTree(fileTree, query, useGitIgnore)
   {
     let results = [];
-    let folders = [filetree.root];
-    let gitIgnore = useGitIgnore ? await this.getGitIgnore(filetree) : ignore();
+    let folders = [fileTree.root];
+    let gitIgnore = useGitIgnore ? await this.getGitIgnore(fileTree) : ignore();
 
     gitIgnore.add(".git");
 
@@ -101,12 +102,12 @@ export default class SearchPlugin extends Plugin
     return results;
   }
 
-  async getGitIgnore(filetree)
+  async getGitIgnore(fileTree)
   {
     let gitIgnore = ignore();
 
     try{
-      let gitIgnorePath = `${filetree.root.serverPath}/.gitignore`;
+      let gitIgnorePath = `${fileTree.root.serverPath}/.gitignore`;
       let contents = await fs.readFile(gitIgnorePath, "utf8");
       let lines = contents.split("\n");
 

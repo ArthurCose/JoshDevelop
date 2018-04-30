@@ -2,20 +2,20 @@ import EventRaiser from "./EventRaiser.mjs";
 
 export default class FileNode extends EventRaiser
 {
-  constructor(name, parentFolder, filetree)
+  constructor(name, parentFolder, fileTree)
   {
     super();
     this._name = name;
     this.parentFolder = parentFolder;
-    this.filetree = filetree;
+    this.fileTree = fileTree;
     this.isFile = true;
     this.deleted = false;
 
     this.addEvent("unlist");
     this.addEvent("move");
 
-    this.on("unlist", () => this.filetree.triggerEvent("unlist", this));
-    this.on("move", () => this.filetree.triggerEvent("move", this));
+    this.on("unlist", () => this.fileTree.triggerEvent("unlist", this));
+    this.on("move", (node) => this.fileTree.triggerEvent("move", this));
   }
 
   get name()
@@ -76,6 +76,7 @@ export default class FileNode extends EventRaiser
   {
     this.destroy();
     this.triggerEvent("unlist");
+    this.fileTree.triggerEvent("unlist", this);
   }
 
   destroy()

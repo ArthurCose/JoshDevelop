@@ -3,9 +3,9 @@ import fs from "fs-extra";
 
 export default class ServerFolderNode extends ServerFileNode
 {
-  constructor(name, parentFolder, filetree)
+  constructor(name, parentFolder, fileTree)
   {
-    super(name, parentFolder, filetree);
+    super(name, parentFolder, fileTree);
     this.isFile = false;
     this.children = [];
   }
@@ -30,20 +30,20 @@ export default class ServerFolderNode extends ServerFileNode
 
   registerSubFolder(name)
   {
-    let folder = new ServerFolderNode(name, this, this.filetree);
+    let folder = new ServerFolderNode(name, this, this.fileTree);
     this.registerNode(folder);
 
-    this.filetree.triggerEvent("add", folder);
+    this.fileTree.triggerEvent("add", folder);
 
     return folder;
   }
 
   registerFile(name)
   {
-    let file = new ServerFileNode(name, this, this.filetree);
+    let file = new ServerFileNode(name, this, this.fileTree);
     this.registerNode(file);
 
-    this.filetree.triggerEvent("add", file);
+    this.fileTree.triggerEvent("add", file);
 
     return file;
   }

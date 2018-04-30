@@ -10,8 +10,10 @@ export default class Project
     this.editors = {};
     this.sessions = [];
 
-    this.fileManager.root.on("unlist", () => this.delete());
-    this.fileManager.root.on("move", () => this.rename(this.fileManager.root.name));
+    let rootNode = this.fileManager.fileTree.root;
+
+    rootNode.on("unlist", () => this.delete());
+    rootNode.on("move", () => this.rename(rootNode.name));
   }
 
   getEditor(path)
@@ -40,7 +42,7 @@ export default class Project
   {
     this.sessions.push(session);
 
-    this.fileManager.sendFolder(session, this.fileManager.root);
+    this.fileManager.sendFolder(session, this.fileManager.fileTree.root);
   }
 
   disconnect(session)

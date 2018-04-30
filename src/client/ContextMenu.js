@@ -107,10 +107,38 @@ export default class ContextMenu
 
   addSubmenu(label)
   {
+    let { submenu } = this.createSubmenu(label);
+
+    return submenu;
+  }
+
+  addSubmenuBefore(nextLabel, label)
+  {
+    let { button, submenu } = this.createSubmenu(label);
+    let nextButton = this.getButton(nextLabel);
+
+    this.element.insertBefore(button, nextButton);
+
+    return submenu;
+  }
+
+  addSubmenuAfter(previousLabel, label)
+  {
+    let { button, submenu } = this.createSubmenu(label);
+    let previousButton = this.getButton(previousLabel);
+
+    this.element.insertBefore(button, previousButton.nextSibling);
+
+    return submenu;
+  }
+
+  createSubmenu(label)
+  {
     let submenu = new ContextMenu(0, this.element.clientY);
     submenu.rootMenu = this;
 
-    let button = this.addButton(label);
+    let button = this.createButton(label);
+
     button.style.cursor = "default";
 
     let rightArrow = document.createElement("span");
@@ -128,9 +156,7 @@ export default class ContextMenu
       this.submenu = submenu;
     });
 
-    this.element.appendChild(button);
-
-    return submenu;
+    return { button, submenu };
   }
 
   destroy()

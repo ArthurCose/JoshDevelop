@@ -58,6 +58,8 @@ export default class Shell
 
   createTerminal()
   {
+    let fileTree = this.session.fileManager.fileTree;
+
     let term = pty.spawn(
       process.env.SHELL,
       [],
@@ -65,7 +67,7 @@ export default class Shell
         name: "xterm-256color",
         cols: this.columns,
         rows: this.rows,
-        cwd: this.session.fileManager.root.serverPath,
+        cwd: fileTree.root.serverPath,
         env: process.env
       }
     );

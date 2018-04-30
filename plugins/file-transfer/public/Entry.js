@@ -1,14 +1,16 @@
 export default function main(session)
 {
-  session.fileManager.on("add", (node) => {
+  session.fileManager.fileTree.on("add", (node) => {
     if(!node.isFile)
       attachDropListeners(node, session);
 
     attachDownloadButton(node, session);
   });
 
-  attachDropListeners(session.fileManager.root, session);
-  attachDownloadButton(session.fileManager.root, session);
+  let fileTree = session.fileManager.fileTree;
+
+  attachDropListeners(fileTree.root, session);
+  attachDownloadButton(fileTree.root, session);
 
   document.body.addEventListener("dragover", (e) => e.preventDefault());
   document.body.addEventListener("drop", (e) => e.preventDefault());
