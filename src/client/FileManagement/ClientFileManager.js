@@ -42,6 +42,9 @@ export default class ClientFileManager extends FileTree
 
   async requestNode(path, isFile)
   {
+    if(path == "")
+      return undefined;
+
     let node = this.getNode(path, isFile);
 
     if(node)
