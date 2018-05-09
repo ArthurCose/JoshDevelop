@@ -31,6 +31,7 @@ export class Tab extends EventRaiser
 
     this.closeElement.className = "close";
     this.closeElement.innerHTML = "x";
+    this.closeElement.addEventListener("mousedown", (e) => e.stopPropagation());
     this.closeElement.addEventListener("click", () => this.destroy());
 
     this.element.appendChild(this.nameElement);
